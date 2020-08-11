@@ -28,7 +28,7 @@ namespace Alternion
         static List<string> PlayerID = new List<string>();
         static List<string> badgeName = new List<string>();
         static int logLevel = 1;
-        static bool showTWBadges = true;
+        static bool showTWBadges = false;
 
         void Start()
         {
