@@ -12,7 +12,7 @@ using System.IO;
 using Harmony;
 using System.Runtime.InteropServices;
 
-namespace CharacterOutfitChanger
+namespace Alternion
 {
     internal static class Log
     {
