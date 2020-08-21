@@ -27,8 +27,11 @@ namespace Alternion
         static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static List<string> PlayerID = new List<string>();
         static List<string> badgeName = new List<string>();
-        static int logLevel = 1;
+        static List<string> weaponSkinID = new List<string>();
+        static List<string> weaponSkinNames = new List<string>();
+        static int logLevel = 3;
         static bool showTWBadges = false;
+        bool showUI = false;
 
         void Start()
         {
@@ -46,7 +49,27 @@ namespace Alternion
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
             }
+
+            if (showUI)
+            {
+                drawUI();
+            }
         }
+
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Delete))
+            {
+                if(showUI)
+                {
+                    showUI = false;
+                }else
+                {
+                    showUI = true;
+                }
+            }
+        }
+
 
         private IEnumerator loadBadgeFileIE()
         {
@@ -124,10 +147,11 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow("Error downloading images:");
+                    logLow("Error downloading image:");
                     logLow(e.Message);
                 }
             }
+
             logLow("Textures Downloaded!");
 
             setMainmenuBadge();
@@ -195,6 +219,12 @@ namespace Alternion
 
         }
 
+        void drawUI()
+        {
+            GUI.DragWindow(new Rect(0f, 0f, 100f, 20f));
+            showTWBadges = GUI.Button(new Rect(10f, 10f, 20f, 10f), "Toggle TW Badges");
+            GUI.TextField(new Rect(30f, 20f, 10f, 10f), showTWBadges.ToString());
+        }
         static void logLow(string message)
         {
             if (logLevel > 0)
@@ -258,10 +288,14 @@ namespace Alternion
                             logHigh($"Badge Name = :{badgeName[i]}:");
                             if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                             {
-                                for (int s = 0; s < badgeName[i].Length; s++)
+                                if (logLevel >= 3)
                                 {
-                                    logHigh(badgeName[i][s].ToString());
+                                    for (int s = 0; s < badgeName[i].Length; s++)
+                                    {
+                                        logHigh(badgeName[i][s].ToString());
+                                    }
                                 }
+
                                 if (File.Exists(Application.dataPath + texturesFilePath + badgeName[i] + ".png"))
                                 {
                                     logHigh("Loading texture....");
@@ -284,6 +318,38 @@ namespace Alternion
                     logLow(e.Message);
                 }
 
+            }
+        }
+
+        [HarmonyPatch(typeof(Character), "íëðäêñïçêêñ", new Type[] { typeof(string) })]
+        static class weaponRendererPatch
+        {
+            static void Postfix(Character __instance, string wep)
+            {
+                bool useThis = true;
+                logMed("Entered Character patch");
+
+                string steamID = GameMode.getPlayerInfo(__instance.).steamID.ToString();
+                logHigh($"Gotten SteamID = {steamID}");
+
+                for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
+                {
+                    if (__instance.ìñíððåñéåèæ.GetChild(i).name == wep)
+                    {
+                        WeaponRender wepRen = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
+                        if (wepRen != null)
+                        {
+                            for (int s = 0; s < weaponSkinID.Count; s++)
+                            {
+                                if (weaponSkinID[s] == steamID)
+                                {
+                                    Texture2D texture = loadTexture(,2048f,2048f)
+                                    wepRen.GetComponent<Renderer>().material.SetTexture("_MainTex", texture);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
