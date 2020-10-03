@@ -42,10 +42,6 @@ namespace Alternion
         static bool showTWBadges = false;
         static bool useCustomSkins = true;
 
-        //Davids Sail Mod
-        private const float TickDelay = 10f;
-        private readonly Dictionary<Transform, string> processedNames = new Dictionary<Transform, string>();
-
         void Start()
         {
             try
@@ -70,12 +66,6 @@ namespace Alternion
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
             }
-        }
-
-        void OnEnable()
-        {
-            //Davids Sail Mod
-            //InvokeRepeating("ShipLoop", 5f, TickDelay);
         }
 
         private IEnumerator loadBadgeFileIE()
