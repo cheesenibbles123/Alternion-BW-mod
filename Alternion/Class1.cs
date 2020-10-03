@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,6 @@ using UnityEngine.UI;
 using BWModLoader;
 using Harmony;
 using Steamworks;
-//using System.Runtime.InteropServices;
 
 
 namespace Alternion
@@ -35,17 +34,31 @@ namespace Alternion
         static List<string> PlayerIDSkins = new List<string>();
         static List<string> SkinNames = new List<string>();
 
-        static int logLevel = 1;
+        static List<string> PlayerIDSailSkins = new List<string>();
+        static List<string> SkinSailNames = new List<string>();
+
+        static int logLevel = 0;
 
         static bool showTWBadges = false;
         static bool useCustomSkins = true;
 
+        //Davids Sail Mod
+        private const float TickDelay = 10f;
+        private readonly Dictionary<Transform, string> processedNames = new Dictionary<Transform, string>();
+
         void Start()
         {
-            logHigh("Patching...");
-            HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
-            harmony.PatchAll();
-            logHigh("Patched!");
+            try
+            {
+                logHigh("Patching...");
+                HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
+                logHigh("Created harmony object!");
+                harmony.PatchAll();
+                logHigh("Patched!");
+            }catch (Exception e)
+            {
+                logHigh(e.Message);
+            }
 
             logHigh("Starting Coroutines...");
             createDirectories();
@@ -57,6 +70,12 @@ namespace Alternion
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
             }
+        }
+
+        void OnEnable()
+        {
+            //Davids Sail Mod
+            //InvokeRepeating("ShipLoop", 5f, TickDelay);
         }
 
         private IEnumerator loadBadgeFileIE()
@@ -87,7 +106,6 @@ namespace Alternion
             }
             logHigh("BadgeFile Downloaded!");
             StartCoroutine(loadSkinFileIE());
-            StartCoroutine(DownloadTexturesFromInternet());
         }
         private IEnumerator loadSkinFileIE()
         {
@@ -116,6 +134,36 @@ namespace Alternion
                 }
             }
             logHigh("SkinFile Downloaded!");
+            StartCoroutine(loadSailsFile());
+        }
+        private IEnumerator loadSailsFile()
+        {
+            logHigh("Downloading Sails...");
+
+            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/sailSkins.txt");
+            yield return www;
+            logHigh("Return complete");
+
+            string[] skinsFile = www.text.Replace("\r", "").Split('\n');
+            logHigh("Split complete");
+
+            for (int i = 0; i < skinsFile.Length; i++)
+            {
+                logHigh($"Skin File For loop run {i} times");
+                try
+                {
+                    string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
+                    PlayerIDSailSkins.Add(splitArrSkin[0]);
+                    SkinSailNames.Add(splitArrSkin[1]);
+                }
+                catch (Exception e)
+                {
+                    logLow("Error loading skin file into program:");
+                    logLow(e.Message);
+                }
+            }
+            logHigh("SailsFile Downloaded!");
+            StartCoroutine(DownloadTexturesFromInternet());
         }
         private IEnumerator waterMark()
         {
@@ -148,27 +196,29 @@ namespace Alternion
         }
         private IEnumerator DownloadTexturesFromInternet()
         {
-            logLow("Downloading Textures...");
+            logMed("Downloading Textures...");
+            logMed("Downloading Badges...");
             for (int i = 0; i < badgeName.Count; i++)
             {
                 logHigh($"for loop run {i}");
-                    WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/Badges/" + badgeName[i] + ".png");
-                    yield return www;
+                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/Badges/" + badgeName[i] + ".png");
+                yield return www;
 
-                    try
-                    {
-                        byte[] bytes = www.texture.EncodeToPNG();
-                        logHigh("Encoded bytes");
-                        File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
-                        logHigh("Written files");
-                    }
-                    catch (Exception e)
-                    {
-                        logLow("Error downloading images:");
-                        logLow(e.Message);
-                    }
+                try
+                {
+                    byte[] bytes = www.texture.EncodeToPNG();
+                    logHigh("Encoded Badges bytes");
+                    File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
+                    logHigh("Written files");
+                }
+                catch (Exception e)
+                {
+                    logLow("Error downloading images:");
+                    logLow(e.Message);
+                }
             }
 
+            logMed("Downloading Weapons...");
             List<string> weaponNames = new List<string>()
             {
                 "nockGun", "blunderbuss", "musket", "handmortar",
@@ -181,24 +231,46 @@ namespace Alternion
                 for (int s = 0; s < weaponNames.Count; s++)
                 {
                     string wpn = weaponNames[s] + '_' + SkinNames[i];
-                        WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/WeaponSkins/" + wpn + ".png");
-                        yield return www;
+                    WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/WeaponSkins/" + wpn + ".png");
+                    yield return www;
 
-                        try
-                        {
-                            byte[] bytes = www.texture.EncodeToPNG();
-                            logHigh("Encoded bytes");
-                            File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
-                            logHigh("Written files");
-                        }
-                        catch (Exception e)
-                        {
-                            logLow("Error downloading images:");
-                            logLow(e.Message);
-                        }
+                    try
+                    {
+                        byte[] bytes = www.texture.EncodeToPNG();
+                        logHigh("Encoded wpnSkins bytes");
+                        File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
+                        logHigh("Written files");
+                    }
+                    catch (Exception e)
+                    {
+                        logLow("Error downloading images:");
+                        logLow(e.Message);
+                    }
                 }
             }
-            logLow("Textures Downloaded!");
+
+            logMed("Downloading SkinSails...");
+            for (int i = 0; i < SkinSailNames.Count; i++)
+            {
+                logHigh($"for loop run {i}");
+                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/SailSkins/" + SkinSailNames[i] + ".png");
+                yield return www;
+
+                try
+                {
+                    byte[] bytes = www.texture.EncodeToPNG();
+                    logHigh("Encoded Sail bytes");
+                    File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
+                    logHigh("Written files");
+                }
+                catch (Exception e)
+                {
+                    logLow("Error downloading images:");
+                    logLow(e.Message);
+                }
+            }
+
+            logMed("Textures Downloaded!");
 
             setMainmenuBadge();
             StartCoroutine(waterMark());
@@ -308,21 +380,6 @@ namespace Alternion
             }
         }
 
-        static bool checkWebsite(string url)
-        {
-            WebRequest webRequest = WebRequest.Create(url);
-            WebResponse webResponse;
-            try
-            {
-                webResponse = webRequest.GetResponse();
-            }
-            catch //If exception thrown then couldn't get response from address
-            {
-                return false;
-            }
-            return true;
-        }
-
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
         static class ScoreBoardSlotAdjuster
         {
@@ -343,9 +400,12 @@ namespace Alternion
                             logHigh($"Badge Name = :{badgeName[i]}:");
                             if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                             {
-                                for (int s = 0; s < badgeName[i].Length; s++)
+                                if (logLevel >= 2)
                                 {
-                                    logHigh(badgeName[i][s].ToString());
+                                    for (int s = 0; s < badgeName[i].Length; s++)
+                                    {
+                                        logHigh(badgeName[i][s].ToString());
+                                    }
                                 }
                                 if (File.Exists(Application.dataPath + texturesFilePath + badgeName[i] + ".png"))
                                 {
@@ -362,7 +422,7 @@ namespace Alternion
                         }
                     }
 
-                }   
+                }
                 catch (Exception e)
                 {
                     logLow("Failed to assign custom badge to a player:");
@@ -389,7 +449,7 @@ namespace Alternion
                             return;
                         }
                         for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
-                        { 
+                        {
                             if (__instance.ìñíððåñéåèæ.GetChild(i).name == îëðíîïïêñîî)
                             {
                                 logHigh("If 2 entered");
@@ -493,7 +553,8 @@ namespace Alternion
                                 logHigh("Set Texture");
                             }
 
-                        }catch(Exception e)
+                        }
+                        catch (Exception e)
                         {
                             logHigh("ERROR:");
                             logHigh(e.Message);
@@ -503,6 +564,49 @@ namespace Alternion
             }
         }
 
-    }
+        [HarmonyPatch(typeof(SailHealth), "Start")]
+        static class sailSkinPatch
+        {
+            static void Postfix(SailHealth __instance)
+            {
+                
+                try
+                {
+                    bool run = true;
+                    logMed("SailSkinPatch Postfix called");
 
+                    foreach (var item in __instance.GetComponent<Renderer>().material.shaderKeywords)
+                    {
+                        logMed(item);
+                    }
+
+                    Transform shipTransf = __instance.transform.root;
+                    if (shipTransf && run)
+                    {
+                        logHigh(shipTransf.name);
+                        int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
+                        logHigh($"Team Number: {teamNum}");
+
+                        string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
+                        logHigh($"Gotten captain SteamID = {steamID} for team {teamNum}");
+                        for (int i = 0; i < PlayerIDSailSkins.Count; i++)
+                        {
+                            if (PlayerIDSailSkins[i] == steamID)
+                            {
+                                logHigh($"Found match for ID: -{steamID}-");
+                                Texture2D customSailSkin = loadTexture(SkinSailNames[i], 2048, 2048);
+                                logHigh("Loaded custom skin");
+
+                                __instance.GetComponent<Renderer>().material.mainTexture = customSailSkin;
+                                logHigh("Set Texture");
+                            }
+                        }
+                    }
+                }catch (Exception e)
+                {
+                    logLow(e.Message);
+                }
+            }
+        }
+    }
 }
