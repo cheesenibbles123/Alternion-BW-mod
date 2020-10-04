@@ -27,5 +27,3 @@ This is a split off from my first mod
  - All required files will be downloaded automatically by the mod when it runs
  - I suck at this
  - Enjoy my crappy code
-
-# YOU WILL NEED HARMONY FOR THIS
