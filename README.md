@@ -9,8 +9,7 @@ This is a split off from my first mod
  
 # Installation
  - Copy **0Harmony.dll**, **Assembly-CSharp.dll** and **BWModLoader.dll** into your **Blackwake_Data/Managed/** folder.
-   (These files are added on the latest release version, starting at **v 4.0**)
-   (For those trying to run an older version see ***Required files*** below)
+   (These files are added on the latest release version, starting at **v 4.0**, for those trying to run an older version see ***Required files*** below)
  - Run the game, it should generate a mods folder in **Blackwake_Data/Managed/Mods**
  - Copy **Alternion.dll** into the mods folder
    (All assets required will be automatically downloaded)
