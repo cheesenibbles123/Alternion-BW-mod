@@ -13,6 +13,7 @@ using UnityEngine.UI;
 using BWModLoader;
 using Harmony;
 using Steamworks;
+//using System.Runtime.InteropServices;
 
 
 namespace Alternion
@@ -37,7 +38,10 @@ namespace Alternion
         static List<string> PlayerIDSailSkins = new List<string>();
         static List<string> SkinSailNames = new List<string>();
 
-        static int logLevel = 0;
+        static List<string> PlayerIDCannonSkins = new List<string>();
+        static List<string> CannonSkinNames = new List<string>();
+
+        static int logLevel = 3;
 
         static bool showTWBadges = false;
         static bool useCustomSkins = true;
@@ -128,7 +132,7 @@ namespace Alternion
         }
         private IEnumerator loadSailsFile()
         {
-            logHigh("Downloading Sails...");
+            logMed("Downloading Sails...");
 
             WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/sailSkins.txt");
             yield return www;
@@ -149,6 +153,35 @@ namespace Alternion
                 catch (Exception e)
                 {
                     logLow("Error loading skin file into program:");
+                    logLow(e.Message);
+                }
+            }
+            logHigh("SailsFile Downloaded!");
+            StartCoroutine(loadCannonsFile());
+        }
+        private IEnumerator loadCannonsFile()
+        {
+            logMed("Downloading Cannon...");
+
+            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/cannonSkins.txt");
+            yield return www;
+            logHigh("Return complete");
+
+            string[] skinsFile = www.text.Replace("\r", "").Split('\n');
+            logHigh("Split complete");
+
+            for (int i = 0; i < skinsFile.Length; i++)
+            {
+                logHigh($"Skin File For loop run {i} times");
+                try
+                {
+                    string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
+                    PlayerIDCannonSkins.Add(splitArrSkin[0]);
+                    CannonSkinNames.Add(splitArrSkin[1]);
+                }
+                catch (Exception e)
+                {
+                    logLow("Error loading Cannon file into program:");
                     logLow(e.Message);
                 }
             }
@@ -207,6 +240,7 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
+            logMed("Badges Downloaded.");
 
             logMed("Downloading Weapons...");
             List<string> weaponNames = new List<string>()
@@ -238,6 +272,7 @@ namespace Alternion
                     }
                 }
             }
+            logMed("Weapons Downloaded.");
 
             logMed("Downloading SkinSails...");
             for (int i = 0; i < SkinSailNames.Count; i++)
@@ -259,6 +294,29 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
+            logMed("Sails Downloaded.");
+
+            logMed("Downloading Cannons...");
+            for (int i = 0; i < CannonSkinNames.Count; i++)
+            {
+                logHigh($"for loop run {i}");
+                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/CannonSkins/" + CannonSkinNames[i] + ".png");
+                yield return www;
+
+                try
+                {
+                    byte[] bytes = www.texture.EncodeToPNG();
+                    logHigh("Encoded Cannon bytes");
+                    File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
+                    logHigh("Written files");
+                }
+                catch (Exception e)
+                {
+                    logLow("Error downloading images:");
+                    logLow(e.Message);
+                }
+            }
+            logMed("Cannons Downloaded.");
 
             logMed("Textures Downloaded!");
 
@@ -562,16 +620,10 @@ namespace Alternion
                 
                 try
                 {
-                    bool run = true;
                     logMed("SailSkinPatch Postfix called");
 
-                    foreach (var item in __instance.GetComponent<Renderer>().material.shaderKeywords)
-                    {
-                        logMed(item);
-                    }
-
                     Transform shipTransf = __instance.transform.root;
-                    if (shipTransf && run)
+                    if (shipTransf)
                     {
                         logHigh(shipTransf.name);
                         int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
@@ -595,6 +647,74 @@ namespace Alternion
                 }catch (Exception e)
                 {
                     logLow(e.Message);
+                }
+            }
+        }
+        [HarmonyPatch(typeof(CannonUse), "Start")]
+        static class cannonOperationalSkinPatch
+        {
+            static void Postfix(CannonUse __instance)
+            {
+                logHigh("Enetered cannon Operational Patch");
+                for (int s = 0; s < __instance.transform.childCount; s++)
+                {
+                    Transform child = __instance.transform.FindChild("cannon");
+                    int index = GameMode.getParentIndex(child.transform.root);
+                    logHigh($"Gotten index: {index}");
+                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                    logHigh($"Gotten steamID: {steamID}");
+                    for (int i = 0; i < PlayerIDCannonSkins.Count; i++)
+                    {
+                        if (PlayerIDCannonSkins[i] == steamID)
+                        {
+                            logHigh("Found match");
+                            logHigh($"Attempting to load: {CannonSkinNames[i]}");
+                            Texture2D newCannonSkin = loadTexture(CannonSkinNames[i], 2048, 2048);
+                            logHigh("Loaded Texture");
+                            child.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin);
+                            logHigh("Set Texture");
+                        }
+                    }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(CannonDestroy), "Start")]
+        static class cannonDestroySkinPatch
+        {
+            static void Postfix(CannonDestroy __instance)
+            {
+                logHigh("Enetered cannon Patch");
+                int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
+                logHigh($"Gotten index: {index}");
+                string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                logHigh($"Gotten steamID: {steamID}");
+                for (int i = 0; i < PlayerIDCannonSkins.Count; i++)
+                {
+                    if (steamID == PlayerIDCannonSkins[i])
+                    {
+                        try
+                        {
+                            if (__instance.îæïíïíäìéêé.GetComponent<Renderer>())
+                            {
+                                logHigh("Cannon Destroy has renderer");
+                                if (__instance.îæïíïíäìéêé.GetComponent<Renderer>().material)
+                                {
+                                    logHigh("Cannon Destroy has material");
+                                    Texture2D newCannonSkin_alb = loadTexture(CannonSkinNames[i], 2048, 2048);
+                                    //Texture2D newCannonSkin_met = loadTexture(CannonSkinNames[i] + "_met", 2048, 2048);
+                                    logHigh("Loaded skin");
+                                    __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin_alb);
+                                    //__instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin_met);
+                                    logHigh("Set Cannon Destroy material texture");
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            logHigh(e.Message);
+                        }
+                    }
                 }
             }
         }
