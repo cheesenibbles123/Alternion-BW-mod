@@ -13,7 +13,6 @@ using UnityEngine.UI;
 using BWModLoader;
 using Harmony;
 using Steamworks;
-//using System.Runtime.InteropServices;
 
 
 namespace Alternion
@@ -38,11 +37,13 @@ namespace Alternion
 
         static List<string> PlayerIDSailSkins = new List<string>();
         static List<string> SkinSailNames = new List<string>();
+        static List<Texture2D> sailSkinTextures = new List<Texture2D>();
 
         static List<string> PlayerIDCannonSkins = new List<string>();
         static List<string> CannonSkinNames = new List<string>();
+        static List<Texture2D> cannonSkinTextures = new List<Texture2D>();
 
-        static int logLevel = 1;
+        static int logLevel = 3;
 
         static bool showTWBadges = false;
         static bool useCustomSkins = true;
@@ -223,7 +224,7 @@ namespace Alternion
         {
             logMed("Downloading Textures...");
             logMed("Downloading Badges...");
-            Texture2D newBadgeTexture;
+            Texture2D newTexture;
             for (int i = 0; i < badgeName.Count; i++)
             {
                 logHigh($"for loop run {i}");
@@ -236,9 +237,9 @@ namespace Alternion
                     logHigh("Encoded Badges bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
                     logHigh("Written files");
-                    newBadgeTexture = loadTexture(badgeName[i], 110, 47);
+                    newTexture = loadTexture(badgeName[i], 110, 47);
                     logHigh("Loaded badge Texture");
-                    badgeTextures.Add(newBadgeTexture);
+                    badgeTextures.Add(newTexture);
                     logHigh("Cached badge Texture");
                 }
                 catch (Exception e)
@@ -294,6 +295,9 @@ namespace Alternion
                     logHigh("Encoded Sail bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
                     logHigh("Written files");
+                    newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
+                    sailSkinTextures.Add(newTexture);
+
                 }
                 catch (Exception e)
                 {
@@ -316,6 +320,8 @@ namespace Alternion
                     logHigh("Encoded Cannon bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
                     logHigh("Written files");
+                    newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
+                    cannonSkinTextures.Add(newTexture);
                 }
                 catch (Exception e)
                 {
@@ -643,10 +649,10 @@ namespace Alternion
                             if (PlayerIDSailSkins[i] == steamID)
                             {
                                 logHigh($"Found match for ID: -{steamID}-");
-                                Texture2D customSailSkin = loadTexture(SkinSailNames[i], 2048, 2048);
+                                //Texture2D customSailSkin = loadTexture(SkinSailNames[i], 2048, 2048);
                                 logHigh("Loaded custom skin");
 
-                                __instance.GetComponent<Renderer>().material.mainTexture = customSailSkin;
+                                __instance.GetComponent<Renderer>().material.mainTexture = sailSkinTextures[i];
                                 logHigh("Set Texture");
                             }
                         }
@@ -677,9 +683,9 @@ namespace Alternion
                         {
                             logHigh("Found match");
                             logHigh($"Attempting to load: {CannonSkinNames[i]}");
-                            Texture2D newCannonSkin = loadTexture(CannonSkinNames[i], 2048, 2048);
+                            //Texture2D newCannonSkin = loadTexture(CannonSkinNames[i], 2048, 2048);
                             logHigh("Loaded Texture");
-                            child.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin);
+                            child.GetComponent<Renderer>().material.SetTexture("_MainTex", cannonSkinTextures[i]);
                             logHigh("Set Texture");
                         }
                     }
@@ -709,10 +715,10 @@ namespace Alternion
                                 if (__instance.îæïíïíäìéêé.GetComponent<Renderer>().material)
                                 {
                                     logHigh("Cannon Destroy has material");
-                                    Texture2D newCannonSkin_alb = loadTexture(CannonSkinNames[i], 2048, 2048);
+                                    //Texture2D newCannonSkin_alb = loadTexture(CannonSkinNames[i], 2048, 2048);
                                     //Texture2D newCannonSkin_met = loadTexture(CannonSkinNames[i] + "_met", 2048, 2048);
                                     logHigh("Loaded skin");
-                                    __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin_alb);
+                                    __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", cannonSkinTextures[i]);
                                     //__instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newCannonSkin_met);
                                     logHigh("Set Cannon Destroy material texture");
                                 }
