@@ -31,6 +31,7 @@ namespace Alternion
         static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static List<string> PlayerID = new List<string>();
         static List<string> badgeName = new List<string>();
+        static List<Texture2D> badgeTextures = new List<Texture2D>();
 
         static List<string> PlayerIDSkins = new List<string>();
         static List<string> SkinNames = new List<string>();
@@ -41,7 +42,7 @@ namespace Alternion
         static List<string> PlayerIDCannonSkins = new List<string>();
         static List<string> CannonSkinNames = new List<string>();
 
-        static int logLevel = 3;
+        static int logLevel = 1;
 
         static bool showTWBadges = false;
         static bool useCustomSkins = true;
@@ -55,7 +56,8 @@ namespace Alternion
                 logHigh("Created harmony object!");
                 harmony.PatchAll();
                 logHigh("Patched!");
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
                 logHigh(e.Message);
             }
@@ -221,6 +223,7 @@ namespace Alternion
         {
             logMed("Downloading Textures...");
             logMed("Downloading Badges...");
+            Texture2D newBadgeTexture;
             for (int i = 0; i < badgeName.Count; i++)
             {
                 logHigh($"for loop run {i}");
@@ -233,6 +236,10 @@ namespace Alternion
                     logHigh("Encoded Badges bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
                     logHigh("Written files");
+                    newBadgeTexture = loadTexture(badgeName[i], 110, 47);
+                    logHigh("Loaded badge Texture");
+                    badgeTextures.Add(newBadgeTexture);
+                    logHigh("Cached badge Texture");
                 }
                 catch (Exception e)
                 {
@@ -458,7 +465,7 @@ namespace Alternion
                                 if (File.Exists(Application.dataPath + texturesFilePath + badgeName[i] + ".png"))
                                 {
                                     logHigh("Loading texture....");
-                                    __instance.éòëèïòëóæèó.texture = loadTexture(badgeName[i], 110, 47);
+                                    __instance.éòëèïòëóæèó.texture = badgeTextures[i]; // loadTexture(badgeName[i], 110, 47);
                                     logHigh("Texture for badge loaded");
                                 }
                                 else
@@ -617,7 +624,7 @@ namespace Alternion
         {
             static void Postfix(SailHealth __instance)
             {
-                
+
                 try
                 {
                     logMed("SailSkinPatch Postfix called");
@@ -644,7 +651,8 @@ namespace Alternion
                             }
                         }
                     }
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     logLow(e.Message);
                 }
