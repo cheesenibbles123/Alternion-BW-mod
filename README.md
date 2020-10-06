@@ -1,3 +1,4 @@
+![custom Image](https://github.com/cheesenibbles123/yeold/blob/master/bwCsharp.jpg?raw=true)
 # Alternion
 This is a split off from my first mod which was initially created for custom badges and outfits. That one allowed for a user to use a local file to assign badges to players, and replace outfits, however this was't replicated across all mod users. Hence why this was made, the original mod can still be found here: [https://github.com/cheesenibbles123/Original-CharacterCustomization-thingy-bw-mod](https://github.com/cheesenibbles123/Original-CharacterCustomization-thingy-bw-mod).
 The original goal was simply to modify and allow for custom badges, and well... it kind of spiralled from there onto what it is now. If you come across any issues make sure to mention/report them, either here or to me on discord **Archie the inventor#4744**
