@@ -50,25 +50,20 @@ namespace Alternion
         static int logLevel = 3;
 
         static bool showTWBadges = false;
-        static bool useCustomSkins = true;
+        static bool useCustomSkins = false;
 
         void Start()
         {
             try
             {
-                logHigh("Patching...");
                 HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
-                logHigh("Created harmony object!");
                 harmony.PatchAll();
-                logHigh("Patched!");
+                createDirectories();
             }
             catch (Exception e)
             {
-                logHigh(e.Message);
+                logLow(e.Message);
             }
-
-            logHigh("Starting Coroutines...");
-            createDirectories();
         }
 
         void OnGUI()
@@ -81,18 +76,14 @@ namespace Alternion
 
         private IEnumerator loadBadgeFileIE()
         {
-            logHigh("Downloading BadgeFile...");
 
             WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/badgeList.txt");
             yield return www;
-            logHigh("Return complete");
 
             string[] badgeFile = www.text.Replace("\r", "").Split('\n');
-            logHigh("Split complete");
 
             for (int i = 0; i < badgeFile.Length; i++)
             {
-                logHigh($"Badge File For loop run {i} times");
                 try
                 {
                     string[] splitArrBadge = badgeFile[i].Split(new char[] { '=' });
@@ -105,23 +96,19 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logHigh("BadgeFile Downloaded!");
+            logLow("Badge skins File Downloaded!");
             StartCoroutine(loadSkinFileIE());
         }
         private IEnumerator loadSkinFileIE()
         {
-            logHigh("Downloading SkinFile...");
 
             WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/skinsList.txt");
             yield return www;
-            logHigh("Return complete");
 
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
-            logHigh("Split complete");
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
-                logHigh($"Skin File For loop run {i} times");
                 try
                 {
                     string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
@@ -134,23 +121,19 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logHigh("SkinFile Downloaded!");
+            logLow("Weapon skins File Downloaded!");
             StartCoroutine(loadSailsFile());
         }
         private IEnumerator loadSailsFile()
         {
-            logMed("Downloading Sails...");
 
             WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/sailSkins.txt");
             yield return www;
-            logHigh("Return complete");
 
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
-            logHigh("Split complete");
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
-                logHigh($"Skin File For loop run {i} times");
                 try
                 {
                     string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
@@ -163,23 +146,19 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logHigh("SailsFile Downloaded!");
+            logLow("Sails File Downloaded!");
             StartCoroutine(loadCannonsFile());
         }
         private IEnumerator loadCannonsFile()
         {
-            logMed("Downloading Cannon...");
 
             WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/cannonSkins.txt");
             yield return www;
-            logHigh("Return complete");
 
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
-            logHigh("Split complete");
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
-                logHigh($"Skin File For loop run {i} times");
                 try
                 {
                     string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
@@ -192,59 +171,45 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logHigh("SailsFile Downloaded!");
+            logLow("SailsFile Downloaded!");
             StartCoroutine(DownloadTexturesFromInternet());
         }
         private IEnumerator waterMark()
         {
             if (!File.Exists(Application.dataPath + texturesFilePath + "pfp.png"))
             {
-                logMed("pfp not found");
                 WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/pfp.png");
                 yield return www;
 
                 try
                 {
                     byte[] bytes = www.texture.EncodeToPNG();
-                    logHigh("Encoded bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "pfp.png", bytes);
-                    logHigh("Written files");
                 }
                 catch (Exception e)
                 {
-                    logMed("Error downloading watermark:");
-                    logMed(e.Message);
+                    logLow("Error downloading watermark:");
+                    logLow(e.Message);
                 }
 
-            }
-            else
-            {
-                logMed("pfp found");
             }
 
             watermarkTex = loadTexture("pfp", 258, 208);
         }
         private IEnumerator DownloadTexturesFromInternet()
         {
-            logMed("Downloading Textures...");
-            logMed("Downloading Badges...");
             Texture2D newTexture;
             for (int i = 0; i < badgeName.Count; i++)
             {
-                logHigh($"for loop run {i}");
                 WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/Badges/" + badgeName[i] + ".png");
                 yield return www;
 
                 try
                 {
                     byte[] bytes = www.texture.EncodeToPNG();
-                    logHigh("Encoded Badges bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
-                    logHigh("Written files");
                     newTexture = loadTexture(badgeName[i], 110, 47);
-                    logHigh("Loaded badge Texture");
                     badgeTextures.Add(PlayerID[i],newTexture);
-                    logHigh("Cached badge Texture");
                 }
                 catch (Exception e)
                 {
@@ -252,9 +217,8 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logMed("Badges Downloaded.");
+            logLow("Badges Downloaded.");
 
-            logMed("Downloading Weapons...");
             List<string> weaponNames = new List<string>()
             {
                 "nockGun", "blunderbuss", "musket", "handmortar",
@@ -263,7 +227,6 @@ namespace Alternion
             };
             for (int i = 0; i < SkinNames.Count; i++)
             {
-                logHigh($"for loop run {i}");
                 for (int s = 0; s < weaponNames.Count; s++)
                 {
                     string wpn = weaponNames[s] + '_' + SkinNames[i];
@@ -273,9 +236,7 @@ namespace Alternion
                     try
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
-                        logHigh("Encoded wpnSkins bytes");
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
-                        logHigh("Written files");
                     }
                     catch (Exception e)
                     {
@@ -284,21 +245,17 @@ namespace Alternion
                     }
                 }
             }
-            logMed("Weapons Downloaded.");
+            logLow("Weapons Downloaded.");
 
-            logMed("Downloading SkinSails...");
             for (int i = 0; i < SkinSailNames.Count; i++)
             {
-                logHigh($"for loop run {i}");
                 WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/SailSkins/" + SkinSailNames[i] + ".png");
                 yield return www;
 
                 try
                 {
                     byte[] bytes = www.texture.EncodeToPNG();
-                    logHigh("Encoded Sail bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
-                    logHigh("Written files");
                     newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
                     sailSkinTextures.Add(PlayerIDSailSkins[i],newTexture);
 
@@ -309,21 +266,17 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logMed("Sails Downloaded.");
+            logLow("Sails Downloaded.");
 
-            logMed("Downloading Cannons...");
             for (int i = 0; i < CannonSkinNames.Count; i++)
             {
-                logHigh($"for loop run {i}");
                 WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/CannonSkins/" + CannonSkinNames[i] + ".png");
                 yield return www;
 
                 try
                 {
                     byte[] bytes = www.texture.EncodeToPNG();
-                    logHigh("Encoded Cannon bytes");
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
-                    logHigh("Written files");
                     newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
                     cannonSkinTextures.Add(PlayerIDCannonSkins[i],newTexture);
                 }
@@ -333,9 +286,9 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logMed("Cannons Downloaded.");
+            logLow("Cannons Downloaded.");
 
-            logMed("Textures Downloaded!");
+            logLow("All Textures Downloaded!");
 
             setMainmenuBadge();
             StartCoroutine(waterMark());
@@ -349,7 +302,6 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath);
             }
             StartCoroutine(loadBadgeFileIE());
-            logHigh("Finished Coroutines!");
         }
         void setMainmenuBadge()
         {
@@ -358,38 +310,13 @@ namespace Alternion
 
             try
             {
-                logHigh("LOGGING GAMEMODE OBJECT");
-                logHigh(Steamworks.SteamUser.GetSteamID().ToString());
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-                logHigh("STEAMID: " + steamID);
-                logHigh($"Gotten SteamID = {steamID}");
-
-                for (int i = 0; i < PlayerID.Count; i++)
+                if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                 {
-
-                    if (steamID == PlayerID[i])
-                    {
-                        logHigh($"FOUND MATCH {steamID} == {PlayerID[i]}");
-                        logHigh($"Badge Name = :{badgeName[i]}:");
-                        if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
-                        {
-                            for (int s = 0; s < badgeName[i].Length; s++)
-                            {
-                                logHigh(badgeName[i][s].ToString());
-                            }
-                            if (File.Exists(Application.dataPath + texturesFilePath + badgeName[i] + ".png"))
-                            {
-                                logHigh("Loading texture....");
-                                mm.menuBadge.texture = loadTexture(badgeName[i], 110, 47);
-                                logHigh("Texture for badge loaded");
-                                logLow("Setting Main Menu badge Finished!");
-                            }
-                            else
-                            {
-                                Log.logger.Log("Cannot find image for: " + PlayerID[i]);
-                            }
-                            logMed($"Player {PlayerID[i]} found");
-                        }
+                    if (badgeTextures.TryGetValue(steamID, out Texture2D newTexture))
+                    { 
+                        mm.menuBadge.texture = newTexture;
+                        logLow("Setting Main Menu badge Finished!");
                     }
                 }
 
@@ -410,17 +337,9 @@ namespace Alternion
             }
         }
 
-        static void logMed(string message)
+        static void logDebug(string message)
         {
             if (logLevel > 1)
-            {
-                Log.logger.Log(message);
-            }
-        }
-
-        static void logHigh(string message)
-        {
-            if (logLevel > 2)
             {
                 Log.logger.Log(message);
             }
@@ -452,16 +371,12 @@ namespace Alternion
             {
                 try
                 {
-                    logMed("Entered Patch");
                     string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
-                    logHigh($"Gotten SteamID = {steamID}");
                     if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                     {
-                        logHigh("Loading texture....");
                         if (badgeTextures.TryGetValue(steamID, out Texture2D newTexture))
                         {
                             __instance.éòëèïòëóæèó.texture = newTexture; // loadTexture(badgeName[i], 110, 47);
-                            logHigh("Texture for badge loaded");
                         }
                     }
 
@@ -480,63 +395,44 @@ namespace Alternion
         {
             static void Postfix(Character __instance, string îëðíîïïêñîî)
             {
-                logMed("Entered Patch");
+                if (!useCustomSkins)
+                {
+                    return;
+                }
                 try
                 {
-                    if (useCustomSkins)
+                    if (__instance.ìñíððåñéåèæ == null)
                     {
-                        logMed("Entered if");
-                        if (__instance.ìñíððåñéåèæ == null)
+                        return;
+                    }
+                    for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
+                    {
+                        if (__instance.ìñíððåñéåèæ.GetChild(i).name == îëðíîïïêñîî)
                         {
-                            logHigh("Inst = null");
-                            return;
-                        }
-                        for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
-                        {
-                            if (__instance.ìñíððåñéåèæ.GetChild(i).name == îëðíîïïêñîî)
+                            WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
+
+                            if (component != null)
                             {
-                                logHigh("If 2 entered");
-                                WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
-                                logHigh("Gotten WeaponRenderer Component");
+                                string weaponName = component.GetComponent<Renderer>().material.name.Split('_')[1];
 
-                                if (component != null)
+                                PlayerInfo plyrInfo = component.ìäóêäðçóììî.transform.parent.GetComponent<PlayerInfo>();
+                                string steamID = plyrInfo.steamID.ToString();
+
+                                string skinToUse = "";
+                                for (int e = 0; e < PlayerIDSkins.Count; e++)
                                 {
-                                    logHigh("Component != null (true)");
-                                    logHigh("----------COMPONENT START----------");
-                                    string weaponName = component.GetComponent<Renderer>().material.name.Split('_')[1];
-                                    logHigh("Weapon Name: :" + weaponName + ":");
-
-                                    PlayerInfo plyrInfo = component.ìäóêäðçóììî.transform.parent.GetComponent<PlayerInfo>();
-                                    logHigh("Gotten Player Info");
-
-                                    string steamID = plyrInfo.steamID.ToString();
-                                    logHigh("SteamID: " + steamID);
-
-                                    string skinToUse = "";
-                                    for (int e = 0; e < PlayerIDSkins.Count; e++)
+                                    if (PlayerIDSkins[e] == steamID)
                                     {
-                                        logHigh("For count: " + (e + 1));
-                                        if (PlayerIDSkins[e] == steamID)
-                                        {
-                                            logHigh("Found Match: " + steamID);
-                                            skinToUse = SkinNames[e];
-                                            logHigh("Set skinToUse = " + skinToUse);
-                                        }
+                                        skinToUse = SkinNames[e];
                                     }
+                                }
 
-                                    string fullSkinName = weaponName + "_" + skinToUse;
-                                    logHigh(fullSkinName);
+                                string fullSkinName = weaponName + "_" + skinToUse;
 
-                                    if (File.Exists(Application.dataPath + texturesFilePath + fullSkinName + ".png"))
-                                    {
-                                        Texture2D tempTexture = loadTexture(fullSkinName, 2048, 2048);
-                                        logHigh("Loaded texture: " + fullSkinName);
-                                        component.GetComponent<Renderer>().material.SetTexture("_MainTex", tempTexture);
-                                        logHigh("Set Texture");
-                                    }
-
-                                    logHigh("-----------COMPONENT END-----------");
-                                    logHigh("Set Main Tex");
+                                if (File.Exists(Application.dataPath + texturesFilePath + fullSkinName + ".png"))
+                                {
+                                    Texture2D tempTexture = loadTexture(fullSkinName, 2048, 2048);
+                                    component.GetComponent<Renderer>().material.SetTexture("_MainTex", tempTexture);
                                 }
                             }
                         }
@@ -544,8 +440,8 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logHigh("ERROR:");
-                    logHigh(e.Message);
+                    logLow("ERROR:");
+                    logLow(e.Message);
                 }
             }
         }
@@ -555,52 +451,43 @@ namespace Alternion
         {
             static void Postfix(WeaponRender __instance)
             {
+                if (!useCustomSkins)
+                {
+                    return;
+                }
 
-                logMed("Entererd 1st Person Wep Skin Patch");
                 if (!__instance.åïääìêêäéèç && __instance.ëæìéäîåçóæí && useCustomSkins)
                 {
-                    logHigh("Entered 1st Person Wep if");
                     if (__instance.GetComponent<Renderer>().material.name.StartsWith("wpn_"))
                     {
-                        logHigh("Is Weapon");
-
                         string wpnName = __instance.GetComponent<Renderer>().material.name.Split('_')[1];
-                        logHigh("Weapon Name: " + wpnName);
                         try
                         {
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                            logHigh(steamID);
 
                             string skinToUse = "";
-                            logHigh("Set skinToUse = ''");
 
                             for (int i = 0; i < PlayerIDSkins.Count; i++)
                             {
-                                logHigh("For count: " + (i + 1));
                                 if (PlayerIDSkins[i] == steamID)
                                 {
-                                    logHigh("Found Match: " + steamID);
                                     skinToUse = SkinNames[i];
-                                    logHigh("Set skinToUse = " + skinToUse);
                                 }
                             }
 
                             string fullSkinName = wpnName + "_" + skinToUse;
-                            logHigh(fullSkinName);
                             if (File.Exists(Application.dataPath + texturesFilePath + fullSkinName + ".png"))
                             {
                                 Texture2D tempTexture = loadTexture(fullSkinName, 2048, 2048);
-                                logHigh("Loaded texture: " + fullSkinName);
 
                                 __instance.GetComponent<Renderer>().material.SetTexture("_MainTex", tempTexture);
-                                logHigh("Set Texture");
                             }
 
                         }
                         catch (Exception e)
                         {
-                            logHigh("ERROR:");
-                            logHigh(e.Message);
+                            logLow("ERROR:");
+                            logLow(e.Message);
                         }
                     }
                 }
@@ -615,22 +502,16 @@ namespace Alternion
 
                 try
                 {
-                    logMed("SailSkinPatch Postfix called");
-
                     Transform shipTransf = __instance.transform.root;
                     if (shipTransf)
                     {
-                        logHigh(shipTransf.name);
                         int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
-                        logHigh($"Team Number: {teamNum}");
 
                         string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
-                        logHigh($"Gotten captain SteamID = {steamID} for team {teamNum}");
 
                         if (sailSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                         {
                             __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
-                            logHigh("Set Texture");
                         }
                     }
                 }
@@ -646,19 +527,18 @@ namespace Alternion
         {
             static void Postfix(CannonUse __instance)
             {
-                logHigh("Enetered cannon Operational Patch");
+                Transform child;
+                int index;
+                string steamID;
                 for (int s = 0; s < __instance.transform.childCount; s++)
                 {
-                    Transform child = __instance.transform.FindChild("cannon");
-                    int index = GameMode.getParentIndex(child.transform.root);
-                    logHigh($"Gotten index: {index}");
-                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-                    logHigh($"Gotten steamID: {steamID}");
+                    child = __instance.transform.FindChild("cannon");
+                    index = GameMode.getParentIndex(child.transform.root);
+                    steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
                     if (cannonSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                     {
                         child.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
-                        logHigh("Set Texture");
                     }
 
                 }
@@ -670,15 +550,11 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
-                logHigh("Enetered cannon Patch");
                 int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
-                logHigh($"Gotten index: {index}");
                 string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-                logHigh($"Gotten steamID: {steamID}");
                 if (cannonSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                 {
                     __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
-                    logHigh("Set Cannon Destroy material texture");
                 }
             }
         }
