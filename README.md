@@ -32,3 +32,4 @@ The original goal was simply to modify and allow for custom badges, and well... 
  - All required files will be downloaded automatically by the mod when it runs
  - I suck at this
  - Enjoy my crappy code
+ - To those interested, there is a beta branch, however this one likely wont work, as its me messing about with unstable code, and using it to save it whilst I work on other stuff
