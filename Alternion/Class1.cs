@@ -38,10 +38,15 @@ namespace Alternion
 
         static List<string> PlayerIDSkins = new List<string>();
         static List<string> SkinNames = new List<string>();
+        static Dictionary<string, Dictionary<string, Texture2D>> weaponTextures = new Dictionary<string, Dictionary<string, Texture2D>>();
 
         static List<string> PlayerIDSailSkins = new List<string>();
         static List<string> SkinSailNames = new List<string>();
         static Dictionary<string, Texture2D> sailSkinTextures = new Dictionary<string, Texture2D>();
+
+        static List<string> PlayerIDMainSailSkins = new List<string>();
+        static List<string> MainSkinSailNames = new List<string>();
+        static Dictionary<string, Texture2D> mainSailDict = new Dictionary<string, Texture2D>();
 
         static List<string> PlayerIDCannonSkins = new List<string>();
         static List<string> CannonSkinNames = new List<string>();
@@ -50,7 +55,9 @@ namespace Alternion
         static int logLevel = 3;
 
         static bool showTWBadges = false;
-        static bool useCustomSkins = false;
+        static bool useWeaponSkins = false;
+
+        static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
         void Start()
         {
@@ -59,6 +66,7 @@ namespace Alternion
                 HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
                 harmony.PatchAll();
                 createDirectories();
+                StartCoroutine(waterMark());
             }
             catch (Exception e)
             {
@@ -77,16 +85,18 @@ namespace Alternion
         private IEnumerator loadBadgeFileIE()
         {
 
-            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/badgeList.txt");
+            WWW www = new WWW(mainUrl + "badgeList.txt");
             yield return www;
 
             string[] badgeFile = www.text.Replace("\r", "").Split('\n');
+            string[] splitArrBadge;
+            char[] charArray = new char[] { '=' };
 
             for (int i = 0; i < badgeFile.Length; i++)
             {
                 try
                 {
-                    string[] splitArrBadge = badgeFile[i].Split(new char[] { '=' });
+                    splitArrBadge = badgeFile[i].Split(charArray);
                     PlayerID.Add(splitArrBadge[0]);
                     badgeName.Add(splitArrBadge[1]);
                 }
@@ -97,21 +107,30 @@ namespace Alternion
                 }
             }
             logLow("Badge skins File Downloaded!");
-            StartCoroutine(loadSkinFileIE());
+            if (useWeaponSkins)
+            {
+                StartCoroutine(loadSkinFileIE());
+            }
+            else
+            {
+                StartCoroutine(loadSailsFile());
+            }
         }
         private IEnumerator loadSkinFileIE()
         {
 
-            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/skinsList.txt");
+            WWW www = new WWW(mainUrl + "skinsList.txt");
             yield return www;
 
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
+            string[] splitArrSkin;
+            char[] charArray = new char[] { '=' };
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
                 try
                 {
-                    string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
+                    splitArrSkin = skinsFile[i].Split(charArray);
                     PlayerIDSkins.Add(splitArrSkin[0]);
                     SkinNames.Add(splitArrSkin[1]);
                 }
@@ -127,35 +146,58 @@ namespace Alternion
         private IEnumerator loadSailsFile()
         {
 
-            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/sailSkins.txt");
+            WWW www = new WWW(mainUrl + "sailSkins.txt");
             yield return www;
 
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
+            string[] splitArrSkin;
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
                 try
                 {
-                    string[] splitArrSkin = skinsFile[i].Split(new char[] { '=' });
+                    splitArrSkin = skinsFile[i].Split(new char[] { '=' });
                     PlayerIDSailSkins.Add(splitArrSkin[0]);
                     SkinSailNames.Add(splitArrSkin[1]);
                 }
                 catch (Exception e)
                 {
-                    logLow("Error loading skin file into program:");
+                    logLow("Error loading Normal Sail skin file into program:");
                     logLow(e.Message);
                 }
             }
             logLow("Sails File Downloaded!");
+
+            // Main Sails
+            www = new WWW(mainUrl + "mainSailSkins.txt");
+            yield return www;
+
+            skinsFile = www.text.Replace("\r", "").Split('\n');
+
+            for (int i = 0; i < skinsFile.Length; i++)
+            {
+                try
+                {
+                    splitArrSkin = skinsFile[i].Split(new char[] { '=' });
+                    PlayerIDMainSailSkins.Add(splitArrSkin[0]);
+                    MainSkinSailNames.Add(splitArrSkin[1]);
+                }
+                catch (Exception e)
+                {
+                    logLow("Error loading Main Sail skin file into program:");
+                    logLow(e.Message);
+                }
+            }
+            logLow("Main Sails File Downloaded!");
             StartCoroutine(loadCannonsFile());
         }
         private IEnumerator loadCannonsFile()
         {
-
-            WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/cannonSkins.txt");
+            WWW www = new WWW(mainUrl + "cannonSkins.txt");
             yield return www;
-
             string[] skinsFile = www.text.Replace("\r", "").Split('\n');
+            //string[] splitArrSkin;
+            //char[] charArray = new char[] { '=' };
 
             for (int i = 0; i < skinsFile.Length; i++)
             {
@@ -171,14 +213,14 @@ namespace Alternion
                     logLow(e.Message);
                 }
             }
-            logLow("SailsFile Downloaded!");
+            logLow("Cannon File Downloaded!");
             StartCoroutine(DownloadTexturesFromInternet());
         }
         private IEnumerator waterMark()
         {
             if (!File.Exists(Application.dataPath + texturesFilePath + "pfp.png"))
             {
-                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/pfp.png");
+                WWW www = new WWW(mainUrl + "pfp.png");
                 yield return www;
 
                 try
@@ -199,100 +241,154 @@ namespace Alternion
         private IEnumerator DownloadTexturesFromInternet()
         {
             Texture2D newTexture;
-            for (int i = 0; i < badgeName.Count; i++)
-            {
-                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/Badges/" + badgeName[i] + ".png");
-                yield return www;
+            WWW www;
+            List<string> alreadyDownloaded = new List<string>();
+            int i;
+            int s;
 
-                try
-                {
-                    byte[] bytes = www.texture.EncodeToPNG();
-                    File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
-                    newTexture = loadTexture(badgeName[i], 110, 47);
-                    badgeTextures.Add(PlayerID[i],newTexture);
-                }
-                catch (Exception e)
-                {
-                    logLow("Error downloading images:");
-                    logLow(e.Message);
-                }
-            }
-            logLow("Badges Downloaded.");
-
-            List<string> weaponNames = new List<string>()
+            for (i = 0; i < badgeName.Count; i++)
             {
-                "nockGun", "blunderbuss", "musket", "handmortar",
-                "duckfoot", "pistol", "shortpistol", "matchlock" , "annelyRevolver",
-                "cutlass", "rapier", "twoHandAxe", "dagger", "bottle", "pike"
-            };
-            for (int i = 0; i < SkinNames.Count; i++)
-            {
-                for (int s = 0; s < weaponNames.Count; s++)
+                bool flag = alreadyDownloaded.Contains(badgeName[i]);
+                if (!flag)
                 {
-                    string wpn = weaponNames[s] + '_' + SkinNames[i];
-                    WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/WeaponSkins/" + wpn + ".png");
+                    www = new WWW(mainUrl + "Badges/" + badgeName[i] + ".png");
                     yield return www;
 
                     try
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
-                        File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
+                        File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
+                        newTexture = loadTexture(badgeName[i], 110, 47);
+                        badgeTextures.Add(PlayerID[i], newTexture);
+                        alreadyDownloaded.Add(badgeName[i]);
                     }
                     catch (Exception e)
                     {
-                        logLow("Error downloading images:");
+                        logLow("Error downloading badge images:");
                         logLow(e.Message);
                     }
                 }
             }
-            logLow("Weapons Downloaded.");
+            logLow("Badges Downloaded.");
+            setMainmenuBadge();
 
-            for (int i = 0; i < SkinSailNames.Count; i++)
+            if (useWeaponSkins)
             {
-                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/SailSkins/" + SkinSailNames[i] + ".png");
-                yield return www;
-
-                try
+                List<string> weaponNames = new List<string>()
+            {
+                "nockGun", "blunderbuss", "musket", "handmortar",
+                "duckfoot", "pistol", "shortpistol", "matchlock" , "annelyRevolver",
+                "cutlass", "rapier", "twoHandAxe", "dagger", "bottle", "pike"
+            };
+                string wpn;
+                for (i = 0; i < SkinNames.Count; i++)
                 {
-                    byte[] bytes = www.texture.EncodeToPNG();
-                    File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
-                    newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
-                    sailSkinTextures.Add(PlayerIDSailSkins[i],newTexture);
+                    bool flag = alreadyDownloaded.Contains(SkinNames[i]);
+                    if (!flag)
+                    {
+                        Dictionary<string, Texture2D> weaponSkins = new Dictionary<string, Texture2D>();
+                        for (s = 0; s < weaponNames.Count; s++)
+                        {
+                            wpn = weaponNames[s] + '_' + SkinNames[i];
+                            www = new WWW(mainUrl + "WeaponSkins/" + wpn + ".png");
+                            yield return www;
 
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
+                                newTexture = loadTexture(wpn, 2048, 2048);
+                                weaponSkins.Add(weaponNames[s], newTexture);
+                                alreadyDownloaded.Add(SkinNames[i]);
+                            }
+                            catch (Exception e)
+                            {
+                                logLow("Error weaponSkin downloading images:");
+                                logLow(e.Message);
+                            }
+                        }
+                        weaponTextures.Add(PlayerIDSkins[i], weaponSkins);
+                    }
                 }
-                catch (Exception e)
+                logLow("Weapons Downloaded.");
+            }
+
+            for (i = 0; i < MainSkinSailNames.Count; i++)
+            {
+                bool flag = alreadyDownloaded.Contains(MainSkinSailNames[i]);
+                if (!flag)
                 {
-                    logLow("Error downloading images:");
-                    logLow(e.Message);
+                    www = new WWW(mainUrl + "MainSailSkins/" + MainSkinSailNames[i] + ".png");
+                    yield return www;
+
+                    try
+                    {
+                        byte[] bytes = www.texture.EncodeToPNG();
+                        File.WriteAllBytes(Application.dataPath + texturesFilePath + MainSkinSailNames[i] + ".png", bytes);
+                        newTexture = loadTexture(MainSkinSailNames[i], 2048, 2048);
+                        mainSailDict.Add(PlayerIDSailSkins[i], newTexture);
+                        alreadyDownloaded.Add(MainSkinSailNames[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        logLow("Error downloading Main Sail images:");
+                        logLow(e.Message);
+                    }
                 }
             }
-            logLow("Sails Downloaded.");
+            logLow("Main Sails Downloaded.");
 
-            for (int i = 0; i < CannonSkinNames.Count; i++)
+            for (i = 0; i < SkinSailNames.Count; i++)
             {
-                WWW www = new WWW("http://www.archiesbots.com/BlackwakeStuff/CannonSkins/" + CannonSkinNames[i] + ".png");
-                yield return www;
+                bool flag = alreadyDownloaded.Contains(SkinSailNames[i]);
+                if (!flag)
+                {
+                    www = new WWW(mainUrl + "SailSkins/" + SkinSailNames[i] + ".png");
+                    yield return www;
 
-                try
-                {
-                    byte[] bytes = www.texture.EncodeToPNG();
-                    File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
-                    newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
-                    cannonSkinTextures.Add(PlayerIDCannonSkins[i],newTexture);
+                    try
+                    {
+                        byte[] bytes = www.texture.EncodeToPNG();
+                        File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
+                        newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
+                        sailSkinTextures.Add(PlayerIDSailSkins[i], newTexture);
+                        alreadyDownloaded.Add(SkinSailNames[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        logLow("Error downloading Secondary Sail images:");
+                        logLow(e.Message);
+                    }
                 }
-                catch (Exception e)
+            }
+            logLow("Secondary Sails Downloaded.");
+
+            for (i = 0; i < CannonSkinNames.Count; i++)
+            {
+                bool flag = alreadyDownloaded.Contains(CannonSkinNames[i]);
+                if (!flag)
                 {
-                    logLow("Error downloading images:");
-                    logLow(e.Message);
+                    www = new WWW(mainUrl + "CannonSkins/" + CannonSkinNames[i] + ".png");
+                    yield return www;
+
+                    try
+                    {
+                        byte[] bytes = www.texture.EncodeToPNG();
+                        File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
+                        newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
+                        cannonSkinTextures.Add(PlayerIDCannonSkins[i], newTexture);
+                        alreadyDownloaded.Add(CannonSkinNames[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        logLow("Error downloading Cannon images:");
+                        logLow(e.Message);
+                    }
                 }
             }
             logLow("Cannons Downloaded.");
 
             logLow("All Textures Downloaded!");
-
-            setMainmenuBadge();
-            StartCoroutine(waterMark());
-
         }
 
         void createDirectories()
@@ -314,7 +410,7 @@ namespace Alternion
                 if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                 {
                     if (badgeTextures.TryGetValue(steamID, out Texture2D newTexture))
-                    { 
+                    {
                         mm.menuBadge.texture = newTexture;
                         logLow("Setting Main Menu badge Finished!");
                     }
@@ -395,7 +491,7 @@ namespace Alternion
         {
             static void Postfix(Character __instance, string îëðíîïïêñîî)
             {
-                if (!useCustomSkins)
+                if (!useWeaponSkins)
                 {
                     return;
                 }
@@ -451,12 +547,12 @@ namespace Alternion
         {
             static void Postfix(WeaponRender __instance)
             {
-                if (!useCustomSkins)
+                if (!useWeaponSkins)
                 {
                     return;
                 }
 
-                if (!__instance.åïääìêêäéèç && __instance.ëæìéäîåçóæí && useCustomSkins)
+                if (!__instance.åïääìêêäéèç && __instance.ëæìéäîåçóæí && useWeaponSkins)
                 {
                     if (__instance.GetComponent<Renderer>().material.name.StartsWith("wpn_"))
                     {
@@ -505,13 +601,166 @@ namespace Alternion
                     Transform shipTransf = __instance.transform.root;
                     if (shipTransf)
                     {
+                        Texture2D newTexture;
                         int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
 
                         string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
 
-                        if (sailSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
+                        if (!sailSkinTextures.TryGetValue(steamID, out newTexture))
                         {
-                            __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                            return;
+                        }
+
+                        string shipType = GameMode.Instance.shipTypes[teamNum - 1];
+                        shipType = shipType.Remove(shipType.Length - 1);
+
+                        switch (shipType)
+                        {
+                            case "cruiser":
+                                if (__instance.name == "hmsSophie_sails08")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "galleon":
+                                if (__instance.name == "galleon_sails_01")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "brig":
+                                if (__instance.name == "hmsSpeedy_sails04")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "xebec":
+                                if (__instance.name == "xebec_sail03")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "bombvessel":
+                                if (__instance.name == "bombVessel_sails07")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "gunboat":
+                                if (__instance.name == "gunboat_sails02")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "cutter":
+                                if (__instance.name == "hmsAlert_sails02")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "bombketch":
+                                if (__instance.name == "bombKetch_sails06")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "carrack":
+                                if (__instance.name == "carrack_sail03")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "junk":
+                                if (__instance.name == "junk_sails_01")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            case "schooner":
+                                if (__instance.name == "schooner_sails02" || __instance.name == "schooner_sails00")
+                                {
+                                    if (mainSailDict.TryGetValue(steamID, out newTexture))
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                    }
+                                }
+                                else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
