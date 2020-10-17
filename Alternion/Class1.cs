@@ -25,9 +25,6 @@ namespace Alternion
     [Mod]
     public class Mainmod : MonoBehaviour
     {
-        //Dictionary<ulong, SomePlayerObject> players = new Dictionary<ulong, SomePlayerObject>();
-        //players.Add(steamId, player);
-        //players[steamId].DoSomeShit();
 
         Texture2D watermarkTex;
 
@@ -38,7 +35,8 @@ namespace Alternion
 
         static List<string> PlayerIDSkins = new List<string>();
         static List<string> SkinNames = new List<string>();
-        static Dictionary<string, Dictionary<string, Texture2D>> weaponTextures = new Dictionary<string, Dictionary<string, Texture2D>>();
+        static Dictionary<string, Texture2D> weaponTextures = new Dictionary<string, Texture2D>();
+        static Dictionary<string, string> playerWeaponsList = new Dictionary<string, string>();
 
         static List<string> PlayerIDSailSkins = new List<string>();
         static List<string> SkinSailNames = new List<string>();
@@ -52,10 +50,10 @@ namespace Alternion
         static List<string> CannonSkinNames = new List<string>();
         static Dictionary<string, Texture2D> cannonSkinTextures = new Dictionary<string, Texture2D>();
 
-        static int logLevel = 3;
+        static int logLevel = 1;
 
         static bool showTWBadges = false;
-        static bool useWeaponSkins = false;
+        static bool useWeaponSkins = true;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
@@ -278,7 +276,7 @@ namespace Alternion
             {
                 "nockGun", "blunderbuss", "musket", "handmortar",
                 "duckfoot", "pistol", "shortpistol", "matchlock" , "annelyRevolver",
-                "cutlass", "rapier", "twoHandAxe", "dagger", "bottle", "pike"
+                "cutlass", "rapier", "twoHandAxe", "dagger", "pike"
             };
                 string wpn;
                 for (i = 0; i < SkinNames.Count; i++)
@@ -286,7 +284,7 @@ namespace Alternion
                     bool flag = alreadyDownloaded.Contains(SkinNames[i]);
                     if (!flag)
                     {
-                        Dictionary<string, Texture2D> weaponSkins = new Dictionary<string, Texture2D>();
+                        playerWeaponsList.Add(PlayerIDSkins[i], SkinNames[i]);
                         for (s = 0; s < weaponNames.Count; s++)
                         {
                             wpn = weaponNames[s] + '_' + SkinNames[i];
@@ -298,16 +296,15 @@ namespace Alternion
                                 byte[] bytes = www.texture.EncodeToPNG();
                                 File.WriteAllBytes(Application.dataPath + texturesFilePath + wpn + ".png", bytes);
                                 newTexture = loadTexture(wpn, 2048, 2048);
-                                weaponSkins.Add(weaponNames[s], newTexture);
+                                weaponTextures.Add(wpn, newTexture);
                                 alreadyDownloaded.Add(SkinNames[i]);
                             }
                             catch (Exception e)
                             {
-                                logLow("Error weaponSkin downloading images:");
+                                logLow("Error downloading Weapon Skin images:");
                                 logLow(e.Message);
                             }
                         }
-                        weaponTextures.Add(PlayerIDSkins[i], weaponSkins);
                     }
                 }
                 logLow("Weapons Downloaded.");
@@ -479,8 +476,15 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow("Failed to assign custom badge to a player:");
-                    logLow(e.Message);
+                    if (e.Message.Contains("Object reference not set to an instance of an object"))
+                    {
+                        //Go do one
+                    }
+                    else
+                    {
+                        logLow("Failed to assign custom badge to a player:");
+                        logLow(e.Message);
+                    }
                 }
 
             }
@@ -514,21 +518,13 @@ namespace Alternion
                                 PlayerInfo plyrInfo = component.ìäóêäðçóììî.transform.parent.GetComponent<PlayerInfo>();
                                 string steamID = plyrInfo.steamID.ToString();
 
-                                string skinToUse = "";
-                                for (int e = 0; e < PlayerIDSkins.Count; e++)
-                                {
-                                    if (PlayerIDSkins[e] == steamID)
-                                    {
-                                        skinToUse = SkinNames[e];
-                                    }
-                                }
+                                playerWeaponsList.TryGetValue(steamID, out string skinToUse);
 
                                 string fullSkinName = weaponName + "_" + skinToUse;
 
-                                if (File.Exists(Application.dataPath + texturesFilePath + fullSkinName + ".png"))
+                                if (weaponTextures.TryGetValue(fullSkinName, out Texture2D newTexture))
                                 {
-                                    Texture2D tempTexture = loadTexture(fullSkinName, 2048, 2048);
-                                    component.GetComponent<Renderer>().material.SetTexture("_MainTex", tempTexture);
+                                    component.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
                                 }
                             }
                         }
@@ -536,8 +532,15 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow("ERROR:");
-                    logLow(e.Message);
+                    if (e.Message.Contains("Array index is out of range."))
+                    {
+                        //Do nothing cause this fucking spamms the log
+                    }
+                    else
+                    {
+                        logLow("ERROR:");
+                        logLow(e.Message);
+                    }
                 }
             }
         }
@@ -561,29 +564,26 @@ namespace Alternion
                         {
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
 
-                            string skinToUse = "";
-
-                            for (int i = 0; i < PlayerIDSkins.Count; i++)
-                            {
-                                if (PlayerIDSkins[i] == steamID)
-                                {
-                                    skinToUse = SkinNames[i];
-                                }
-                            }
+                            playerWeaponsList.TryGetValue(steamID, out string skinToUse);
 
                             string fullSkinName = wpnName + "_" + skinToUse;
-                            if (File.Exists(Application.dataPath + texturesFilePath + fullSkinName + ".png"))
+                            if (weaponTextures.TryGetValue(fullSkinName, out Texture2D newTexture))
                             {
-                                Texture2D tempTexture = loadTexture(fullSkinName, 2048, 2048);
-
-                                __instance.GetComponent<Renderer>().material.SetTexture("_MainTex", tempTexture);
+                                __instance.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
                             }
 
                         }
                         catch (Exception e)
                         {
-                            logLow("ERROR:");
-                            logLow(e.Message);
+                            if (e.Message.Contains("Array index is out of range."))
+                            {
+                                //Do nothing cause this fucking spamms the log
+                            }
+                            else
+                            {
+                                logLow("ERROR:");
+                                logLow(e.Message);
+                            }
                         }
                     }
                 }
@@ -807,5 +807,26 @@ namespace Alternion
                 }
             }
         }
+
+        [HarmonyPatch(typeof(AccoladeItem), "ëîéæìêìëéæï")]
+        static class accoladeSetInfoPatch
+        {
+            static void Postfix(AccoladeItem __instance, string óéíïñîèëëêð, int òææóïíéñåïñ, string çìîñìëðêëéò, CSteamID ìçíêääéïíòç)
+            {
+                try
+                {
+                    string steamID = ìçíêääéïíòç.m_SteamID.ToString();
+                    if (badgeTextures.TryGetValue(steamID, out Texture2D newTexture))
+                    {
+                        __instance.äæåéåîèòéîñ.texture = newTexture;
+                    }
+                }
+                catch (Exception e)
+                {
+                    logLow(e.Message);
+                }
+            }
+        }
+
     }
 }
