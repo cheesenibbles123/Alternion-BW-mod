@@ -23,11 +23,6 @@ The original goal was simply to modify and allow for custom badges, and well... 
  - **Assembly-CSharp.dll** - Modified assembly-csharp file
  - **BWModLoader.dll** - modloader created by da_google
  
-# Issues:
- - The main known issue currently is possible lag every few seconds, I believe this is tied to the leaderboard updating, as this is more noticeable on servers with more players. Best fix for this might be to cache the badges on main Start(), although depending on the future badge count this may/may not be unsustainable (will require a deeper look).
- 
- ```(with the latest caching update I believe I have for the most part fixed this, however I need more validation before I can confirm it) ```
- 
 # Additional notes:
  - All required files will be downloaded automatically by the mod when it runs
  - I suck at this
