@@ -552,18 +552,12 @@ namespace Alternion
                     logLow(__instance.GetComponent<Renderer>().material.name);
                     if (__instance.GetComponent<Renderer>().material.name.StartsWith("wpn_"))
                     {
-                        string wpnName2 = __instance.GetComponent<Renderer>().material.name;
-                        string wpnNameTex = __instance.GetComponent<Renderer>().material.mainTexture.name;
                         string wpnName = __instance.GetComponent<Renderer>().material.name.Split('_')[1];
                         try
                         {
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
 
                             playerWeaponsList.TryGetValue(steamID, out string skinToUse);
-                            logLow("-----");
-                            logLow(wpnName2);
-                            logLow(wpnNameTex);
-                            logLow("-----");
                             string fullSkinName = wpnName + "_" + skinToUse;
                             if (weaponTextures.TryGetValue(fullSkinName, out Texture2D newTexture))
                             {
