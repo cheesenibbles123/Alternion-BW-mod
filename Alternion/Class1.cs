@@ -53,7 +53,7 @@ namespace Alternion
         static int logLevel = 1;
 
         static bool showTWBadges = false;
-        static bool useWeaponSkins = true;
+        static bool useWeaponSkins = false;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
@@ -273,11 +273,11 @@ namespace Alternion
             if (useWeaponSkins)
             {
                 List<string> weaponNames = new List<string>()
-            {
+                {
                 "nockGun", "blunderbuss", "musket", "handmortar",
                 "duckfoot", "pistol", "shortpistol", "matchlock" , "annelyRevolver",
                 "cutlass", "rapier", "twoHandAxe", "dagger", "pike"
-            };
+                };
                 string wpn;
                 for (i = 0; i < SkinNames.Count; i++)
                 {
@@ -430,14 +430,6 @@ namespace Alternion
             }
         }
 
-        static void logDebug(string message)
-        {
-            if (logLevel > 1)
-            {
-                Log.logger.Log(message);
-            }
-        }
-
         static Texture2D loadTexture(string texName, int imgWidth, int imgHeight)
         {
             try
@@ -555,17 +547,23 @@ namespace Alternion
                     return;
                 }
 
-                if (!__instance.åïääìêêäéèç && __instance.ëæìéäîåçóæí && useWeaponSkins)
+                if (!__instance.åïääìêêäéèç && __instance.ëæìéäîåçóæí)
                 {
+                    logLow(__instance.GetComponent<Renderer>().material.name);
                     if (__instance.GetComponent<Renderer>().material.name.StartsWith("wpn_"))
                     {
+                        string wpnName2 = __instance.GetComponent<Renderer>().material.name;
+                        string wpnNameTex = __instance.GetComponent<Renderer>().material.mainTexture.name;
                         string wpnName = __instance.GetComponent<Renderer>().material.name.Split('_')[1];
                         try
                         {
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
 
                             playerWeaponsList.TryGetValue(steamID, out string skinToUse);
-
+                            logLow("-----");
+                            logLow(wpnName2);
+                            logLow(wpnNameTex);
+                            logLow("-----");
                             string fullSkinName = wpnName + "_" + skinToUse;
                             if (weaponTextures.TryGetValue(fullSkinName, out Texture2D newTexture))
                             {
