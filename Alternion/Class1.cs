@@ -22,11 +22,41 @@ namespace Alternion
         static readonly public ModLogger logger = new ModLogger("[Alternion]", ModLoader.LogPath + "\\Alternion.txt");
     }
 
+    class cachedShip
+    {
+        //Format will be OBJECTNAME / OBJECT
+        public Dictionary<string, SailHealth> sailDict = new Dictionary<string, SailHealth>();
+        public Dictionary<string, SailHealth> mainSailDict = new Dictionary<string, SailHealth>();
+        public Dictionary<string, CannonUse> cannonOperationalDict = new Dictionary<string, CannonUse>();
+        public Dictionary<string, CannonDestroy> cannonDestroyDict = new Dictionary<string, CannonDestroy>();
+    }
+
+    class cachedCannonsAndSails
+    {
+        //Format will be TEAMNUMBER / SHIP
+        public Texture2D defaultSails = null;
+        public Texture2D defaultCannons = null;
+        public Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
+
+        public void setDefaultSails(Texture2D newTexture)
+        {
+            defaultSails = newTexture;
+        }
+        public void setDefaultCannons(Texture2D newTexture)
+        {
+            defaultCannons = newTexture;
+        }
+    }
+
+
+
     [Mod]
     public class Mainmod : MonoBehaviour
     {
 
         Texture2D watermarkTex;
+
+        static cachedCannonsAndSails cachedGameObjects = new cachedCannonsAndSails();
 
         static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static List<string> PlayerID = new List<string>();
@@ -172,16 +202,20 @@ namespace Alternion
 
             skinsFile = www.text.Replace("\r", "").Split('\n');
 
+            logLow(skinsFile.Length.ToString());
+
             for (int i = 0; i < skinsFile.Length; i++)
             {
                 try
                 {
+                    logLow($"i: {i}");
                     splitArrSkin = skinsFile[i].Split(new char[] { '=' });
                     PlayerIDMainSailSkins.Add(splitArrSkin[0]);
                     MainSkinSailNames.Add(splitArrSkin[1]);
                 }
                 catch (Exception e)
                 {
+                    logLow(i.ToString());
                     logLow("Error loading Main Sail skin file into program:");
                     logLow(e.Message);
                 }
@@ -323,12 +357,13 @@ namespace Alternion
                         byte[] bytes = www.texture.EncodeToPNG();
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + MainSkinSailNames[i] + ".png", bytes);
                         newTexture = loadTexture(MainSkinSailNames[i], 2048, 2048);
-                        mainSailDict.Add(PlayerIDSailSkins[i], newTexture);
+                        mainSailDict.Add(PlayerIDMainSailSkins[i], newTexture);
                         alreadyDownloaded.Add(MainSkinSailNames[i]);
                     }
                     catch (Exception e)
                     {
                         logLow("Error downloading Main Sail images:");
+                        logLow("Failed: " + i.ToString() + $" / {MainSkinSailNames.Count.ToString()}");
                         logLow(e.Message);
                     }
                 }
@@ -446,6 +481,80 @@ namespace Alternion
                 logLow(string.Format("Error loading texture {0}", texName));
                 logLow(e.Message);
                 return Texture2D.whiteTexture;
+            }
+        }
+
+        static void resetAllShipsToDefault()
+        {
+            foreach(KeyValuePair<string, cachedShip> individualShip in cachedGameObjects.ships)
+            {
+                foreach(KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
+                {
+                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                }
+
+                foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
+                {
+                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                }
+
+                foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
+                {
+                    indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
+                }
+
+                foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
+                {
+                    indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
+                }
+            }
+        }
+
+        // NEEDS FIXING
+        static void assignNewTexturesToShips(string steamID, string index)
+        {
+            try
+            {
+                if(cachedGameObjects.ships.TryGetValue(index, out cachedShip mightyVessel))
+                {
+                    Texture2D newTexture;
+
+                    foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
+                    {
+                        if (sailSkinTextures.TryGetValue(steamID, out newTexture))
+                        {
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTexture;
+                        }
+                    }
+
+                    foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
+                    {
+                        if (mainSailDict.TryGetValue(steamID, out newTexture))
+                        {
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTexture;
+                        }
+                    }
+
+                    foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                    {
+                        if (cannonSkinTextures.TryGetValue(steamID, out newTexture))
+                        {
+                            indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
+                        }
+                    }
+
+                    foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                    {
+                        if (cannonSkinTextures.TryGetValue(steamID, out newTexture))
+                        {
+                            indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
+                        }
+                    }
+                }
+            } catch (Exception e)
+            {
+                logLow(e.Message);
+                //Ignore Exception
             }
         }
 
@@ -582,12 +691,11 @@ namespace Alternion
             }
         }
 
-        [HarmonyPatch(typeof(SailHealth), "Start")]
+        [HarmonyPatch(typeof(SailHealth), "OnEnable")]
         static class sailSkinPatch
         {
             static void Postfix(SailHealth __instance)
             {
-
                 try
                 {
                     Transform shipTransf = __instance.transform.root;
@@ -606,11 +714,30 @@ namespace Alternion
                         string shipType = GameMode.Instance.shipTypes[teamNum - 1];
                         shipType = shipType.Remove(shipType.Length - 1);
 
+                        if (cachedGameObjects.defaultSails == null)
+                        {
+                            cachedGameObjects.setDefaultSails((Texture2D)__instance.GetComponent<Renderer>().material.mainTexture);
+                        }
+
+
                         switch (shipType)
                         {
                             case "cruiser":
                                 if (__instance.name == "hmsSophie_sails08")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -620,10 +747,39 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+
+                                if (__instance.name != "hmsSophie_sails08")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "galleon":
                                 if (__instance.name == "galleon_sails_01")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -633,10 +789,36 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "galleon_sails_01")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "brig":
                                 if (__instance.name == "hmsSpeedy_sails04")
                                 {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -646,10 +828,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "hmsSpeedy_sails04")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "xebec":
                                 if (__instance.name == "xebec_sail03")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -659,10 +868,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "xebec_sail03")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "bombvessel":
                                 if (__instance.name == "bombVessel_sails07")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -672,10 +908,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "bombVessel_sails07")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "gunboat":
                                 if (__instance.name == "gunboat_sails02")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -685,10 +948,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "gunboat_sails02")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "cutter":
                                 if (__instance.name == "hmsAlert_sails02")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -698,10 +988,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "hmsAlert_sails02")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "bombketch":
                                 if (__instance.name == "bombKetch_sails06")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -711,10 +1028,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "bombKetch_sails06")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "carrack":
                                 if (__instance.name == "carrack_sail03")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -724,10 +1068,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "carrack_sail03")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "junk":
                                 if (__instance.name == "junk_sails_01")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -737,10 +1108,37 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "junk_sails_01")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             case "schooner":
                                 if (__instance.name == "schooner_sails02" || __instance.name == "schooner_sails00")
                                 {
+
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.mainSailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+
                                     if (mainSailDict.TryGetValue(steamID, out newTexture))
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
@@ -750,6 +1148,21 @@ namespace Alternion
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                 }
+
+                                if (__instance.name != "schooner_sails02" && __instance.name != "schooner_sails00")
+                                {
+                                    if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                    {
+                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                    }
+                                    else
+                                    {
+                                        cachedShip newVessel = new cachedShip();
+                                        newVessel.sailDict.Add("1", __instance);
+                                        cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
+                                    }
+                                }
+
                                 break;
                             default:
                                 break;
@@ -763,7 +1176,7 @@ namespace Alternion
             }
         }
 
-        [HarmonyPatch(typeof(CannonUse), "Start")]
+        [HarmonyPatch(typeof(CannonUse), "OnEnable")]
         static class cannonOperationalSkinPatch
         {
             static void Postfix(CannonUse __instance)
@@ -776,6 +1189,21 @@ namespace Alternion
                     child = __instance.transform.FindChild("cannon");
                     index = GameMode.getParentIndex(child.transform.root);
                     steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                    if (cachedGameObjects.defaultCannons == null)
+                    {
+                        cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
+                    }
+
+                    if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                    {
+                        vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
+                    }
+                    else
+                    {
+                        cachedShip newVessel = new cachedShip();
+                        newVessel.cannonOperationalDict.Add("1", __instance);
+                        cachedGameObjects.ships.Add(index.ToString(), newVessel);
+                    }
 
                     if (cannonSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                     {
@@ -793,6 +1221,18 @@ namespace Alternion
             {
                 int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
                 string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+
+                if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                {
+                    vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
+                }
+                else
+                {
+                    cachedShip newVessel = new cachedShip();
+                    newVessel.cannonDestroyDict.Add("1", __instance);
+                    cachedGameObjects.ships.Add(index.ToString(), newVessel);
+                }
+
                 if (cannonSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                 {
                     __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
@@ -816,6 +1256,31 @@ namespace Alternion
                 catch (Exception e)
                 {
                     logLow(e.Message);
+                }
+            }
+        }
+
+
+        [HarmonyPatch(typeof(GameMode), "newRound")]
+        static class newRoundPatch
+        {
+            static void Postfix(GameMode __instance)
+            {
+                resetAllShipsToDefault();
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerOptions), "passCaptain")]
+        static class passCaptainPatch
+        {
+            static void Prefix(PlayerOptions __instance)
+            {
+                if (LocalPlayer.îêêæëçäëèñî.äíìíëðñïñéè.isCaptain())
+                {
+                    PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
+                    string steamNewCaptainID = player.steamID.ToString();
+                    string teamNum = player.team.ToString();
+                    assignNewTexturesToShips(steamNewCaptainID, teamNum);
                 }
             }
         }
