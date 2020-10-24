@@ -119,7 +119,6 @@ namespace Alternion
             string[] badgeFile = www.text.Replace("\r", "").Split('\n');
             string[] splitArrBadge;
             char[] charArray = new char[] { '=' };
-
             for (int i = 0; i < badgeFile.Length; i++)
             {
                 try
@@ -290,8 +289,6 @@ namespace Alternion
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + badgeName[i] + ".png", bytes);
-                        newTexture = loadTexture(badgeName[i], 110, 47);
-                        badgeTextures.Add(PlayerID[i], newTexture);
                         alreadyDownloaded.Add(badgeName[i]);
                     }
                     catch (Exception e)
@@ -300,6 +297,9 @@ namespace Alternion
                         logLow(e.Message);
                     }
                 }
+
+                newTexture = loadTexture(badgeName[i], 110, 47);
+                badgeTextures.Add(PlayerID[i], newTexture);
             }
             logLow("Badges Downloaded.");
             setMainmenuBadge();
@@ -356,8 +356,6 @@ namespace Alternion
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + MainSkinSailNames[i] + ".png", bytes);
-                        newTexture = loadTexture(MainSkinSailNames[i], 2048, 2048);
-                        mainSailDict.Add(PlayerIDMainSailSkins[i], newTexture);
                         alreadyDownloaded.Add(MainSkinSailNames[i]);
                     }
                     catch (Exception e)
@@ -367,6 +365,9 @@ namespace Alternion
                         logLow(e.Message);
                     }
                 }
+
+                newTexture = loadTexture(MainSkinSailNames[i], 2048, 2048);
+                mainSailDict.Add(PlayerIDMainSailSkins[i], newTexture);
             }
             logLow("Main Sails Downloaded.");
 
@@ -382,8 +383,6 @@ namespace Alternion
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + SkinSailNames[i] + ".png", bytes);
-                        newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
-                        sailSkinTextures.Add(PlayerIDSailSkins[i], newTexture);
                         alreadyDownloaded.Add(SkinSailNames[i]);
                     }
                     catch (Exception e)
@@ -392,6 +391,9 @@ namespace Alternion
                         logLow(e.Message);
                     }
                 }
+
+                newTexture = loadTexture(SkinSailNames[i], 2048, 2048);
+                sailSkinTextures.Add(PlayerIDSailSkins[i], newTexture);
             }
             logLow("Secondary Sails Downloaded.");
 
@@ -407,8 +409,6 @@ namespace Alternion
                     {
                         byte[] bytes = www.texture.EncodeToPNG();
                         File.WriteAllBytes(Application.dataPath + texturesFilePath + CannonSkinNames[i] + ".png", bytes);
-                        newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
-                        cannonSkinTextures.Add(PlayerIDCannonSkins[i], newTexture);
                         alreadyDownloaded.Add(CannonSkinNames[i]);
                     }
                     catch (Exception e)
@@ -417,6 +417,9 @@ namespace Alternion
                         logLow(e.Message);
                     }
                 }
+                newTexture = loadTexture(CannonSkinNames[i], 2048, 2048);
+                cannonSkinTextures.Add(PlayerIDCannonSkins[i], newTexture);
+
             }
             logLow("Cannons Downloaded.");
 
@@ -486,9 +489,9 @@ namespace Alternion
 
         static void resetAllShipsToDefault()
         {
-            foreach(KeyValuePair<string, cachedShip> individualShip in cachedGameObjects.ships)
+            foreach (KeyValuePair<string, cachedShip> individualShip in cachedGameObjects.ships)
             {
-                foreach(KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
+                foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
                 {
                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                 }
@@ -515,7 +518,7 @@ namespace Alternion
         {
             try
             {
-                if(cachedGameObjects.ships.TryGetValue(index, out cachedShip mightyVessel))
+                if (cachedGameObjects.ships.TryGetValue(index, out cachedShip mightyVessel))
                 {
                     Texture2D newTexture;
 
@@ -551,7 +554,8 @@ namespace Alternion
                         }
                     }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 logLow(e.Message);
                 //Ignore Exception
@@ -566,12 +570,23 @@ namespace Alternion
                 try
                 {
                     string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
+                    logLow("Gotten SteamID: " + steamID.ToString());
                     if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                     {
                         if (badgeTextures.TryGetValue(steamID, out Texture2D newTexture))
                         {
+                            logLow("Found match for ID " + steamID.ToString());
                             __instance.éòëèïòëóæèó.texture = newTexture; // loadTexture(badgeName[i], 110, 47);
+                            logLow("Set texture");
                         }
+                        else
+                        {   
+                            logLow("No match found");
+                        }
+                    }
+                    else
+                    {
+                        logLow("useing TW badge");
                     }
 
                 }
@@ -706,6 +721,11 @@ namespace Alternion
 
                         string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
 
+                        if (cachedGameObjects.defaultSails == null)
+                        {
+                            cachedGameObjects.setDefaultSails((Texture2D)__instance.GetComponent<Renderer>().material.mainTexture);
+                        }
+
                         if (!sailSkinTextures.TryGetValue(steamID, out newTexture))
                         {
                             return;
@@ -713,11 +733,6 @@ namespace Alternion
 
                         string shipType = GameMode.Instance.shipTypes[teamNum - 1];
                         shipType = shipType.Remove(shipType.Length - 1);
-
-                        if (cachedGameObjects.defaultSails == null)
-                        {
-                            cachedGameObjects.setDefaultSails((Texture2D)__instance.GetComponent<Renderer>().material.mainTexture);
-                        }
 
 
                         switch (shipType)
@@ -742,10 +757,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
 
@@ -784,10 +807,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "galleon_sails_01")
@@ -823,10 +854,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "hmsSpeedy_sails04")
@@ -863,10 +902,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "xebec_sail03")
@@ -903,10 +950,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "bombVessel_sails07")
@@ -943,10 +998,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "gunboat_sails02")
@@ -983,10 +1046,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "hmsAlert_sails02")
@@ -1023,10 +1094,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "bombKetch_sails06")
@@ -1063,10 +1142,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "carrack_sail03")
@@ -1103,10 +1190,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "junk_sails_01")
@@ -1143,10 +1238,18 @@ namespace Alternion
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
                                     }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
+                                    }
                                 }
                                 else if (sailSkinTextures.TryGetValue(steamID, out newTexture))
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = newTexture;
+                                }
+                                else
+                                {
+                                    __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                 }
 
                                 if (__instance.name != "schooner_sails02" && __instance.name != "schooner_sails00")
@@ -1209,6 +1312,10 @@ namespace Alternion
                     {
                         child.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
                     }
+                    else
+                    {
+                        child.GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
+                    }
 
                 }
             }
@@ -1236,6 +1343,10 @@ namespace Alternion
                 if (cannonSkinTextures.TryGetValue(steamID, out Texture2D newTexture))
                 {
                     __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTexture);
+                }
+                else
+                {
+                    __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
                 }
             }
         }
