@@ -25,7 +25,7 @@ The original goal was simply to modify and allow for custom badges, and well... 
  
 # Additional notes:
  - All required files will be downloaded automatically by the mod when it runs
- - On launching into the main menu, press **Insert** and go to the **logs** tab, scroll down and when it says either **Cannons Downloaded.** ***OR*** **All Textures Downloaded!** you can go join a server, this is because the mod downloads all required assets on starup as mentioned above, however as more and more stuff gets added, it will take longer and longer to load up. For now however it should be ok as there is still a very small pool of items.
+ - On launching into the main menu, press **Insert** and go to the **logs** tab, scroll down and when it says either **Cannons Downloaded.** *OR* **All Textures Downloaded!** you can go join a server, this is because the mod downloads all required assets on starup as mentioned above, however as more and more stuff gets added, it will take longer and longer to load up. For now however it should be ok as there is still a very small pool of items.
  
  - I suck at this
  - Enjoy my crappy code
