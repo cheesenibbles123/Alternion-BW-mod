@@ -1,12 +1,4 @@
 # Alternion
-This is a split off from my first mod
-
-Features:
- - Custom Badges based on steamID's managed by a website
- 
-Additional notes:
- - All required files will be downloaded automatically by the mod when it runs (badge assets)
- - I suck at this
- - Enjoy my crappy code
+This is the more live Beta code, so to speak, here you will see what i am currently working on, and this will be the most up-to-date.
 
 # YOU WILL NEED HARMONY FOR THIS
