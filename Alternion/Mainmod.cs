@@ -117,6 +117,7 @@ namespace Alternion
             {
                 playerObject finalPlayer = new playerObject();
                 finalPlayer.setSteamID(players[i].steamID);
+                finalPlayer.weaponTextures = new Dictionary<string, Texture2D>();
 
                 if (players[i].badgeName != "null")
                 {
@@ -143,7 +144,7 @@ namespace Alternion
                     catch (Exception e)
                     {
                         Log.logger.Log("------------------");
-                        Log.logger.Log("Badge Error");
+                        Log.logger.Log("Badge Download Error");
                         Log.logger.Log(e.Message);
                     }
                 }
@@ -164,7 +165,7 @@ namespace Alternion
                         catch (Exception e)
                         {
                             Log.logger.Log("------------------");
-                            Log.logger.Log("Sail Skin Error");
+                            Log.logger.Log("Sail Skin Download Error");
                             logLow(e.Message);
                         }
                     }
@@ -192,8 +193,6 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(players[i].weaponSkinName);
                     Texture2D weaponSkin;
 
-                    finalPlayer.weaponTextures = new Dictionary<string, Texture2D>();
-
                     for (int s = 0; s < weaponNames.Count; s++)
                     {
                         if (!flag)
@@ -208,21 +207,22 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                logLow("Internal Weapon skins exception");
+                                logLow("Internal Weapon skins Download exception");
                                 logLow(e.Message);
                             }
                         }
                         try
                         {
-                            weaponSkin = loadTexture(weaponNames[s] + "_" + players[i].weaponSkinName, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            logLow("Set texture");
-                            finalPlayer.weaponTextures.Add(weaponNames[s], weaponSkin);
-                            logLow("Added skin");
+                            if (players[i].weaponSkinName != "null")
+                            {
+                                weaponSkin = loadTexture(weaponNames[s] + "_" + players[i].weaponSkinName, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                finalPlayer.weaponTextures.Add(weaponNames[s], weaponSkin);
+                            }
                         }
                         catch (Exception e)
                         {
                             logLow("------------------");
-                            logLow("Weapon Skin Error");
+                            logLow("Weapon Skin Download Error");
                             logLow($"Weapon skin : -{weaponNames[s]}- -{players[i].weaponSkinName}-");
                             logLow("filePath: " + texturesFilePath + "WeaponSkins/");
                             logLow(e.Message);
@@ -255,7 +255,7 @@ namespace Alternion
                     catch (Exception e)
                     {
                         Log.logger.Log("------------------");
-                        Log.logger.Log("Main Sail Error");
+                        Log.logger.Log("Main Sail Download Error");
                         Log.logger.Log(e.Message);
                     }
                 }
@@ -285,7 +285,7 @@ namespace Alternion
                     catch (Exception e)
                     {
                         Log.logger.Log("------------------");
-                        Log.logger.Log("Cannon Skin Error");
+                        Log.logger.Log("Cannon Skin Download Error");
                         Log.logger.Log(e.Message);
                     }
                 }
@@ -301,11 +301,13 @@ namespace Alternion
 
         private void outputPlayerDict()
         {
+
+            // For logging purposes ATM
             try
             {
                 foreach (KeyValuePair<string, playerObject> individual in playerDictionary)
                 {
-                    logLow("------------");
+                    logLow("------------ PlayerDictObjStart ------------");
                     try
                     {
                         logLow(individual.Key);
@@ -322,7 +324,7 @@ namespace Alternion
                     {
                         logLow(e.Message);
                     }
-                    logLow("------------");
+                    logLow("------------ PlayerDictObjEnd------------");
                 }
             }
             catch (Exception e)
@@ -333,6 +335,7 @@ namespace Alternion
 
         void createDirectories()
         {
+            //Create directories prior to downloading all asset files
             if (!File.Exists(Application.dataPath + texturesFilePath))
             {
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath);
@@ -373,6 +376,8 @@ namespace Alternion
 
         static void logLow(string message)
         {
+            //Just easier to type than Log.logger.Log
+            // Also lets me just set logLevel to 0 if I dont want to deal with the spam.
             if (logLevel > 0)
             {
                 Log.logger.Log(message);
@@ -394,12 +399,18 @@ namespace Alternion
             {
                 logLow(string.Format("Error loading texture {0}", texName));
                 logLow(e.Message);
+                // Return default white texture on failing to load
                 return Texture2D.whiteTexture;
             }
         }
 
         static void resetAllShipsToDefault()
         {
+            // Loop through all ships, and set all visuals to defaults in the following order:
+            // Sails
+            // Main Sails
+            // Functioning cannons
+            // Destroyed cannons
             foreach (KeyValuePair<string, cachedShip> individualShip in cachedGameObjects.ships)
             {
                 foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
@@ -429,6 +440,11 @@ namespace Alternion
         {
             try
             {
+                // Loop through all cached vessels and apply new textures in the following order:
+                // Sails
+                // Main Sails
+                // Functional Cannons
+                // Destroyed Cannons
                 if (cachedGameObjects.ships.TryGetValue(index, out cachedShip mightyVessel))
                 {
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
@@ -512,8 +528,8 @@ namespace Alternion
 
         static void assignWeaponToRenderer(Renderer renderer, playerObject player, string weapon)
         {
-            player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture);
-            if (newTexture)
+            // If the player Dict contains a reference to the specific weapon, output the texture
+            if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
             {
                 logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}-");
                 renderer.material.mainTexture = newTexture;
@@ -523,9 +539,11 @@ namespace Alternion
         [HarmonyPatch(typeof(Character), "íëðäêñïçêêñ", new Type[] { typeof(string) })]
         static class weaponSkinPatch3rdPerson
         {
+            // íëðäêñïçêêñ = setCurrentWeapon(string weapon)
+            // îëðíîïïêñîî = new weapon
             static void Postfix(Character __instance, string îëðíîïïêñîî)
             {
-
+                // ìñíððåñéåèæ = weaponHand
                 try
                 {
                     if (__instance.ìñíððåñéåèæ == null)
@@ -676,12 +694,19 @@ namespace Alternion
         {
             static void Postfix(WeaponRender __instance)
             {
+                //Grab local steamID
                 string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+
+                //Fetch the player's object by steamID
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
-                    if (!(player.weaponTextures.Count <= 1))
+                    // Check If they have atleast one weapon skin
+                    if (player.weaponTextures.Count >= 1)
                     {
+                        //Get the WeaponRenderer's Renderer
                         Renderer renderer = __instance.GetComponent<Renderer>();
+
+                        // Switch on texture name
                         switch (renderer.material.mainTexture.name)
                         {
                             case "wpn_standardMusket_stock_alb":
@@ -756,7 +781,11 @@ namespace Alternion
                             case "wpn_spyglass_alb":
                                 assignWeaponToRenderer(renderer, player, "spyglass");
                                 break;
+                            case "prp_atlas_alb":
+                                assignWeaponToRenderer(renderer, player, "atlass");
+                                break;
                             default:
+                                // If not known, output here
                                 logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                                 break;
                         }
@@ -1342,12 +1371,10 @@ namespace Alternion
         {
             static void Postfix(CannonUse __instance)
             {
-                Transform child;
-                int index;
-                string steamID;
-                child = __instance.transform.FindChild("cannon");
-                index = GameMode.getParentIndex(child.transform.root);
-                steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                Transform child = __instance.transform.FindChild("cannon");
+                int index = GameMode.getParentIndex(child.transform.root);
+
+                string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
                     if (cachedGameObjects.defaultCannons == null)
@@ -1355,6 +1382,7 @@ namespace Alternion
                         cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
                     }
 
+                    // If vessel is already cached, grab it and add, otherwise create new vessel
                     if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                     {
                         vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
@@ -1366,6 +1394,7 @@ namespace Alternion
                         cachedGameObjects.ships.Add(index.ToString(), newVessel);
                     }
 
+                    // If they have a custom texture, use it, else use default skin
                     if (player.cannonSkinTexture)
                     {
                         child.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
@@ -1387,6 +1416,7 @@ namespace Alternion
                 string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
+                    // If vessel is cached, add cannon to it, else create new vessel
                     if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                     {
                         vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
@@ -1397,6 +1427,8 @@ namespace Alternion
                         newVessel.cannonDestroyDict.Add("1", __instance);
                         cachedGameObjects.ships.Add(index.ToString(), newVessel);
                     }
+
+                    // If they have a cannon skin then apply
                     if (player.cannonSkinTexture)
                     {
                         __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
@@ -1410,6 +1442,7 @@ namespace Alternion
         {
             static void Postfix(AccoladeItem __instance, string óéíïñîèëëêð, int òææóïíéñåïñ, string çìîñìëðêëéò, CSteamID ìçíêääéïíòç)
             {
+                // Sets win screen badges
                 try
                 {
                     string steamID = ìçíêääéïíòç.m_SteamID.ToString();
@@ -1430,6 +1463,7 @@ namespace Alternion
         {
             static void Postfix(GameMode __instance)
             {
+                // Reset all ship skins that are cached on newRound() to default textures
                 resetAllShipsToDefault();
             }
         }
@@ -1439,6 +1473,7 @@ namespace Alternion
         {
             static void Prefix(PlayerOptions __instance)
             {
+                // Untested
                 if (LocalPlayer.îêêæëçäëèñî.äíìíëðñïñéè.isCaptain())
                 {
                     PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
