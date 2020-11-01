@@ -116,6 +116,7 @@ namespace Alternion
             for (int i = 0; i < players.Count; i++)
             {
                 playerObject finalPlayer = new playerObject();
+                finalPlayer.setSteamID(players[i].steamID);
 
                 if (players[i].badgeName != "null")
                 {
@@ -191,6 +192,8 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(players[i].weaponSkinName);
                     Texture2D weaponSkin;
 
+                    finalPlayer.weaponTextures = new Dictionary<string, Texture2D>();
+
                     for (int s = 0; s < weaponNames.Count; s++)
                     {
                         if (!flag)
@@ -218,11 +221,11 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            Log.logger.Log("------------------");
-                            Log.logger.Log("Weapon Skin Error");
-                            Log.logger.Log($"Weapon skin : -{weaponNames[s]}- -{players[i].weaponSkinName}-");
+                            logLow("------------------");
+                            logLow("Weapon Skin Error");
+                            logLow($"Weapon skin : -{weaponNames[s]}- -{players[i].weaponSkinName}-");
                             logLow("filePath: " + texturesFilePath + "WeaponSkins/");
-                            Log.logger.Log(e.Message);
+                            logLow(e.Message);
                         }
                     }
                 }
@@ -290,6 +293,7 @@ namespace Alternion
                 playerDictionary.Add(players[i].steamID, finalPlayer);
             }
 
+            logLow("Player dict size: " + playerDictionary.Count);
             setMainmenuBadge();
             outputPlayerDict();
 
@@ -297,10 +301,33 @@ namespace Alternion
 
         private void outputPlayerDict()
         {
-            foreach (KeyValuePair<string, playerObject> individual in playerDictionary)
+            try
             {
-                logLow(individual.Key);
-                logLow(individual.Value.ToString());
+                foreach (KeyValuePair<string, playerObject> individual in playerDictionary)
+                {
+                    logLow("------------");
+                    try
+                    {
+                        logLow(individual.Key);
+                        if (individual.Value.weaponTextures.Count >= 1)
+                        {
+                            foreach (KeyValuePair<string, Texture2D> weaponSkin in individual.Value.weaponTextures)
+                            {
+                                logLow("Weapon: " + weaponSkin.Key);
+                                logLow("Skin: " + weaponSkin.Value.name);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logLow(e.Message);
+                    }
+                    logLow("------------");
+                }
+            }
+            catch (Exception e)
+            {
+                logLow(e.Message);
             }
         }
 
@@ -488,7 +515,7 @@ namespace Alternion
             player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture);
             if (newTexture)
             {
-                logLow($"Assigning -{weapon}- skin to -{player.steamID}-");
+                logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}-");
                 renderer.material.mainTexture = newTexture;
             }
         }
@@ -513,121 +540,128 @@ namespace Alternion
                     {
                         logLow("Gotten player");
                         logLow(JsonUtility.ToJson(player));
-                        if (!(player.weaponTextures.Count <= 1))
+                        string playerObjSteamID = player.getSteamID();
+                        if (playerObjSteamID == steamID)
                         {
-                            for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
+                            if (!(player.weaponTextures.Count <= 1))
                             {
-                                if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
+                                for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
                                 {
-                                    Renderer renderer;
-                                    switch (îëðíîïïêñîî)
+                                    if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
                                     {
-                                        case "wpn_standardMusket_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "musket");
-                                            break;
-                                        case "wpn_cutlass_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "cutlass");
-                                            break;
-                                        case "wpn_standardBlunder_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "blunderbuss");
-                                            break;
-                                        case "wpn_standardNockGun_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "nockgun");
-                                            break;
-                                        case "wpn_standardHandMortar_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "handmortar");
-                                            break;
-                                        case "wpn_rapier":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "rapier");
-                                            break;
-                                        case "wpn_dagger":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "dagger");
-                                            break;
-                                        case "wpn_bottle":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "bottle");
-                                            break;
-                                        case "wpn_standardSD_Pistol_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "standardPistol");
-                                            break;
-                                        case "wpn_standardShort_Pistol_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "shortPistol");
-                                            break;
-                                        case "wpn_standardDuckfoot_Pistol_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "duckfoot");
-                                            break;
-                                        case "item_crate_a":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "crate");
-                                            break;
-                                        case "wpn_annleyRevolver_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "annelyRevolver");
-                                            break;
-                                        case "RumBottle":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "rumBottle");
-                                            break;
-                                        case "Tea":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "teaCup");
-                                            break;
-                                        case "item_grenade_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "grenade");
-                                            break;
-                                        case "hammer":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "hammer");
-                                            break;
-                                        case "lighter":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "lighter");
-                                            break;
-                                        case "booty":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "booty");
-                                            break;
-                                        case "ramrod":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "ramrod");
-                                            break;
-                                        case "tomohawk":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "tomohawk");
-                                            break;
-                                        case "wpn_matchlockRevolver_LOD1":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "matchlockRevolver");
-                                            break;
-                                        case "wpn_twoHandAxe":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "axe");
-                                            break;
-                                        case "wpn_boardingPike":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "pike");
-                                            break;
-                                        case "wpn_spyglass":
-                                            renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
-                                            assignWeaponToRenderer(renderer, player, "spyglass");
-                                            break;
-                                        default:
-                                            break;
+                                        Renderer renderer;
+                                        switch (îëðíîïïêñîî)
+                                        {
+                                            case "wpn_standardMusket_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "musket");
+                                                break;
+                                            case "wpn_cutlass_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "cutlass");
+                                                break;
+                                            case "wpn_standardBlunder_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "blunderbuss");
+                                                break;
+                                            case "wpn_standardNockGun_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "nockgun");
+                                                break;
+                                            case "wpn_standardHandMortar_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "handmortar");
+                                                break;
+                                            case "wpn_rapier":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "rapier");
+                                                break;
+                                            case "wpn_dagger":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "dagger");
+                                                break;
+                                            case "wpn_bottle":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "bottle");
+                                                break;
+                                            case "wpn_standardSD_Pistol_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "standardPistol");
+                                                break;
+                                            case "wpn_standardShort_Pistol_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "shortPistol");
+                                                break;
+                                            case "wpn_standardDuckfoot_Pistol_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "duckfoot");
+                                                break;
+                                            case "item_crate_a":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "crate");
+                                                break;
+                                            case "wpn_annleyRevolver_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "annelyRevolver");
+                                                break;
+                                            case "RumBottle":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "rumBottle");
+                                                break;
+                                            case "Tea":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "teaCup");
+                                                break;
+                                            case "item_grenade_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "grenade");
+                                                break;
+                                            case "hammer":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "hammer");
+                                                break;
+                                            case "lighter":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "lighter");
+                                                break;
+                                            case "booty":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "booty");
+                                                break;
+                                            case "ramrod":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "ramrod");
+                                                break;
+                                            case "tomohawk":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "tomohawk");
+                                                break;
+                                            case "wpn_matchlockRevolver_LOD1":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "matchlockRevolver");
+                                                break;
+                                            case "wpn_twoHandAxe":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "axe");
+                                                break;
+                                            case "wpn_boardingPike":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "pike");
+                                                break;
+                                            case "wpn_spyglass":
+                                                renderer = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<Renderer>();
+                                                assignWeaponToRenderer(renderer, player, "spyglass");
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
+                        }else
+                        {
+                            logLow($"No match for {playerObjSteamID} and {steamID}");
                         }
                     }
                 }catch (Exception e)
