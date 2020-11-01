@@ -15,10 +15,10 @@ namespace Alternion
         public Texture2D mainSailTexture;
         public Texture2D cannonSkinTexture;
         public Dictionary<string, Texture2D> weaponTextures;
-
-        public void setSteamID(string newSteamID)
+        public void Init(string newSteamID)
         {
             steamID = newSteamID;
+            weaponTextures = new Dictionary<string, Texture2D>();
         }
         public string getSteamID()
         {
