@@ -227,7 +227,7 @@ namespace Alternion
                             if (players[i].weaponSkinName != "null")
                             {
                                 weaponSkin = loadTexture(weaponNames[s] + "_" + players[i].weaponSkinName, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                                weaponSkin.name = players[i].weaponSkinName;
+                                weaponSkin.name = weaponNames[s] + "_" + players[i].weaponSkinName;
                                 finalPlayer.weaponTextures.Add(weaponNames[s], weaponSkin);
                             }
                         }
@@ -552,7 +552,7 @@ namespace Alternion
                     if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
                     {
                         logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 1p");
-                        renderer.material.mainTexture = newTexture;
+                        renderer.material.SetTexture("_MainTex", newTexture);
                     }
                 }
                 logLow("Applied to -" + renderer.material.name + "- in " + type + " mode.");
@@ -700,11 +700,10 @@ namespace Alternion
         {
             try
             {
-                Character character = __instance.ìäóêäðçóììî;
-                logLow("Got character");
-
-                bool isLocal = character.æïðèñìæêêñç;
+                bool isLocal = __instance.ìäóêäðçóììî.æïðèñìæêêñç;
                 logLow("Set bool: " + isLocal.ToString());
+
+                __instance.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
 
                 if (isLocal)
                 {
@@ -723,6 +722,9 @@ namespace Alternion
                             switch (renderer.material.mainTexture.name)
                             {
                                 case "wpn_standardMusket_stock_alb":
+                                    assignWeaponToRenderer(renderer, player, "musket", "1p");
+                                    break;
+                                case "musket_diamond":
                                     assignWeaponToRenderer(renderer, player, "musket", "1p");
                                     break;
                                 case "wpn_standardCutlass_alb":
@@ -825,7 +827,7 @@ namespace Alternion
                     {
                         firstPersonSkinHandler(__instance);
                         modded = true;
-                        logLow("SET MODDED TO TRUE");
+                        //logLow("SET MODDED TO TRUE");
                     }
                 }catch (Exception e)
                 {
