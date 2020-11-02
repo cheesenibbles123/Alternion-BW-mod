@@ -34,10 +34,8 @@ namespace Alternion
         static int logLevel = 1;
 
         static bool showTWBadges = false;
-        static bool run1pWeaponSkins = false;
 
-        static int timesApplied = 0;
-        static int timesCalled = 0;
+        static bool modded = false;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
@@ -70,7 +68,6 @@ namespace Alternion
             {
                 //logLow("applied :" + timesApplied.ToString());
                 //logLow("called :" + timesCalled.ToString());
-                run1pWeaponSkins = true;
             }
         }
 
@@ -539,24 +536,30 @@ namespace Alternion
 
         static void assignWeaponToRenderer(Renderer renderer, playerObject player, string weapon, string type)
         {
-            if (type == "3p")
+            try
             {
-                // If the player Dict contains a reference to the specific weapon, output the texture
-                if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
+                if (type == "3p")
                 {
-                    logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 3p");
-                    renderer.material.mainTexture = newTexture;
+                    // If the player Dict contains a reference to the specific weapon, output the texture
+                    if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
+                    {
+                        logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 3p");
+                        renderer.material.mainTexture = newTexture;
+                    }
                 }
-            }
-            else
+                else
+                {
+                    if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
+                    {
+                        logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 1p");
+                        renderer.material.mainTexture = newTexture;
+                    }
+                }
+                logLow("Applied to -" + renderer.material.name + "- in " + type + " mode.");
+            }catch (Exception e)
             {
-                if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
-                {
-                    logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 1p");
-                    renderer.material.mainTexture = newTexture;
-                }
+                logLow(e.Message);
             }
-            logLow("Applied to -" + renderer.material.name + "-");
         }
 
         [HarmonyPatch(typeof(Character), "íëðäêñïçêêñ", new Type[] { typeof(string) })]
@@ -567,6 +570,7 @@ namespace Alternion
             static void Postfix(Character __instance, string îëðíîïïêñîî)
             {
                 // ìñíððåñéåèæ = weaponHand
+                modded = false;
                 try
                 {
                     if (__instance.ìñíððåñéåèæ == null)
@@ -591,7 +595,6 @@ namespace Alternion
                                     if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
                                     {
                                         WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
-                                        plyrInfo.name = "EDITED";
                                         if (component != null)
                                         {
                                             Renderer renderer = component.GetComponent<Renderer>();
@@ -673,7 +676,7 @@ namespace Alternion
                                                     assignWeaponToRenderer(renderer, player, "spyglass", "3p");
                                                     break;
                                                 default:
-                                                    logLow("mat name: " + renderer.material.name);
+                                                    logLow("Mat tex name: -" + renderer.material.mainTexture.name + "-");
                                                     break;
                                             }
                                             break;
@@ -693,12 +696,16 @@ namespace Alternion
             }
         }
 
-        [HarmonyPatch(typeof(WeaponRender), "Start")]
-        static class weaponSkinpatch1stPerson
+        static void firstPersonSkinHandler(WeaponRender __instance)
         {
-            static void Postfix(WeaponRender __instance)
+            try
             {
-                bool isLocal = __instance.ìäóêäðçóììî.æïðèñìæêêñç;
+                Character character = __instance.ìäóêäðçóììî;
+                logLow("Got character");
+
+                bool isLocal = character.æïðèñìæêêñç;
+                logLow("Set bool: " + isLocal.ToString());
+
                 if (isLocal)
                 {
                     //Grab local steamID
@@ -712,7 +719,6 @@ namespace Alternion
                         {
                             //Get the WeaponRenderer's Renderer
                             Renderer renderer = __instance.GetComponent<Renderer>();
-                            timesCalled += 1;
                             // Switch on texture name
                             switch (renderer.material.mainTexture.name)
                             {
@@ -798,6 +804,32 @@ namespace Alternion
                             }
                         }
                     }
+                }
+            }
+            catch (Exception e)
+            {
+                logLow("1p");
+                logLow(e.Message);
+                logLow("1p");
+            }
+        }
+
+        [HarmonyPatch(typeof(WeaponRender), "Update")]
+        static class weaponSkinpatch1stPerson
+        {
+            static void Postfix(WeaponRender __instance)
+            {
+                try
+                {
+                    if (__instance.ìäóêäðçóììî != null && !modded)
+                    {
+                        firstPersonSkinHandler(__instance);
+                        modded = true;
+                        logLow("SET MODDED TO TRUE");
+                    }
+                }catch (Exception e)
+                {
+                    logLow(e.Message);
                 }
             }
         }
