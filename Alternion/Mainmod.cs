@@ -27,15 +27,12 @@ namespace Alternion
 
         static cachedCannonsAndSails cachedGameObjects = new cachedCannonsAndSails();
         static Dictionary<string, playerObject> playerDictionary = new Dictionary<string, playerObject>();
-        static Dictionary<string, int> uniquePlayerRenderers = new Dictionary<string, int>();
 
         static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
 
         static int logLevel = 1;
 
         static bool showTWBadges = false;
-
-        static bool modded = false;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
@@ -95,6 +92,7 @@ namespace Alternion
                 Log.logger.Log(e.Message);
                 Log.logger.Log("------------------");
             }
+            logLow("Finished loading Json");
             StartCoroutine(DownloadTextures(webPlayers));
         }
         private IEnumerator waterMark()
@@ -304,6 +302,8 @@ namespace Alternion
 
                 playerDictionary.Add(players[i].steamID, finalPlayer);
             }
+
+            logLow("Finished downloading textures.");
             setMainmenuBadge();
         }
 
@@ -353,6 +353,7 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
             }
+            logLow("Finished directories");
             StartCoroutine(loadJsonFile());
         }
         void setMainmenuBadge()
@@ -534,7 +535,7 @@ namespace Alternion
             }
         }
 
-        static void assignWeaponToRenderer(Renderer renderer, playerObject player, string weapon, string type)
+        static void assignWeaponToRenderer(WeaponRender __instance, Renderer renderer, playerObject player, string weapon, string type)
         {
             try
             {
@@ -562,6 +563,99 @@ namespace Alternion
             }
         }
 
+        static void weaponSkinHandler(WeaponRender __instance, playerObject player, string type)
+        {
+
+            Renderer renderer = __instance.GetComponent<Renderer>();
+            logLow(renderer.material.mainTexture.name);
+
+            switch (renderer.material.mainTexture.name)
+            {
+                case "wpn_standardMusket_stock_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "musket", type);
+                    break;
+                case "musket_diamond":
+                    assignWeaponToRenderer(__instance, renderer, player, "musket", type);
+                    break;
+                case "wpn_standardCutlass_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "cutlass", type);
+                    break;
+                case "wpn_blunderbuss_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "blunderbuss", type);
+                    break;
+                case "wpn_nockGun_stock_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "nockgun", type);
+                    break;
+                case "wpn_handMortar_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "handmortar", type);
+                    break;
+                case "wpn_rapier_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "rapier", type);
+                    break;
+                case "wpn_dagger_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "dagger", type);
+                    break;
+                case "wpn_bottle_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "bottle", type);
+                    break;
+                case "wpn_standardPistol_stock_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "standardPistol", type);
+                    break;
+                case "wpn_shortpistol_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "shortPistol", type);
+                    break;
+                case "wpn_duckfoot_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "duckfoot", type);
+                    break;
+                case "wpn_annelyRevolver_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "annelyRevolver", type);
+                    break;
+                case "wpn_rumHealth_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "rumBottle", type);
+                    break;
+                case "wpn_teaCup_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "teaCup", type);
+                    break;
+                case "wpn_grenade_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "grenade", type);
+                    break;
+                case "prp_hammer_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "hammer", type);
+                    break;
+                case "prp_lighter_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "lighter", type);
+                    break;
+                case "wpn_booty_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "booty", type);
+                    break;
+                case "wpn_ramrod_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "ramrod", type);
+                    break;
+                case "wpn_tomohawk_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "tomohawk", type);
+                    break;
+                case "wpn_matchlockRevolver_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "matchlockRevolver", type);
+                    break;
+                case "wpn_twoHandAxe_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "axe", type);
+                    break;
+                case "wpn_boardingPike_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "pike", type);
+                    break;
+                case "wpn_spyglass_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "spyglass", type);
+                    break;
+                case "prp_atlas_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "atlass", type);
+                    break;
+                default:
+                    // If not known, output here
+                    logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+                    break;
+            }
+        }
+
         [HarmonyPatch(typeof(Character), "íëðäêñïçêêñ", new Type[] { typeof(string) })]
         static class weaponSkinPatch3rdPerson
         {
@@ -570,7 +664,6 @@ namespace Alternion
             static void Postfix(Character __instance, string îëðíîïïêñîî)
             {
                 // ìñíððåñéåèæ = weaponHand
-                modded = false;
                 try
                 {
                     if (__instance.ìñíððåñéåèæ == null)
@@ -579,240 +672,31 @@ namespace Alternion
                     }
                     PlayerInfo plyrInfo = __instance.transform.parent.GetComponent<PlayerInfo>();
                     string steamID = plyrInfo.steamID.ToString();
-                    logLow("Gotten: -" + steamID + "-");
-                    logLow(plyrInfo.name);
-
+                    logLow("Got steamID + player info");
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
-                        logLow("Gotten player");
-                        string playerObjSteamID = player.getSteamID();
-                        if (playerObjSteamID == steamID)
+                        logLow("Got user");
+                        for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
                         {
-                            if (player.weaponTextures.Count >= 1)
+                            if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
                             {
-                                for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
+                                logLow("Got child");
+                                WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
+                                if (component != null)
                                 {
-                                    if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
-                                    {
-                                        WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
-                                        if (component != null)
-                                        {
-                                            Renderer renderer = component.GetComponent<Renderer>();
-                                            switch (îëðíîïïêñîî)
-                                            {
-                                                case "wpn_standardMusket_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "musket", "3p");
-                                                    break;
-                                                case "wpn_cutlass_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "cutlass", "3p");
-                                                    break;
-                                                case "wpn_standardBlunder_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "blunderbuss", "3p");
-                                                    break;
-                                                case "wpn_standardNockGun_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "nockgun", "3p");
-                                                    break;
-                                                case "wpn_standardHandMortar_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "handmortar", "3p");
-                                                    break;
-                                                case "wpn_rapier":
-                                                    assignWeaponToRenderer(renderer, player, "rapier", "3p");
-                                                    break;
-                                                case "wpn_dagger":
-                                                    assignWeaponToRenderer(renderer, player, "dagger", "3p");
-                                                    break;
-                                                case "wpn_bottle":
-                                                    assignWeaponToRenderer(renderer, player, "bottle", "3p");
-                                                    break;
-                                                case "wpn_standardSD_Pistol_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "standardPistol", "3p");
-                                                    break;
-                                                case "wpn_standardShort_Pistol_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "shortPistol", "3p");
-                                                    break;
-                                                case "wpn_standardDuckfoot_Pistol_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "duckfoot", "3p");
-                                                    break;
-                                                case "item_crate_a":
-                                                    assignWeaponToRenderer(renderer, player, "crate", "3p");
-                                                    break;
-                                                case "wpn_annleyRevolver_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "annelyRevolver", "3p");
-                                                    break;
-                                                case "RumBottle":
-                                                    assignWeaponToRenderer(renderer, player, "rumBottle", "3p");
-                                                    break;
-                                                case "Tea":
-                                                    assignWeaponToRenderer(renderer, player, "teaCup", "3p");
-                                                    break;
-                                                case "item_grenade_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "grenade", "3p");
-                                                    break;
-                                                case "hammer":
-                                                    assignWeaponToRenderer(renderer, player, "hammer", "3p");
-                                                    break;
-                                                case "lighter":
-                                                    assignWeaponToRenderer(renderer, player, "lighter", "3p");
-                                                    break;
-                                                case "booty":
-                                                    assignWeaponToRenderer(renderer, player, "booty", "3p");
-                                                    break;
-                                                case "ramrod":
-                                                    assignWeaponToRenderer(renderer, player, "ramrod", "3p");
-                                                    break;
-                                                case "tomohawk":
-                                                    assignWeaponToRenderer(renderer, player, "tomohawk", "3p");
-                                                    break;
-                                                case "wpn_matchlockRevolver_LOD1":
-                                                    assignWeaponToRenderer(renderer, player, "matchlockRevolver", "3p");
-                                                    break;
-                                                case "wpn_twoHandAxe":
-                                                    assignWeaponToRenderer(renderer, player, "axe", "3p");
-                                                    break;
-                                                case "wpn_boardingPike":
-                                                    assignWeaponToRenderer(renderer, player, "pike", "3p");
-                                                    break;
-                                                case "wpn_spyglass":
-                                                    assignWeaponToRenderer(renderer, player, "spyglass", "3p");
-                                                    break;
-                                                default:
-                                                    logLow("Mat tex name: -" + renderer.material.mainTexture.name + "-");
-                                                    break;
-                                            }
-                                            break;
-                                        }
-                                    }
+                                    logLow("setting skin");
+                                    weaponSkinHandler(component, player, "3p");
+                                    break;
                                 }
                             }
-                        }else
-                        {
-                            logLow($"No match for {playerObjSteamID} and {steamID}");
                         }
                     }
                 }catch (Exception e)
                 {
+                    logLow("------ 3p skin Error ------");
                     logLow(e.Message);
+                    logLow("------ 3p skin Error ------");
                 }
-            }
-        }
-
-        static void firstPersonSkinHandler(WeaponRender __instance)
-        {
-            try
-            {
-                bool isLocal = __instance.ìäóêäðçóììî.æïðèñìæêêñç;
-                logLow("Set bool: " + isLocal.ToString());
-
-                __instance.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
-
-                if (isLocal)
-                {
-                    //Grab local steamID
-                    string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-
-                    //Fetch the player's object by steamID
-                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
-                    {
-                        // Check If they have atleast one weapon skin
-                        if (player.weaponTextures.Count >= 1)
-                        {
-                            //Get the WeaponRenderer's Renderer
-                            Renderer renderer = __instance.GetComponent<Renderer>();
-                            // Switch on texture name
-                            switch (renderer.material.mainTexture.name)
-                            {
-                                case "wpn_standardMusket_stock_alb":
-                                    assignWeaponToRenderer(renderer, player, "musket", "1p");
-                                    break;
-                                case "musket_diamond":
-                                    assignWeaponToRenderer(renderer, player, "musket", "1p");
-                                    break;
-                                case "wpn_standardCutlass_alb":
-                                    assignWeaponToRenderer(renderer, player, "cutlass", "1p");
-                                    break;
-                                case "wpn_blunderbuss_alb":
-                                    assignWeaponToRenderer(renderer, player, "blunderbuss", "1p");
-                                    break;
-                                case "wpn_nockGun_stock_alb":
-                                    assignWeaponToRenderer(renderer, player, "nockgun", "1p");
-                                    break;
-                                case "wpn_handMortar_alb":
-                                    assignWeaponToRenderer(renderer, player, "handmortar", "1p");
-                                    break;
-                                case "wpn_rapier_alb":
-                                    assignWeaponToRenderer(renderer, player, "rapier", "1p");
-                                    break;
-                                case "wpn_dagger_alb":
-                                    assignWeaponToRenderer(renderer, player, "dagger", "1p");
-                                    break;
-                                case "wpn_bottle_alb":
-                                    assignWeaponToRenderer(renderer, player, "bottle", "1p");
-                                    break;
-                                case "wpn_standardPistol_stock_alb":
-                                    assignWeaponToRenderer(renderer, player, "standardPistol", "1p");
-                                    break;
-                                case "wpn_shortpistol_alb":
-                                    assignWeaponToRenderer(renderer, player, "shortPistol", "1p");
-                                    break;
-                                case "wpn_duckfoot_alb":
-                                    assignWeaponToRenderer(renderer, player, "duckfoot", "1p");
-                                    break;
-                                case "wpn_annelyRevolver_alb":
-                                    assignWeaponToRenderer(renderer, player, "annelyRevolver", "1p");
-                                    break;
-                                case "wpn_rumHealth_alb":
-                                    assignWeaponToRenderer(renderer, player, "rumBottle", "1p");
-                                    break;
-                                case "wpn_teaCup_alb":
-                                    assignWeaponToRenderer(renderer, player, "teaCup", "1p");
-                                    break;
-                                case "wpn_grenade_alb":
-                                    assignWeaponToRenderer(renderer, player, "grenade", "1p");
-                                    break;
-                                case "prp_hammer_alb":
-                                    assignWeaponToRenderer(renderer, player, "hammer", "1p");
-                                    break;
-                                case "prp_lighter_alb":
-                                    assignWeaponToRenderer(renderer, player, "lighter", "1p");
-                                    break;
-                                case "wpn_booty_alb":
-                                    assignWeaponToRenderer(renderer, player, "booty", "1p");
-                                    break;
-                                case "wpn_ramrod_alb":
-                                    assignWeaponToRenderer(renderer, player, "ramrod", "1p");
-                                    break;
-                                case "wpn_tomohawk_alb":
-                                    assignWeaponToRenderer(renderer, player, "tomohawk", "1p");
-                                    break;
-                                case "wpn_matchlockRevolver_alb":
-                                    assignWeaponToRenderer(renderer, player, "matchlockRevolver", "1p");
-                                    break;
-                                case "wpn_twoHandAxe_alb":
-                                    assignWeaponToRenderer(renderer, player, "axe", "1p");
-                                    break;
-                                case "wpn_boardingPike_alb":
-                                    assignWeaponToRenderer(renderer, player, "pike", "1p");
-                                    break;
-                                case "wpn_spyglass_alb":
-                                    assignWeaponToRenderer(renderer, player, "spyglass", "1p");
-                                    break;
-                                case "prp_atlas_alb":
-                                    assignWeaponToRenderer(renderer, player, "atlass", "1p");
-                                    break;
-                                default:
-                                    // If not known, output here
-                                    logLow("Default 1p name: -" + renderer.material.mainTexture.name + "-");
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                logLow("1p");
-                logLow(e.Message);
-                logLow("1p");
             }
         }
 
@@ -823,15 +707,96 @@ namespace Alternion
             {
                 try
                 {
-                    if (__instance.ìäóêäðçóììî != null && !modded)
+                    if (!__instance.åïääìêêäéèç)
                     {
-                        firstPersonSkinHandler(__instance);
-                        modded = true;
-                        //logLow("SET MODDED TO TRUE");
+                        //Grab local steamID
+                        string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+                        if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                        {
+                            weaponSkinHandler(__instance, player, "1p");
+                        }
+                    }else
+                    {
+                        try
+                        {
+                            string finalParent = ".parent";
+                            var parent = __instance.transform.parent;
+                            var finalParent2 = __instance.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent;
+
+                            try
+                            {
+                                if (finalParent2.GetComponent<Character>() != null)
+                                {
+                                    if (finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.gameObject.activeSelf)
+                                    {
+                                        logLow("True");
+                                    }
+                                    else
+                                    {
+                                        logLow("False");
+                                    }
+                                    if (finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>() != null && finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString() != "0")
+                                    {
+                                        logLow("Got playerinfo");
+                                        logLow("ID: " + finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString());
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                logLow("parent issue");
+                                logLow(e.Message);
+                            }
+                            return;
+                            for (int i = 0; i < 21; i++)
+                            {
+                                logLow("running " + i.ToString() + " times");
+                                try
+                                {
+                                    if (parent.GetComponent<Character>() != null)
+                                    {
+                                        if (parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.gameObject.activeSelf)
+                                        {
+                                            logLow("True");
+                                        }
+                                        else
+                                        {
+                                            logLow("False");
+                                        }
+                                        if (parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>() != null && parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString() != "0")
+                                        {
+                                            logLow("Got playerinfo");
+                                            logLow("ID: " + parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString());
+                                        }
+                                        logLow("final trace : -" + finalParent + "-");
+                                        break;
+                                    }
+                                }catch (Exception e)
+                                {
+                                    logLow("parent issue");
+                                    logLow(e.Message);
+                                }
+                                finalParent += ".parent";
+                                parent = parent.parent;
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            logLow("failed");
+                            logLow(e.Message);
+                        }
+                        return;
+                        string steamID;
+                        if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                        {
+                            weaponSkinHandler(__instance, player, "3p");
+                        }
                     }
                 }catch (Exception e)
                 {
+                    logLow("------ 1p skin Error ------");
                     logLow(e.Message);
+                    logLow("------ 1p skin Error ------");
                 }
             }
         }
