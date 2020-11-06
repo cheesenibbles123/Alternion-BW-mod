@@ -27,27 +27,47 @@ namespace Alternion
 
         static cachedCannonsAndSails cachedGameObjects = new cachedCannonsAndSails();
         static Dictionary<string, playerObject> playerDictionary = new Dictionary<string, playerObject>();
+        static List<string> steamIDList = new List<string>();
 
         static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
 
         static int logLevel = 1;
+        static Mainmod Instance;
 
         static bool showTWBadges = false;
+        static bool runStuff = false;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
+
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                UnityEngine.Object.DestroyImmediate(this);
+            }
+        }
 
         void Start()
         {
             try
             {
+                //Setup harmony patching
                 HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
                 harmony.PatchAll();
+
+                //Starts asset fetching cycle
                 createDirectories();
+
+                //Setup watermark
                 StartCoroutine(waterMark());
             }
             catch (Exception e)
             {
-                logLow(e.Message);
+                debugLog(e.Message);
             }
         }
 
@@ -65,6 +85,7 @@ namespace Alternion
             {
                 //logLow("applied :" + timesApplied.ToString());
                 //logLow("called :" + timesCalled.ToString());
+                logLow("Total list: " + steamIDList.Count.ToString());
             }
         }
 
@@ -87,10 +108,10 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Log.logger.Log("------------------");
-                Log.logger.Log("Loading from JSON error");
-                Log.logger.Log(e.Message);
-                Log.logger.Log("------------------");
+                debugLog("------------------");
+                debugLog("Loading from JSON error");
+                debugLog(e.Message);
+                debugLog("------------------");
             }
             logLow("Finished loading Json");
             StartCoroutine(DownloadTextures(webPlayers));
@@ -109,8 +130,8 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow("Error downloading watermark:");
-                    logLow(e.Message);
+                    debugLog("Error downloading watermark:");
+                    debugLog(e.Message);
                 }
 
             }
@@ -142,19 +163,20 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            logLow(e.Message);
+                            debugLog(e.Message);
                         }
                     }
                     try
                     {
 
                         finalPlayer.badgeTexture = loadTexture(players[i].badgeName, texturesFilePath + "Badges/", 100, 40);
+                        finalPlayer.badgeTexture.name = players[i].badgeName;
                     }
                     catch (Exception e)
                     {
-                        Log.logger.Log("------------------");
-                        Log.logger.Log("Badge Download Error");
-                        Log.logger.Log(e.Message);
+                        debugLog("------------------");
+                        debugLog("Badge Download Error");
+                        debugLog(e.Message);
                     }
                 }
 
@@ -173,19 +195,21 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            Log.logger.Log("------------------");
-                            Log.logger.Log("Sail Skin Download Error");
-                            logLow(e.Message);
+                            debugLog("------------------");
+                            debugLog("Sail Skin Download Error");
+                            debugLog(e.Message);
                         }
                     }
                     try
                     {
                         finalPlayer.sailSkinTexture = loadTexture(players[i].sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
+                        finalPlayer.sailSkinTexture.name = players[i].sailSkinName;
                     }
                     catch (Exception e)
                     {
-                        Log.logger.Log("------------------");
-                        Log.logger.Log(e.Message);
+                        debugLog("------------------");
+                        debugLog(e.Message);
+                        debugLog("------------------");
                     }
                 }
 
@@ -216,8 +240,8 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                logLow("Internal Weapon skins Download exception");
-                                logLow(e.Message);
+                                debugLog("Internal Weapon skins Download exception");
+                                debugLog(e.Message);
                             }
                         }
                         try
@@ -231,11 +255,11 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            logLow("------------------");
-                            logLow("Weapon Skin Download Error");
-                            logLow($"Weapon skin : -{weaponNames[s]}- -{players[i].weaponSkinName}-");
-                            logLow("filePath: " + texturesFilePath + "WeaponSkins/");
-                            logLow(e.Message);
+                            debugLog("------------------");
+                            debugLog("Weapon Skin Download Error");
+                            debugLog($"Weapon skin : -{weaponNames[s]}- -{players[i].weaponSkinName}-");
+                            debugLog("filePath: " + texturesFilePath + "WeaponSkins/");
+                            debugLog(e.Message);
                         }
                     }
                 }
@@ -255,18 +279,19 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            logLow(e.Message);
+                            debugLog(e.Message);
                         }
                     }
                     try
                     {
                         finalPlayer.mainSailTexture = loadTexture(players[i].mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
+                        finalPlayer.mainSailTexture.name = players[i].mainSailName;
                     }
                     catch (Exception e)
                     {
-                        Log.logger.Log("------------------");
-                        Log.logger.Log("Main Sail Download Error");
-                        Log.logger.Log(e.Message);
+                        debugLog("------------------");
+                        debugLog("Main Sail Download Error");
+                        debugLog(e.Message);
                     }
                 }
 
@@ -285,18 +310,19 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            logLow(e.Message);
+                            debugLog(e.Message);
                         }
                     }
                     try
                     {
                         finalPlayer.cannonSkinTexture = loadTexture(players[i].cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                        finalPlayer.cannonSkinTexture.name = players[i].cannonSkinName;
                     }
                     catch (Exception e)
                     {
-                        Log.logger.Log("------------------");
-                        Log.logger.Log("Cannon Skin Download Error");
-                        Log.logger.Log(e.Message);
+                        debugLog("------------------");
+                        debugLog("Cannon Skin Download Error");
+                        debugLog(e.Message);
                     }
                 }
 
@@ -337,7 +363,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                logLow(e.Message);
+                debugLog(e.Message);
             }
         }
 
@@ -354,10 +380,14 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
             }
             logLow("Finished directories");
+
+            //Grab online JSON file
             StartCoroutine(loadJsonFile());
         }
         void setMainmenuBadge()
         {
+            //Only main menu that you will really see is the one intially started
+            //This doesn't work if you return to the main menu from a server
             MainMenu mm = FindObjectOfType<MainMenu>();
 
             try
@@ -377,12 +407,13 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                logLow("Failed to assign custom badge to a player:");
-                logLow(e.Message);
+                debugLog("Failed to assign custom badge to a player:");
+                debugLog(e.Message);
             }
 
         }
 
+        //Debugging purposes
         static void logLow(string message)
         {
             //Just easier to type than Log.logger.Log
@@ -391,6 +422,14 @@ namespace Alternion
             {
                 Log.logger.Log(message);
             }
+        }
+        
+        //ALWAYS RUNS
+        static void debugLog(string message)
+        {
+            //Just easier to type than Log.logger.Log
+            //Will always log, so only use in try{} catch(Exception e) {} when absolutely needed
+            Log.logger.Log(message);
         }
 
         static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
@@ -406,8 +445,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                logLow(string.Format("Error loading texture {0}", texName));
-                logLow(e.Message);
+                debugLog(string.Format("Error loading texture {0}", texName));
+                debugLog(e.Message);
                 // Return default white texture on failing to load
                 return Texture2D.whiteTexture;
             }
@@ -500,6 +539,18 @@ namespace Alternion
             }
         }
 
+        [HarmonyPatch(typeof(TeamSelect), "Update")]
+        static class teamSelectPatch
+        {
+            static void Postfix(TeamSelect __instance)
+            {
+                if (!runStuff)
+                {
+                    runStuff = true;
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
         static class ScoreBoardSlotAdjuster
         {
@@ -527,8 +578,8 @@ namespace Alternion
                     }
                     else
                     {
-                        logLow("Failed to assign custom badge to a player:");
-                        logLow(e.Message);
+                        debugLog("Failed to assign custom badge to a player:");
+                        debugLog(e.Message);
                     }
                 }
 
@@ -539,27 +590,16 @@ namespace Alternion
         {
             try
             {
-                if (type == "3p")
+                // If the player Dict contains a reference to the specific weapon, output the texture
+                if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
                 {
-                    // If the player Dict contains a reference to the specific weapon, output the texture
-                    if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
-                    {
-                        logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 3p");
-                        renderer.material.mainTexture = newTexture;
-                    }
-                }
-                else
-                {
-                    if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
-                    {
-                        logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}- 1p");
-                        renderer.material.SetTexture("_MainTex", newTexture);
-                    }
+                    logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}-");
+                    renderer.material.mainTexture = newTexture;
                 }
                 logLow("Applied to -" + renderer.material.name + "- in " + type + " mode.");
             }catch (Exception e)
             {
-                logLow(e.Message);
+                debugLog(e.Message);
             }
         }
 
@@ -656,51 +696,30 @@ namespace Alternion
             }
         }
 
-        [HarmonyPatch(typeof(Character), "íëðäêñïçêêñ", new Type[] { typeof(string) })]
-        static class weaponSkinPatch3rdPerson
+        //apply gold
+        [HarmonyPatch(typeof(WeaponRender), "ìæóòèðêççæî")]
+        static class goldApplyPatch
         {
-            // íëðäêñïçêêñ = setCurrentWeapon(string weapon)
-            // îëðíîïïêñîî = new weapon
-            static void Postfix(Character __instance, string îëðíîïïêñîî)
+            static void Postfix(WeaponRender __instance)
             {
-                // ìñíððåñéåèæ = weaponHand
                 try
                 {
-                    if (__instance.ìñíððåñéåèæ == null)
-                    {
-                        return;
-                    }
-                    PlayerInfo plyrInfo = __instance.transform.parent.GetComponent<PlayerInfo>();
-                    string steamID = plyrInfo.steamID.ToString();
-                    logLow("Got steamID + player info");
+                    PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
+                    string steamID = plyrInf.steamID.ToString();
+
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
-                        logLow("Got user");
-                        for (int i = 0; i < __instance.ìñíððåñéåèæ.childCount; i++)
-                        {
-                            if (îëðíîïïêñîî == __instance.ìñíððåñéåèæ.GetChild(i).name)
-                            {
-                                logLow("Got child");
-                                WeaponRender component = __instance.ìñíððåñéåèæ.GetChild(i).GetComponent<WeaponRender>();
-                                if (component != null)
-                                {
-                                    logLow("setting skin");
-                                    weaponSkinHandler(component, player, "3p");
-                                    break;
-                                }
-                            }
-                        }
+                        weaponSkinHandler(__instance, player, "3p");
                     }
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
-                    logLow("------ 3p skin Error ------");
-                    logLow(e.Message);
-                    logLow("------ 3p skin Error ------");
+                    debugLog("err: " + e.Message);
                 }
             }
         }
 
-        [HarmonyPatch(typeof(WeaponRender), "Update")]
+        [HarmonyPatch(typeof(WeaponRender), "Start")]
         static class weaponSkinpatch1stPerson
         {
             static void Postfix(WeaponRender __instance)
@@ -715,88 +734,11 @@ namespace Alternion
                         {
                             weaponSkinHandler(__instance, player, "1p");
                         }
-                    }else
-                    {
-                        try
-                        {
-                            string finalParent = ".parent";
-                            var parent = __instance.transform.parent;
-                            var finalParent2 = __instance.transform.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent.parent;
-
-                            try
-                            {
-                                if (finalParent2.GetComponent<Character>() != null)
-                                {
-                                    if (finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.gameObject.activeSelf)
-                                    {
-                                        logLow("True");
-                                    }
-                                    else
-                                    {
-                                        logLow("False");
-                                    }
-                                    if (finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>() != null && finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString() != "0")
-                                    {
-                                        logLow("Got playerinfo");
-                                        logLow("ID: " + finalParent2.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString());
-                                    }
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                logLow("parent issue");
-                                logLow(e.Message);
-                            }
-                            return;
-                            for (int i = 0; i < 21; i++)
-                            {
-                                logLow("running " + i.ToString() + " times");
-                                try
-                                {
-                                    if (parent.GetComponent<Character>() != null)
-                                    {
-                                        if (parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.gameObject.activeSelf)
-                                        {
-                                            logLow("True");
-                                        }
-                                        else
-                                        {
-                                            logLow("False");
-                                        }
-                                        if (parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>() != null && parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString() != "0")
-                                        {
-                                            logLow("Got playerinfo");
-                                            logLow("ID: " + parent.GetComponent<Character>().ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString());
-                                        }
-                                        logLow("final trace : -" + finalParent + "-");
-                                        break;
-                                    }
-                                }catch (Exception e)
-                                {
-                                    logLow("parent issue");
-                                    logLow(e.Message);
-                                }
-                                finalParent += ".parent";
-                                parent = parent.parent;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            logLow("failed");
-                            logLow(e.Message);
-                        }
-                        return;
-                        string steamID;
-                        if (playerDictionary.TryGetValue(steamID, out playerObject player))
-                        {
-                            weaponSkinHandler(__instance, player, "3p");
-                        }
                     }
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
-                    logLow("------ 1p skin Error ------");
-                    logLow(e.Message);
-                    logLow("------ 1p skin Error ------");
+                    debugLog(e.Message);
                 }
             }
         }
@@ -1368,7 +1310,7 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow(e.Message);
+                    debugLog(e.Message);
                 }
             }
         }
@@ -1380,15 +1322,16 @@ namespace Alternion
             {
                 Transform child = __instance.transform.FindChild("cannon");
                 int index = GameMode.getParentIndex(child.transform.root);
-
+                if (cachedGameObjects.defaultCannons == null)
+                {
+                    cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
+                }
                 string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                logLow("Gotten cannon: " + steamID);
+
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
-                    if (cachedGameObjects.defaultCannons == null)
-                    {
-                        cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
-                    }
-
+                    logLow("Gotten player");
                     // If vessel is already cached, grab it and add, otherwise create new vessel
                     if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                     {
@@ -1402,8 +1345,9 @@ namespace Alternion
                     }
 
                     // If they have a custom texture, use it, else use default skin
-                    if (player.cannonSkinTexture)
+                    if (player.cannonSkinTexture != null)
                     {
+                        logLow("Setting cannon texture: -" + player.cannonSkinTexture.name + "- for -" + steamID + "-");
                         child.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
                     }
                     else
