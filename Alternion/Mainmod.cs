@@ -330,8 +330,7 @@ namespace Alternion
             }
 
             logLow("Finished downloading textures.");
-            setMainmenuBadge();
-            //setMainMenuWeaponSkin();
+            setupMainMenu();
         }
 
         private void outputPlayerDict()
@@ -385,7 +384,12 @@ namespace Alternion
             //Grab online JSON file
             StartCoroutine(loadJsonFile());
         }
-        void setMainmenuBadge()
+        static void setupMainMenu()
+        {
+            setMainmenuBadge();
+            setMainMenuWeaponSkin();
+        }
+        static void setMainmenuBadge()
         {
             //Only main menu that you will really see is the one intially started
             //This doesn't work if you return to the main menu from a server
@@ -412,6 +416,37 @@ namespace Alternion
                 debugLog(e.Message);
             }
 
+        }
+        static void setMainMenuWeaponSkin()
+        {
+            try
+            {
+                string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+                logLow("Gotten steamID: " + steamID);
+                if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                {
+                    logLow("Gotten player: " + player.getSteamID());
+                    if (player.weaponTextures.TryGetValue("musket", out Texture2D newTex))
+                    {
+                        logLow("Getting musket");
+                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
+                        if (musket != null)
+                        {
+                            logLow("Got musket");
+                            musket.GetComponent<Renderer>().material.mainTexture = newTex;
+                            logLow("Set texture");
+                        }
+                        else
+                        {
+                            debugLog("Main menu musket not found.");
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                debugLog(e.Message);
+            }
         }
 
         //Debugging purposes
@@ -549,115 +584,6 @@ namespace Alternion
                 {
                     runStuff = true;
                 }
-            }
-        }
-
-        [HarmonyPatch(typeof(CharacterCustomizationUI), "Update")]
-        static class characterCustomizationWeaponPatch
-        {
-            static void Postfix(CharacterCustomizationUI __instance)
-            {
-                try
-                {
-                    if (!runStuff)
-                    {
-                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
-                        foreach (var child in musket.transform.parent.parent)
-                        {
-                            logLow(child.ToString());
-                        }
-                        if (musket != null)
-                        {
-                            logLow("gotten object");
-                            var temp1 = musket.GetComponent<WeaponRender>();
-                            logLow("gotten weaponRenderer");
-                            if (temp1 != null)
-                            {
-                                var temp2 = temp1.GetComponent<Renderer>().material.color = Color.red;
-                                logLow("Set color");
-                            }
-                        }
-                        else
-                        {
-                            logLow("Not found");
-                        }
-                        runStuff = true;
-                    }
-                    return;
-                    string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                    logLow("gotten steamID");
-                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
-                    {
-                        if (player.weaponTextures.TryGetValue("musket", out Texture2D newTex))
-                        {
-                            Material mat = __instance.ìðåìééäïìæì.transform.GetComponent<WeaponRender>().GetComponent<Renderer>().material;
-                            mat.mainTexture = newTex;
-                            logLow("Set texture");
-                        }
-                    }
-                }catch(Exception e)
-                {
-                    debugLog(e.Message);
-                }
-            }
-        }
-
-        static void setMainMenuWeaponSkin()
-        {
-            try
-            {
-                var __instance = FindObjectsOfType<SkinnedMeshRenderer>();
-                int count = 0;
-                if (__instance != null)
-                {
-                    logLow("Skinned Mesh found");
-                    foreach (SkinnedMeshRenderer renderer in __instance)
-                    {
-                        var wpn = renderer.transform.parent.GetComponent<WeaponRender>();
-                        count += 1;
-                        if (wpn != null)
-                        {
-                            logLow("eureka!");
-                            logLow(count.ToString());
-                        }
-                        else
-                        {
-                            logLow("bummer");
-                        }
-                        foreach (var keyword in renderer.material.shaderKeywords)
-                        {
-                            logLow(keyword);
-                        }
-                        logLow("Next one");
-                    }
-                    logLow("End of keywords");
-                }
-                else
-                {
-                    logLow("No Skinned Mesh found");
-                }
-                string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                logLow("Gotten steamID: " + steamID);
-                if (playerDictionary.TryGetValue(steamID, out playerObject player))
-                {
-                    logLow("Gotten player: " + player.getSteamID());
-                    if (player.weaponTextures.TryGetValue("musket", out Texture2D newTex))
-                    {
-                        logLow("Getting renderer");
-                        //WeaponRender wpnRender = FindObjectOfType<WeaponRender>();
-                        //Material mat = __instance.ìðåìééäïìæì.transform.parent.GetComponent<WeaponRender>().GetComponent<Renderer>().material;
-                        logLow("Getting material");
-                        //Material mat = wpnRender.GetComponent<Renderer>().material;
-                        logLow("Setting texture");
-                        //mat.mainTexture = newTex;
-                        logLow("Set texture");
-                    }
-                }
-                óèïòòåææäêï.åìçæçìíäåóë.SetActive(false);
-            }
-            catch (Exception e)
-            {
-                debugLog(e.Message);
             }
         }
 
