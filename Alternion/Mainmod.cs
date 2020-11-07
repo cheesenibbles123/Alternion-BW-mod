@@ -35,7 +35,6 @@ namespace Alternion
         static Mainmod Instance;
 
         static bool showTWBadges = false;
-        static bool runStuff = false;
 
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
@@ -575,53 +574,6 @@ namespace Alternion
             }
         }
 
-        [HarmonyPatch(typeof(TeamSelect), "Update")]
-        static class teamSelectPatch
-        {
-            static void Postfix(TeamSelect __instance)
-            {
-                if (!runStuff)
-                {
-                    runStuff = true;
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
-        static class ScoreBoardSlotAdjuster
-        {
-            static void Postfix(ScoreboardSlot __instance, string ìåäòäóëäêèæ, int óîèòèðîðçîì, string ñíçæóñðæéòó, int çïîèïçïñêïæ, int äïóïåòòéðåç, int ìëäòìèçñçìí, int óíïòðíäóïçç, int íîóìóíèíñìå, bool ðèæòðìêóëïð, bool äåîéíèñèììñ, bool æíèòîîìðçóî, int ïîñíñóóåîîñ, int æìíñèéçñîíí, bool òêóçíïåæíîë, bool æåèòðéóçêçó, bool èëçòëæêäêîå, bool ëååííåïäæîè, bool ñîäèñæïîóçó)
-            {
-                try
-                {
-                    string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
-                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
-                    {
-                        if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
-                        {
-                            logLow("Found match for ID " + steamID.ToString());
-                            __instance.éòëèïòëóæèó.texture = player.badgeTexture; // loadTexture(badgeName[i], 110, 47);
-                            logLow("Set texture");
-                        }
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.Contains("Object reference not set to an instance of an object"))
-                    {
-                        //Go do one
-                    }
-                    else
-                    {
-                        debugLog("Failed to assign custom badge to a player:");
-                        debugLog(e.Message);
-                    }
-                }
-
-            }
-        }
-
         static void assignWeaponToRenderer(WeaponRender __instance, Renderer renderer, playerObject player, string weapon, string type)
         {
             try
@@ -729,6 +681,41 @@ namespace Alternion
                     // If not known, output here
                     logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
+            }
+        }
+
+        [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
+        static class ScoreBoardSlotAdjuster
+        {
+            static void Postfix(ScoreboardSlot __instance, string ìåäòäóëäêèæ, int óîèòèðîðçîì, string ñíçæóñðæéòó, int çïîèïçïñêïæ, int äïóïåòòéðåç, int ìëäòìèçñçìí, int óíïòðíäóïçç, int íîóìóíèíñìå, bool ðèæòðìêóëïð, bool äåîéíèñèììñ, bool æíèòîîìðçóî, int ïîñíñóóåîîñ, int æìíñèéçñîíí, bool òêóçíïåæíîë, bool æåèòðéóçêçó, bool èëçòëæêäêîå, bool ëååííåïäæîè, bool ñîäèñæïîóçó)
+            {
+                try
+                {
+                    string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
+                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                    {
+                        if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+                        {
+                            logLow("Found match for ID " + steamID.ToString());
+                            __instance.éòëèïòëóæèó.texture = player.badgeTexture; // loadTexture(badgeName[i], 110, 47);
+                            logLow("Set texture");
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    if (e.Message.Contains("Object reference not set to an instance of an object"))
+                    {
+                        //Go do one
+                    }
+                    else
+                    {
+                        debugLog("Failed to assign custom badge to a player:");
+                        debugLog(e.Message);
+                    }
+                }
+
             }
         }
 
@@ -1359,21 +1346,15 @@ namespace Alternion
                 try
                 {
                     Transform child = __instance.transform.FindChild("cannon");
-                    if (child != null)
-                    {
-                        logLow("Gotten child -operational");
-                    }else
-                    {
-                        logLow("Child = null");
-                    }
-                    int index = GameMode.getParentIndex(child.transform.root);
-                    logLow($"Gotten index {index} -operational");
+                    int.TryParse( child.transform.root.name.Split('m')[1] , out int index);
+                    logLow($"Gotten index {index - 1} -operational");
                     if (cachedGameObjects.defaultCannons == null)
                     {
-                        logLow($"set default cannons -operational");
+                        logLow("set default cannons -operational");
                         cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
                     }
-                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                    logLow("Default cannons already exist -operational");
+                    string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
                     logLow("Gotten steamID: " + steamID + " -operational");
 
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
