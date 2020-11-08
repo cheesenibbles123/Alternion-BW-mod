@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using System.Net;
 using System.IO;
@@ -75,6 +74,7 @@ namespace Alternion
                 {
                     webPlayerObject player = JsonUtility.FromJson<webPlayerObject>(json[i]);
                     webPlayers.Add(player);
+                    LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players");
                 }
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace Alternion
                 debugLog(e.Message);
                 debugLog("------------------");
             }
-            logLow("Finished loading Json");
+            LoadingBar.updatePercentage(20, "Finished getting players");
             StartCoroutine(DownloadTextures(webPlayers));
         }
         private IEnumerator waterMark()
@@ -114,8 +114,6 @@ namespace Alternion
             List<string> alreadyDownloaded = new List<string>();
             WWW www;
             bool flag;
-
-            LoadingBar.updatePercentage(20, "Downloading Textures");
             //Grab UI textures
 
             //Grab Player textures
@@ -303,7 +301,6 @@ namespace Alternion
 
                 playerDictionary.Add(players[i].steamID, finalPlayer);
                 float newPercentage = 20 + (60 * ((float)i / (float)players.Count));
-                logLow(newPercentage.ToString());
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
 
@@ -385,19 +382,14 @@ namespace Alternion
                     return;
                 }
                 string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                logLow("Gotten steamID: " + steamID);
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
-                    logLow("Gotten player: " + player.getSteamID());
                     if (player.weaponTextures.TryGetValue("musket", out Texture2D newTex))
                     {
-                        logLow("Getting musket");
                         var musket = GameObject.Find("wpn_standardMusket_LOD1");
                         if (musket != null)
                         {
-                            logLow("Got musket");
                             musket.GetComponent<Renderer>().material.mainTexture = newTex;
-                            logLow("Set texture");
                         }
                         else
                         {
@@ -535,22 +527,20 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                logLow(e.Message);
+                debugLog(e.Message);
                 //Ignore Exception
             }
         }
 
-        static void assignWeaponToRenderer(WeaponRender __instance, Renderer renderer, playerObject player, string weapon, string type)
+        static void assignWeaponToRenderer(WeaponRender __instance, Renderer renderer, playerObject player, string weapon)
         {
             try
             {
                 // If the player Dict contains a reference to the specific weapon, output the texture
                 if (player.weaponTextures.TryGetValue(weapon, out Texture2D newTexture))
                 {
-                    logLow($"Assigning -{weapon}- skin to -{player.getSteamID()}-");
                     renderer.material.mainTexture = newTexture;
                 }
-                logLow("Applied to -" + renderer.material.name + "- in " + type + " mode.");
             }catch (Exception e)
             {
                 debugLog(e.Message);
@@ -561,87 +551,59 @@ namespace Alternion
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
-            logLow(renderer.material.mainTexture.name);
 
             switch (renderer.material.mainTexture.name)
             {
                 case "wpn_standardMusket_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "musket", type);
-                    break;
-                case "musket_diamond":
-                    assignWeaponToRenderer(__instance, renderer, player, "musket", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "musket");
                     break;
                 case "wpn_standardCutlass_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "cutlass", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "cutlass");
                     break;
                 case "wpn_blunderbuss_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "blunderbuss", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "blunderbuss");
                     break;
                 case "wpn_nockGun_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "nockgun", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "nockgun");
                     break;
                 case "wpn_handMortar_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "handmortar", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "handmortar");
                     break;
                 case "wpn_rapier_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "rapier", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "rapier");
                     break;
                 case "wpn_dagger_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "dagger", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "dagger");
                     break;
                 case "wpn_bottle_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "bottle", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "bottle");
                     break;
                 case "wpn_standardPistol_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "standardPistol", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "standardPistol");
                     break;
                 case "wpn_shortpistol_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "shortPistol", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "shortPistol");
                     break;
                 case "wpn_duckfoot_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "duckfoot", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "duckfoot");
                     break;
                 case "wpn_annelyRevolver_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "annelyRevolver", type);
-                    break;
-                case "wpn_rumHealth_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "rumBottle", type);
-                    break;
-                case "wpn_teaCup_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "teaCup", type);
-                    break;
-                case "wpn_grenade_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "grenade", type);
-                    break;
-                case "prp_hammer_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "hammer", type);
-                    break;
-                case "prp_lighter_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "lighter", type);
-                    break;
-                case "wpn_booty_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "booty", type);
-                    break;
-                case "wpn_ramrod_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "ramrod", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "annelyRevolver");
                     break;
                 case "wpn_tomohawk_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "tomohawk", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "tomohawk");
                     break;
                 case "wpn_matchlockRevolver_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "matchlockRevolver", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "matchlockRevolver");
                     break;
                 case "wpn_twoHandAxe_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "axe", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "axe");
                     break;
                 case "wpn_boardingPike_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "pike", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "pike");
                     break;
                 case "wpn_spyglass_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "spyglass", type);
-                    break;
-                case "prp_atlas_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "atlass", type);
+                    assignWeaponToRenderer(__instance, renderer, player, "spyglass");
                     break;
                 default:
                     // If not known, output here
@@ -712,6 +674,28 @@ namespace Alternion
                 catch (Exception e)
                 {
                     debugLog("err: " + e.Message);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(MainMenu), "Start")]
+        static class mainMenuStuffPatch
+        {
+            static void Postfix(MainMenu __instance)
+            {
+                setMainmenuBadge();
+                setMainMenuWeaponSkin();
+            }
+        }
+
+        [HarmonyPatch(typeof(MainMenu), "toggleKSBadge")]
+        static class toggleKSPatch
+        {
+            static void Postfix(MainMenu __instance, bool on)
+            {
+                if (!on)
+                {
+                    setMainmenuBadge();
                 }
             }
         }

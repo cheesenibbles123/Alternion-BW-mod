@@ -17,7 +17,7 @@ namespace Alternion
         bool isEnabled = false;
         static string configFile = "AlternionConfig.cfg";
 
-        //UI SETUP
+        //UI SETUP (Not yet implemented scaling)
         //MAIN BOX
         Vector4 boxSettings = new Vector4(20, 60, 250, 300);
         //BUTTONS
@@ -131,8 +131,6 @@ namespace Alternion
                 if (array[i].Contains("="))
                 {
                     string[] splitArr = array[i].Split(splitCharacter);
-                    log("Start: -" + splitArr[0] + "-");
-                    log("Value: -" + splitArr[1] + "-");
                     if (splitArr.Length >= 2)
                     {
                         switch (splitArr[0])
