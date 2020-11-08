@@ -9,6 +9,7 @@ namespace Alternion
     public class webPlayerObject
     {
         public string steamID;
+        public string maskSkinName;
         public string badgeName;
         public string sailSkinName;
         public string mainSailName;

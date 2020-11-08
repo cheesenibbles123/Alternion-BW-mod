@@ -12,6 +12,7 @@ namespace Alternion
         //Format will be TEAMNUMBER / SHIP
         public Texture2D defaultSails = null;
         public Texture2D defaultCannons = null;
+        public Texture defaultDestroyCannons = null;
         public Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
 
         public void setDefaultSails(Texture2D newTexture)

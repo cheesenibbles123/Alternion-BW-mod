@@ -57,6 +57,7 @@ namespace Alternion
         {
             try
             {
+                UnityEngine.Random.InitState(DateTime.Now.Millisecond);
                 int imgToUse = UnityEngine.Random.Range(0, loadingTextures.Count);
 
                 return loadingTextures[imgToUse];

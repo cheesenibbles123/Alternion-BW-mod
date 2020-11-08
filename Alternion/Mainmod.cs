@@ -44,6 +44,9 @@ namespace Alternion
 
                 //Setup watermark
                 StartCoroutine(waterMark());
+
+                //Rotate Character
+                InvokeRepeating("rotateMainMenuCharacter", 1, 0.1f);
             }
             catch (Exception e)
             {
@@ -58,6 +61,37 @@ namespace Alternion
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
             }
         }
+
+        static void rotateMainMenuCharacter()
+        {
+            var mainCharacter = GameObject.Find("default_character_rig");
+            if (óèïòòåææäêï.äíæóéòñäîîó.activeSelf)
+            {
+                if (global::Input.GetMouseButton(1))
+                {
+                    mainCharacter.transform.parent.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+                }
+            }
+        }
+
+        static void outputPlayerDict()
+        {
+            logLow("----");
+            foreach (KeyValuePair<string, playerObject> player in playerDictionary)
+            {
+                try
+                {
+                    logLow(player.Value.getSteamID());
+                    logLow(player.Value.goldenMaskSkin.name);
+                }
+                catch (Exception e)
+                {
+                    logLow(e.Message);
+                }
+            }
+            logLow("----");
+        }
+
 
         private IEnumerator loadJsonFile()
         {
@@ -150,6 +184,37 @@ namespace Alternion
                         debugLog("------------------");
                         debugLog("Badge Download Error");
                         debugLog(e.Message);
+                    }
+                }
+
+                if (players[i].maskSkinName != "null")
+                {
+                    flag = alreadyDownloaded.Contains(players[i].maskSkinName);
+                    if (!flag)
+                    {
+                        www = new WWW(mainUrl + "MaskSkins/" + players[i].maskSkinName + ".png");
+                        yield return www;
+                        try
+                        {
+                            byte[] bytes = www.texture.EncodeToPNG();
+                            File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + players[i].maskSkinName + ".png", bytes);
+                        }
+                        catch (Exception e)
+                        {
+                            debugLog(e.Message);
+                        }
+                        try
+                        {
+
+                            finalPlayer.goldenMaskSkin = loadTexture(players[i].maskSkinName, texturesFilePath + "MaskSkins/", 100, 40);
+                            finalPlayer.goldenMaskSkin.name = players[i].maskSkinName;
+                        }
+                        catch (Exception e)
+                        {
+                            debugLog("------------------");
+                            debugLog("Mask Download Error");
+                            debugLog(e.Message);
+                        }
                     }
                 }
 
@@ -303,7 +368,7 @@ namespace Alternion
                 float newPercentage = 20 + (60 * ((float)i / (float)players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
-
+            outputPlayerDict();
             setupMainMenu();
         }
 
@@ -317,9 +382,9 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "WeaponSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SailSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/"); 
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MaskSkins/");
             }
-            logLow("Finished directories");
 
             //Grab online JSON file
             StartCoroutine(loadJsonFile());
@@ -578,8 +643,20 @@ namespace Alternion
                 case "wpn_bottle_alb":
                     assignWeaponToRenderer(__instance, renderer, player, "bottle");
                     break;
+                case "wpn_rumHealth_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "rum");
+                    break;
+                case "prp_hammer_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "hammer");
+                    break;
                 case "wpn_standardPistol_stock_alb":
                     assignWeaponToRenderer(__instance, renderer, player, "standardPistol");
+                    break;
+                case "prp_atlas01_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "atlas01");
+                    break;
+                case "prp_bucket_alb":
+                    assignWeaponToRenderer(__instance, renderer, player, "bucket");
                     break;
                 case "wpn_shortpistol_alb":
                     assignWeaponToRenderer(__instance, renderer, player, "shortPistol");
@@ -628,9 +705,7 @@ namespace Alternion
                     {
                         if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                         {
-                            logLow("Found match for ID " + steamID.ToString());
                             __instance.éòëèïòëóæèó.texture = player.badgeTexture; // loadTexture(badgeName[i], 110, 47);
-                            logLow("Set texture");
                         }
                     }
 
@@ -669,6 +744,29 @@ namespace Alternion
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
                         weaponSkinHandler(__instance, player, "3p");
+                    }
+                }
+                catch (Exception e)
+                {
+                    debugLog("err: " + e.Message);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(Character), "setGoldMask")]
+        static class goldMaskPatch
+        {
+            static void Postfix(Character __instance)
+            {
+                try
+                {
+                    logLow("Entered patch");
+                    string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
+                    logLow("Gotten steamID: " + steamID);
+                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                    {
+                        Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
+                        renderer.material.mainTexture = player.goldenMaskSkin;
                     }
                 }
                 catch (Exception e)
@@ -1317,28 +1415,20 @@ namespace Alternion
                     }
                     Transform child = __instance.transform.FindChild("cannon");
                     int.TryParse( child.transform.root.name.Split('m')[1] , out int index);
-                    logLow($"Gotten index {index - 1} -operational");
                     if (cachedGameObjects.defaultCannons == null)
                     {
-                        logLow("set default cannons -operational");
                         cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
                     }
-                    logLow("Default cannons already exist -operational");
                     string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
-                    logLow("Gotten steamID: " + steamID + " -operational");
-
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
-                        logLow("Gotten player");
                         // If vessel is already cached, grab it and add, otherwise create new vessel
                         if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                         {
-                            logLow($"Added to existing vessel -operational");
                             vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
                         }
                         else
                         {
-                            logLow($"New vessel -operational");
                             cachedShip newVessel = new cachedShip();
                             newVessel.cannonOperationalDict.Add("1", __instance);
                             cachedGameObjects.ships.Add(index.ToString(), newVessel);
@@ -1347,16 +1437,16 @@ namespace Alternion
                         // If they have a custom texture, use it, else use default skin
                         if (player.cannonSkinTexture != null)
                         {
-                            logLow("Setting cannon texture: -" + player.cannonSkinTexture.name + "- for -" + steamID + "-");
                             child.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
                         }
                         else
                         {
-                            logLow($"Setting default skin -operational");
-                            child.GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
+                            if (cachedGameObjects.defaultCannons != null)
+                            {
+                                child.GetComponent<Renderer>().material.SetTexture("_MainTex", cachedGameObjects.defaultCannons);
+                            }
                         }
                     }
-                    logLow($"Finished -operational");
                 }
                 catch (Exception e)
                 {
@@ -1378,37 +1468,35 @@ namespace Alternion
                     {
                         return;
                     }
-                    int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
-                    logLow("Gotten index -destroy");
-                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-                    logLow("Gotten steamID -destroy");
+                    if (cachedGameObjects.defaultCannons == null)
+                    {
+                        cachedGameObjects.defaultDestroyCannons = __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.mainTexture;
+                    }
+                    int.TryParse(__instance.æïìçñðåììêç.transform.root.name.Split('m')[1], out int index);
+                    logLow("INDEX: " + index.ToString());
+                    string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
+                    logLow("STEAMID: " + steamID);
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
                         // If vessel is cached, add cannon to it, else create new vessel
-                        logLow("Gotten player -destroy");
                         if (cachedGameObjects.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                         {
                             vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
-                            logLow("Added to vessel -destroy");
                         }
                         else
                         {
-                            logLow("Created vessel -destroy");
                             cachedShip newVessel = new cachedShip();
                             newVessel.cannonDestroyDict.Add("1", __instance);
                             cachedGameObjects.ships.Add(index.ToString(), newVessel);
                         }
 
-                        logLow("Passed vessel -destroy");
 
                         // If they have a cannon skin then apply
                         if (player.cannonSkinTexture != null)
                         {
-                            logLow("Applied skin -destroy");
                             __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
                         }
 
-                        logLow("Finished -destroy");
                     }
                 }catch (Exception e)
                 {

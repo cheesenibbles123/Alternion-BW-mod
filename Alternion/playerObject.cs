@@ -10,6 +10,7 @@ namespace Alternion
     public class playerObject
     {
         private string steamID;
+        public Texture2D goldenMaskSkin;
         public Texture2D badgeTexture;
         public Texture2D sailSkinTexture;
         public Texture2D mainSailTexture;
