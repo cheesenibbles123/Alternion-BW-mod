@@ -41,7 +41,6 @@ namespace Alternion
 
         void Start()
         {
-
             var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
             //Texture background;
             foreach (Texture texture in mainTex)

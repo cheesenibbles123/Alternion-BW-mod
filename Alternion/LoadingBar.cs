@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using BWModLoader;
 using UnityEngine.UI;
 
 namespace Alternion
 {
+    [Mod]
     public class LoadingBar : MonoBehaviour
     {
-        List<Texture> loadingTextures = new List<Texture>();
+        static List<Texture> loadingTextures = new List<Texture>();
         Texture activeTexture;
         static bool isLoading = true;
 
@@ -28,9 +30,7 @@ namespace Alternion
 
         void Start()
         {
-
             var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
-            //Texture background;
             foreach (Texture texture in mainTex)
             {
                 if (texture.name.Length >= 1)
@@ -39,6 +39,10 @@ namespace Alternion
                 }
             }
             updatePercentage(0, "Starting bar");
+        }
+        static void log(string message)
+        {
+            Log.logger.Log(message);
         }
 
         void Update()
@@ -51,9 +55,17 @@ namespace Alternion
         }
         Texture getNewTexture()
         {
-            int imgToUse = UnityEngine.Random.Range(0, loadingTextures.Count);
-            return loadingTextures[imgToUse];
+            try
+            {
+                int imgToUse = UnityEngine.Random.Range(0, loadingTextures.Count);
 
+                return loadingTextures[imgToUse];
+            }catch (Exception e)
+            {
+                Log.logger.Log("ERROR GETTING TEXTURE");
+                Log.logger.Log(e.Message);
+                return Texture2D.whiteTexture;
+            }
         }
         void OnGUI()
         {
@@ -64,9 +76,9 @@ namespace Alternion
             }
         }
 
-        public static void updatePercentage(int newPercentage, string newText)
+        public static void updatePercentage(float newPercentage, string newText)
         {
-            loadingText = newText + "... " + newPercentage.ToString();
+            loadingText = newText + "... " + newPercentage.ToString() + "%";
             hasPercentageChanged = true;
             if (newPercentage >= 100)
             {

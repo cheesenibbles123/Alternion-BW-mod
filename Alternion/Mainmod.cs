@@ -302,7 +302,9 @@ namespace Alternion
                 }
 
                 playerDictionary.Add(players[i].steamID, finalPlayer);
-                LoadingBar.updatePercentage(Convert.ToInt32( 20 + (60 * ( i / players.Count)) ), "Downloading Textures");
+                float newPercentage = 20 + (60 * ((float)i / (float)players.Count));
+                logLow(newPercentage.ToString());
+                LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
 
             setupMainMenu();
