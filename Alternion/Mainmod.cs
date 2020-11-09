@@ -27,8 +27,6 @@ namespace Alternion
         static Dictionary<string, playerObject> playerDictionary = new Dictionary<string, playerObject>();
 
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
-        static int logLevel = 1;
-        static bool showTWBadges = false;
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
         void Start()
@@ -62,18 +60,7 @@ namespace Alternion
             }
         }
 
-        static void rotateMainMenuCharacter()
-        {
-            var mainCharacter = GameObject.Find("default_character_rig");
-            if (óèïòòåææäêï.äíæóéòñäîîó.activeSelf)
-            {
-                if (global::Input.GetMouseButton(1))
-                {
-                    mainCharacter.transform.parent.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
-                }
-            }
-        }
-
+        // Debugging Only
         static void outputPlayerDict()
         {
             logLow("----");
@@ -91,7 +78,6 @@ namespace Alternion
             }
             logLow("----");
         }
-
 
         private IEnumerator loadJsonFile()
         {
@@ -148,6 +134,7 @@ namespace Alternion
             List<string> alreadyDownloaded = new List<string>();
             WWW www;
             bool flag;
+            LoadingBar.updatePercentage(20, "Preparing to download");
             //Grab UI textures
 
             //Grab Player textures
@@ -368,7 +355,7 @@ namespace Alternion
                 float newPercentage = 20 + (60 * ((float)i / (float)players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
-            outputPlayerDict();
+            // outputPlayerDict();
             setupMainMenu();
         }
 
@@ -392,7 +379,7 @@ namespace Alternion
         static void setupMainMenu()
         {
             LoadingBar.updatePercentage(90, "Preparing Main Menu");
-            if (!ModGUI.useWeaponSkins && !ModGUI.useBadges)
+            if (!AlternionSettings.useWeaponSkins && !AlternionSettings.useBadges)
             {
                 LoadingBar.updatePercentage(100, "Finished!");
                 return;
@@ -402,9 +389,10 @@ namespace Alternion
         static void setMainmenuBadge()
         {
 
-            if (!ModGUI.useBadges)
+            if (!AlternionSettings.useBadges)
             {
-                LoadingBar.updatePercentage(95, "applying wpn skin");
+                LoadingBar.updatePercentage(95, "applying weapon skin");
+                setMainMenuWeaponSkin();
                 return;
             }
 
@@ -417,7 +405,7 @@ namespace Alternion
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
                 if (playerDictionary.TryGetValue(steamID, out playerObject player))
                 {
-                    if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
+                    if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                     {
                         if (player.badgeTexture)
                         {
@@ -433,7 +421,7 @@ namespace Alternion
                 debugLog(e.Message);
             }
 
-            LoadingBar.updatePercentage(95, "applying wpn skin");
+            LoadingBar.updatePercentage(95, "Applying weapon skin");
             setMainMenuWeaponSkin();
 
         }
@@ -441,7 +429,7 @@ namespace Alternion
         {
             try
             {
-                if (!ModGUI.useWeaponSkins)
+                if (!AlternionSettings.useWeaponSkins)
                 {
                     LoadingBar.updatePercentage(100, "Finished!");
                     return;
@@ -476,7 +464,7 @@ namespace Alternion
         {
             //Just easier to type than Log.logger.Log
             // Also lets me just set logLevel to 0 if I dont want to deal with the spam.
-            if (logLevel > 0)
+            if (AlternionSettings.loggingLevel > 0)
             {
                 Log.logger.Log(message);
             }
@@ -555,36 +543,47 @@ namespace Alternion
                 {
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
-
-                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
+                        if (AlternionSettings.useSecondarySails)
                         {
-                            if (player.sailSkinTexture)
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
+                                if (player.sailSkinTexture)
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
+                                }
                             }
                         }
 
-                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
+                        if (AlternionSettings.useMainSails)
                         {
-                            if (player.mainSailTexture)
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = player.mainSailTexture;
+                                if (player.mainSailTexture)
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = player.mainSailTexture;
+                                }
                             }
                         }
 
-                        foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                        if (AlternionSettings.useCannonSkins)
                         {
-                            if (player.cannonSkinTexture)
+                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
-                                indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
+                                if (player.cannonSkinTexture)
+                                {
+                                    indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
+                                }
                             }
                         }
 
-                        foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                        if (AlternionSettings.useCannonSkins)
                         {
-                            if (player.cannonSkinTexture)
+                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
                             {
-                                indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
+                                if (player.cannonSkinTexture)
+                                {
+                                    indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", player.cannonSkinTexture);
+                                }
                             }
                         }
                     }
@@ -696,14 +695,14 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useBadges)
+                    if (!AlternionSettings.useBadges)
                     {
                         return;
                     }
                     string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
-                        if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+                        if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                         {
                             __instance.éòëèïòëóæèó.texture = player.badgeTexture; // loadTexture(badgeName[i], 110, 47);
                         }
@@ -734,7 +733,7 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useWeaponSkins)
+                    if (!AlternionSettings.useWeaponSkins)
                     {
                         return;
                     }
@@ -760,13 +759,14 @@ namespace Alternion
             {
                 try
                 {
-                    logLow("Entered patch");
-                    string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                    logLow("Gotten steamID: " + steamID);
-                    if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                    if (AlternionSettings.useMaskSkins)
                     {
-                        Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
-                        renderer.material.mainTexture = player.goldenMaskSkin;
+                        string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
+                        if (playerDictionary.TryGetValue(steamID, out playerObject player))
+                        {
+                            Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
+                            renderer.material.mainTexture = player.goldenMaskSkin;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -791,9 +791,12 @@ namespace Alternion
         {
             static void Postfix(MainMenu __instance, bool on)
             {
-                if (!on)
+                if (!AlternionSettings.useBadges)
                 {
-                    setMainmenuBadge();
+                    if (!on)
+                    {
+                        setMainmenuBadge();
+                    }
                 }
             }
         }
@@ -805,7 +808,7 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useWeaponSkins)
+                    if (!AlternionSettings.useWeaponSkins)
                     {
                         return;
                     }
@@ -833,7 +836,7 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useMainSails && ModGUI.useSecondarySails)
+                    if (!AlternionSettings.useMainSails && !AlternionSettings.useSecondarySails)
                     {
                         return;
                     }
@@ -861,7 +864,7 @@ namespace Alternion
                         switch (shipType)
                         {
                             case "cruiser":
-                                if (__instance.name == "hmsSophie_sails08" && ModGUI.useMainSails)
+                                if (__instance.name == "hmsSophie_sails08" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -885,7 +888,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -911,7 +914,7 @@ namespace Alternion
 
                                 break;
                             case "galleon":
-                                if (__instance.name == "galleon_sails_01" && ModGUI.useMainSails)
+                                if (__instance.name == "galleon_sails_01" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -935,7 +938,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -960,7 +963,7 @@ namespace Alternion
 
                                 break;
                             case "brig":
-                                if (__instance.name == "hmsSpeedy_sails04" && ModGUI.useMainSails)
+                                if (__instance.name == "hmsSpeedy_sails04" && AlternionSettings.useMainSails)
                                 {
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
                                     {
@@ -982,7 +985,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1007,7 +1010,7 @@ namespace Alternion
 
                                 break;
                             case "xebec":
-                                if (__instance.name == "xebec_sail03" && ModGUI.useMainSails)
+                                if (__instance.name == "xebec_sail03" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1030,7 +1033,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1055,7 +1058,7 @@ namespace Alternion
 
                                 break;
                             case "bombvessel":
-                                if (__instance.name == "bombVessel_sails07" && ModGUI.useMainSails)
+                                if (__instance.name == "bombVessel_sails07" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1069,7 +1072,7 @@ namespace Alternion
                                         cachedGameObjects.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailTexture && ModGUI.useSecondarySails)
+                                    if (player.mainSailTexture && AlternionSettings.useSecondarySails)
                                     {
                                         __instance.GetComponent<Renderer>().material.mainTexture = player.mainSailTexture;
                                     }
@@ -1078,7 +1081,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1103,7 +1106,7 @@ namespace Alternion
 
                                 break;
                             case "gunboat":
-                                if (__instance.name == "gunboat_sails02" && ModGUI.useMainSails)
+                                if (__instance.name == "gunboat_sails02" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1126,7 +1129,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1151,7 +1154,7 @@ namespace Alternion
 
                                 break;
                             case "cutter":
-                                if (__instance.name == "hmsAlert_sails02" && ModGUI.useMainSails)
+                                if (__instance.name == "hmsAlert_sails02" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1174,7 +1177,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1199,7 +1202,7 @@ namespace Alternion
 
                                 break;
                             case "bombketch":
-                                if (__instance.name == "bombKetch_sails06" && ModGUI.useMainSails)
+                                if (__instance.name == "bombKetch_sails06" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1222,7 +1225,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1247,7 +1250,7 @@ namespace Alternion
 
                                 break;
                             case "carrack":
-                                if (__instance.name == "carrack_sail03" && ModGUI.useMainSails)
+                                if (__instance.name == "carrack_sail03" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1270,7 +1273,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1295,7 +1298,7 @@ namespace Alternion
 
                                 break;
                             case "junk":
-                                if (__instance.name == "junk_sails_01" && ModGUI.useMainSails)
+                                if (__instance.name == "junk_sails_01" && AlternionSettings.useMainSails)
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1318,7 +1321,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1343,7 +1346,7 @@ namespace Alternion
 
                                 break;
                             case "schooner":
-                                if ((__instance.name == "schooner_sails02" && ModGUI.useMainSails) || (__instance.name == "schooner_sails00" && ModGUI.useMainSails))
+                                if ((__instance.name == "schooner_sails02" && AlternionSettings.useMainSails) || (__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
                                 {
 
                                     if (cachedGameObjects.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
@@ -1366,7 +1369,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = cachedGameObjects.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinTexture && ModGUI.useSecondarySails)
+                                else if (player.sailSkinTexture && AlternionSettings.useSecondarySails)
                                 {
                                     __instance.GetComponent<Renderer>().material.mainTexture = player.sailSkinTexture;
                                 }
@@ -1409,16 +1412,12 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useCannonSkins)
+                    if (!AlternionSettings.useCannonSkins)
                     {
                         return;
                     }
                     Transform child = __instance.transform.FindChild("cannon");
                     int.TryParse( child.transform.root.name.Split('m')[1] , out int index);
-                    if (cachedGameObjects.defaultCannons == null)
-                    {
-                        cachedGameObjects.setDefaultCannons((Texture2D)child.GetComponent<Renderer>().material.mainTexture);
-                    }
                     string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
@@ -1450,9 +1449,16 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    debugLog("Cannon operational start");
-                    debugLog(e.Message);
-                    debugLog("Cannon operational end");
+                    if (e.Message.Contains("Object reference not set to an instance of an object"))
+                    {
+                        //Go do one
+                    }
+                    else
+                    {
+                        debugLog("Cannon operational error start");
+                        debugLog(e.Message);
+                        debugLog("Cannon operational error end");
+                    }
                 }
             }
         }
@@ -1464,7 +1470,7 @@ namespace Alternion
             {
                 try
                 {
-                    if (!ModGUI.useCannonSkins)
+                    if (!AlternionSettings.useCannonSkins)
                     {
                         return;
                     }
@@ -1473,9 +1479,7 @@ namespace Alternion
                         cachedGameObjects.defaultDestroyCannons = __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.mainTexture;
                     }
                     int.TryParse(__instance.æïìçñðåììêç.transform.root.name.Split('m')[1], out int index);
-                    logLow("INDEX: " + index.ToString());
                     string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
-                    logLow("STEAMID: " + steamID);
                     if (playerDictionary.TryGetValue(steamID, out playerObject player))
                     {
                         // If vessel is cached, add cannon to it, else create new vessel
@@ -1515,7 +1519,7 @@ namespace Alternion
                 // Sets win screen badges
                 try
                 {
-                    if (!ModGUI.useBadges)
+                    if (!AlternionSettings.useBadges)
                     {
                         return;
                     }
@@ -1527,7 +1531,7 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logLow(e.Message);
+                    debugLog(e.Message);
                 }
             }
         }
