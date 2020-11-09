@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Alternion")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Blackwake Mod created by Archie the Inventor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Alternion")]
