@@ -1,19 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Alternion
 {
-    public class webPlayerObject
+    [Serializable]
+    public class playerObject
     {
         public string steamID;
         public string maskSkinName;
         public string badgeName;
         public string sailSkinName;
         public string mainSailName;
-        public string weaponSkinName;
         public string cannonSkinName;
+        public weaponObject[] weaponSkins;
+    }
+
+    [Serializable]
+    public class weaponObject
+    {
+        public string weaponName;
+        public string weaponSkin;
     }
 }

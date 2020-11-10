@@ -1,17 +1,15 @@
-﻿using System.IO;
-using UnityEngine;
+﻿using UnityEngine;
 using BWModLoader;
-using System;
 
 namespace Alternion
 {
     [Mod]
     public class ModGUI : MonoBehaviour
     {
-        Texture mainBoxBackground;
-        Texture mainButtonBackground;
-        Texture checkMark;
-        Texture checkBox;
+        static Texture mainBoxBackground;
+        static Texture mainButtonBackground;
+        static Texture checkMark;
+        static Texture checkBox;
         bool isEnabled = false;
 
         //Placeholder Declarations for displayButtons()
@@ -39,31 +37,26 @@ namespace Alternion
 
         int buttonOffset = 50;
 
+        // Setting up initial textures
+        public static void setMainBoxBackground(Texture newTexture)
+        {
+            mainBoxBackground = newTexture;
+        }
+        public static void setMainButtonBackground(Texture newTexture)
+        {
+            mainButtonBackground = newTexture;
+        }
+        public static void setCheckmark(Texture newTexture)
+        {
+            checkMark = newTexture;
+        }
+        public static void setCheckBox(Texture newTexture)
+        {
+            checkBox = newTexture;
+        }
+
         void Start()
         {
-            var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
-            //Texture background;
-            foreach (Texture texture in mainTex)
-            {
-                if (texture.name == "oldmap1")
-                {
-                    //background = texture;
-                    mainBoxBackground = texture;
-                }
-                if (texture.name == "panel_medium")
-                {
-                    mainButtonBackground = texture;
-                }
-                if (texture.name == "Checkmark")
-                {
-                    checkMark = texture;
-                }
-                if (texture.name == "UISprite")
-                {
-                    checkBox = texture;
-                }
-            }
-
             horizontalCheckBox = new Vector2(horizontalButton.x + buttonWH.x + 40, horizontalButton.y + 10);
         }
         void OnGUI()

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BWModLoader;
 using System.IO;
 using UnityEngine;
@@ -34,6 +30,7 @@ namespace Alternion
         void Start()
         {
             checkConfig();
+            setTextures();
         }
 
         void checkConfig()
@@ -204,6 +201,39 @@ namespace Alternion
             else
             {
                 return 0;
+            }
+        }
+
+        void setTextures()
+        {
+            var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
+            //Texture background;
+            foreach (Texture texture in mainTex)
+            {
+                switch (texture.name)
+                {
+                    case "oldmap1":
+                        ModGUI.setMainBoxBackground(texture);
+                        break;
+                    case "panel_medium":
+                        ModGUI.setMainButtonBackground(texture);
+                        break;
+                    case "Checkmark":
+                        ModGUI.setCheckmark(texture);
+                        break;
+                    case "UISprite":
+                        ModGUI.setCheckBox(texture);
+                        break;
+                    case "prp_cannon_alb":
+                        theGreatCacher.setDefaultCannons(texture);
+                        break;
+                    case "ships_sails_alb":
+                        theGreatCacher.setDefaultSails(texture);
+                        break;
+                    default:
+                        //log(texture.name);
+                        break;
+                }
             }
         }
     }
