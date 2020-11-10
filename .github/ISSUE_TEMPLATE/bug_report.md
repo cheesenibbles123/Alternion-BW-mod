@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help me fix it
 title: "[BUG]"
-labels: bug
-assignees: ''
+labels: bug, help wanted
+assignees: cheesenibbles123
 
 ---
 
