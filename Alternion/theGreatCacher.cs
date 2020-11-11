@@ -8,6 +8,7 @@ namespace Alternion
     public class theGreatCacher : MonoBehaviour
     {
         //Format will be TEAMNUMBER / SHIP
+        public static bool isActive = false;
         public static Texture defaultSails;
         public static Texture defaultCannons;
         public static Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
@@ -18,7 +19,10 @@ namespace Alternion
         public static Dictionary<string, Texture> secondarySails = new Dictionary<string, Texture>();
         public static Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
         public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
-
+        void Start()
+        {
+            isActive = true;
+        }
         public static void setDefaultSails(Texture newTexture)
         {
             defaultSails = newTexture;

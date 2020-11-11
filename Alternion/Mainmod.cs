@@ -37,7 +37,7 @@ namespace Alternion
                 StartCoroutine(waterMark());
 
                 //Rotate Character
-                InvokeRepeating("rotateMainMenuCharacter", 1, 0.1f);
+                //InvokeRepeating("rotateMainMenuCharacter", 1, 0.1f);
             }
             catch (Exception e)
             {
@@ -59,7 +59,9 @@ namespace Alternion
 
             WWW www = new WWW(mainUrl + "playerObjectList2.json");
             yield return www;
+            logLow("WWW START");
             logLow(www.text);
+            logLow("WWW END");
 
             try
             {
