@@ -1122,17 +1122,17 @@ namespace Alternion
                     //if (player.weaponSkins.TryGetValue("musket", out string weaponSkin))
                     //{
                         var musket = GameObject.Find("wpn_standardMusket_LOD1");
-                        if (musket != null)
+                    if (musket != null)
+                    {
+                        if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
                         {
-                            //if (theGreatCacher.weaponSkins.TryGetValue("musket_" + weaponSkin, out Texture newTex))
-                            //{
-                            //    musket.GetComponent<Renderer>().material.mainTexture = newTex;
-                            //}
+                            musket.GetComponent<Renderer>().material.mainTexture = newTex;
                         }
-                        else
-                        {
-                            debugLog("Main menu musket not found.");
-                        }
+                    }
+                    else
+                    {
+                        debugLog("Main menu musket not found.");
+                    }
                     //}
                 }
             }
