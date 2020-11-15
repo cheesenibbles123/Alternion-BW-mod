@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-
 using System.IO;
-
 using UnityEngine;
 using BWModLoader;
 using Harmony;
@@ -53,27 +52,21 @@ namespace Alternion
             }
         }
 
+        //Fetching players and textures
         private IEnumerator loadJsonFile()
         {
             LoadingBar.updatePercentage(0, "Fetching Players");
 
             WWW www = new WWW(mainUrl + "playerObjectList2.json");
             yield return www;
-            logLow("WWW START");
-            logLow(www.text);
-            logLow("WWW END");
 
             try
             {
                 string[] json = www.text.Split('&');
                 for (int i = 0; i < json.Length; i++)
                 {
-                    logLow("----------");
-                    logLow(json[i]);
-                    logLow("----------");
                     playerObject player = JsonUtility.FromJson<playerObject>(json[i]);
                     theGreatCacher.players.Add(player.steamID, player);
-                    logLow(theGreatCacher.players.Count.ToString());
                     LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players");
                 }
             }
@@ -115,6 +108,7 @@ namespace Alternion
             WWW www;
             bool flag;
             Texture newTex;
+            string fullWeaponString;
             LoadingBar.updatePercentage(20, "Preparing to download");
             //Grab UI textures
             logLow("Player Count:" + theGreatCacher.players.Count.ToString());
@@ -123,6 +117,7 @@ namespace Alternion
             {
                 foreach (KeyValuePair<string, playerObject> player in theGreatCacher.players)
                 {
+                    // Badges
                     if (player.Value.badgeName != "null")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.badgeName);
@@ -145,6 +140,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40);
                                 newTex.name = player.Value.badgeName;
                                 theGreatCacher.badges.Add(player.Value.badgeName, newTex);
+                                alreadyDownloaded.Add(player.Value.badgeName);
                             }
                             catch (Exception e)
                             {
@@ -153,9 +149,11 @@ namespace Alternion
                                 debugLog(e.Message);
                                 debugLog("------------------");
                             }
+
                         }
                     }
 
+                    // Masks
                     if (player.Value.maskSkinName != "null")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.maskSkinName);
@@ -178,6 +176,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.maskSkinName, texturesFilePath + "MaskSkins/", 100, 40);
                                 newTex.name = player.Value.maskSkinName;
                                 theGreatCacher.maskSkins.Add(player.Value.maskSkinName, newTex);
+                                alreadyDownloaded.Add(player.Value.maskSkinName);
                             }
                             catch (Exception e)
                             {
@@ -188,6 +187,7 @@ namespace Alternion
                         }
                     }
 
+                    // Sails
                     if (player.Value.sailSkinName != "null")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.sailSkinName);
@@ -207,57 +207,19 @@ namespace Alternion
                                 debugLog("Sail Skin Download Error");
                                 debugLog(e.Message);
                             }
-                        }
-                        try
-                        {
-                            newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
-                            newTex.name = player.Value.sailSkinName;
-                            theGreatCacher.secondarySails.Add(player.Value.sailSkinName, newTex);
-                        }
-                        catch (Exception e)
-                        {
-                            debugLog("------------------");
-                            debugLog(e.Message);
-                            debugLog("------------------");
-                        }
-                    }
 
-                    if (player.Value.weaponSkins[0].weaponName != "null")
-                    {
-                        foreach (weaponObject weapon in player.Value.weaponSkins)
-                        {
-                            flag = alreadyDownloaded.Contains(weapon.weaponName + "_" + weapon.weaponSkin);
-                            Texture2D weaponSkin;
-
-                            if (!flag)
+                            try
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + weapon.weaponName + "_" + weapon.weaponSkin + ".png");
-                                yield return www;
-
-                                try
-                                {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + weapon.weaponName + "_" + weapon.weaponSkin + ".png", bytes);
-                                }
-                                catch (Exception e)
-                                {
-                                    debugLog("Internal Weapon skins Download exception");
-                                    debugLog(e.Message);
-                                }
-                                try
-                                {
-                                    weaponSkin = loadTexture(weapon.weaponName + "_" + weapon.weaponSkin, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                                    weaponSkin.name = weapon.weaponName + "_" + weapon.weaponSkin;
-                                    theGreatCacher.weaponSkins.Add(weapon.weaponName + "_" + weapon.weaponSkin, weaponSkin);
-                                }
-                                catch (Exception e)
-                                {
-                                    debugLog("------------------");
-                                    debugLog("Weapon Skin Download Error");
-                                    debugLog($"Weapon skin : -{weapon.weaponName}- -{weapon.weaponSkin}-");
-                                    debugLog("filePath: " + texturesFilePath + "WeaponSkins/");
-                                    debugLog(e.Message);
-                                }
+                                newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
+                                newTex.name = player.Value.sailSkinName;
+                                theGreatCacher.secondarySails.Add(player.Value.sailSkinName, newTex);
+                                alreadyDownloaded.Add(player.Value.sailSkinName);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -284,6 +246,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
                                 newTex.name = player.Value.mainSailName;
                                 theGreatCacher.mainSails.Add(player.Value.mainSailName, newTex);
+                                alreadyDownloaded.Add(player.Value.mainSailName);
                             }
                             catch (Exception e)
                             {
@@ -294,6 +257,7 @@ namespace Alternion
                         }
                     }
 
+                    // Cannons
                     if (player.Value.cannonSkinName != "null")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
@@ -311,18 +275,760 @@ namespace Alternion
                             {
                                 debugLog(e.Message);
                             }
+
+                            try
+                            {
+                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                                newTex.name = player.Value.cannonSkinName;
+                                theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName, newTex);
+                                alreadyDownloaded.Add(player.Value.cannonSkinName);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Cannon Skin Download Error");
+                                debugLog(e.Message);
+                            }
                         }
-                        try
+                    }
+
+                    // Primary weapons
+                    if (player.Value.musketSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("musket_" + player.Value.musketSkinName);
+                        if (!flag)
                         {
-                            newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
-                            newTex.name = player.Value.cannonSkinName;
-                            theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName, newTex);
+                            fullWeaponString = "musket_" + player.Value.musketSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Musket Skin Download Error");
+                                debugLog(e.Message);
+                            }
                         }
-                        catch (Exception e)
+                    }
+
+                    if (player.Value.blunderbussSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("blunderbuss_" + player.Value.blunderbussSkinName);
+                        if (!flag)
                         {
-                            debugLog("------------------");
-                            debugLog("Cannon Skin Download Error");
-                            debugLog(e.Message);
+                            fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Blunderbuss Skin Download Error");
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.nockgunSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("nockgun_" + player.Value.nockgunSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Nockgun Skin Download Error");
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.handMortarSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("handmortar_" + player.Value.handMortarSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Handmortar Skin Download Error");
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    // Secondary Weapons
+                    if (player.Value.standardPistolSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("standardPistol_" + player.Value.standardPistolSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Standard Pistol Skin Download Error: " + player.Value.standardPistolSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.shortPistolSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("shortPistol_" +  player.Value.shortPistolSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Short Pistol Skin Download Error: " + player.Value.shortPistolSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.duckfootSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("duckfoot_" + player.Value.duckfootSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Duckfoot Skin Download Error: " + player.Value.duckfootSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.matchlockRevolverSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("matchlock_" + player.Value.matchlockRevolverSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Matchlock Skin Download Error: " + player.Value.matchlockRevolverSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.annelyRevolverSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("annelyRevolver_" + player.Value.annelyRevolverSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + "annelyRevolver_" + player.Value.annelyRevolverSkinName + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Annely Skin Download Error: " + player.Value.annelyRevolverSkinName);
+                                debugLog(e.Message);
+                            }
+
+                        }
+                    }
+
+                    // Melee weapons
+                    if (player.Value.axeSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("axe_" + player.Value.axeSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "axe_" + player.Value.axeSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Axe Skin Download Error: " + player.Value.axeSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.rapierSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("rapier_" + player.Value.rapierSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "rapier_" + player.Value.rapierSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Rapier Skin Download Error: " + player.Value.rapierSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.daggerSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("dagger_" + player.Value.daggerSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "dagger_" + player.Value.daggerSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Dagger Skin Download Error: " + player.Value.daggerSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.bottleSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("bottle_" + player.Value.bottleSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "bottle_" + player.Value.bottleSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Bottle Skin Download Error: " + player.Value.bottleSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.cutlassSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("cutlass_" + player.Value.cutlassSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Cutlass Skin Download Error: " + player.Value.cutlassSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.pikeSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("pike_" + player.Value.pikeSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "pike_" + player.Value.pikeSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Pike Skin Download Error: " + player.Value.pikeSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    // Specials
+                    if (player.Value.tomohawkSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("tomohawk_" + player.Value.tomohawkSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "tomohawk_" + player.Value.tomohawkSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Tomohawk Skin Download Error: " + player.Value.tomohawkSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.spyglassSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("spyglass_" + player.Value.spyglassSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Spyglass Skin Download Error: " + player.Value.spyglassSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.grenadeSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("grenade_" + player.Value.grenadeSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Grenade Skin Download Error: " + player.Value.grenadeSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.healItemSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("healItem_" + player.Value.healItemSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "healItem_" + player.Value.healItemSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+                            
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("HealItem Skin Download Error: " + player.Value.healItemSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    // Hammer
+                    if (player.Value.hammerSkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("hammer_" + player.Value.hammerSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "hammer_" + player.Value.hammerSkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Hammer Skin Download Error: " + player.Value.hammerSkinName);
+                                debugLog(e.Message);
+                            }
+                        }
+                    }
+
+                    if (player.Value.atlas01SkinName != "null")
+                    {
+                        flag = alreadyDownloaded.Contains("atlas01_" + player.Value.atlas01SkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "atlas01_" + player.Value.atlas01SkinName;
+                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog(e.Message);
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Atlas Skin Download Error: " + player.Value.atlas01SkinName);
+                                debugLog(e.Message);
+                            }
                         }
                     }
                 }
@@ -349,6 +1055,7 @@ namespace Alternion
             }
 
             //Grab online JSON file
+            logLow("Starting JSON fetch");
             StartCoroutine(loadJsonFile());
         }
         static void setupMainMenu()
@@ -412,24 +1119,21 @@ namespace Alternion
                 string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
                 if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                 {
-                    for (int i = 0; i < player.weaponSkins.Length; i++)
-                    {
-                        if (player.weaponSkins[i].weaponName == "musket")
+                    //if (player.weaponSkins.TryGetValue("musket", out string weaponSkin))
+                    //{
+                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
+                        if (musket != null)
                         {
-                            var musket = GameObject.Find("wpn_standardMusket_LOD1");
-                            if (musket != null)
-                            {
-                                if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.weaponSkins[i].weaponSkin, out Texture newTex))
-                                {
-                                    musket.GetComponent<Renderer>().material.mainTexture = newTex;
-                                }
-                            }
-                            else
-                            {
-                                debugLog("Main menu musket not found.");
-                            }
+                            //if (theGreatCacher.weaponSkins.TryGetValue("musket_" + weaponSkin, out Texture newTex))
+                            //{
+                            //    musket.GetComponent<Renderer>().material.mainTexture = newTex;
+                            //}
                         }
-                    }
+                        else
+                        {
+                            debugLog("Main menu musket not found.");
+                        }
+                    //}
                 }
             }
             catch (Exception e)
@@ -438,45 +1142,6 @@ namespace Alternion
             }
 
             LoadingBar.updatePercentage(100, "Finished!");
-        }
-
-        //Debugging purposes
-        static void logLow(string message)
-        {
-            //Just easier to type than Log.logger.Log
-            // Also lets me just set logLevel to 0 if I dont want to deal with the spam.
-            if (AlternionSettings.loggingLevel > 0)
-            {
-                Log.logger.Log(message);
-            }
-        }
-        
-        //ALWAYS RUNS
-        static void debugLog(string message)
-        {
-            //Just easier to type than Log.logger.Log
-            //Will always log, so only use in try{} catch(Exception e) {} when absolutely needed
-            Log.logger.Log(message);
-        }
-
-        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
-        {
-            try
-            {
-                byte[] fileData = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
-
-                Texture2D tex = new Texture2D(imgWidth, imgHeight, TextureFormat.RGB24, false);
-                tex.LoadImage(fileData);
-                return tex;
-
-            }
-            catch (Exception e)
-            {
-                debugLog(string.Format("Error loading texture {0}", texName));
-                debugLog(e.Message);
-                // Return default white texture on failing to load
-                return Texture2D.whiteTexture;
-            }
         }
 
         static void resetAllShipsToDefault()
@@ -578,26 +1243,27 @@ namespace Alternion
             }
         }
 
-        static void assignWeaponToRenderer(WeaponRender __instance, Renderer renderer, playerObject player, string weapon)
+        static void assignWeaponToRenderer(Renderer renderer, string weaponSkin, string weapon)
         {
             try
             {
                 // If the player Dict contains a reference to the specific weapon, output the texture
-                for (int i = 0; i < player.weaponSkins.Length; i++)
+                logLow(weapon + "_" + weaponSkin);
+                if (weaponSkin != "null")
                 {
-                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + player.weaponSkins[i].weaponSkin, out Texture newTexture))
+                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out Texture newTexture))
                     {
                         renderer.material.mainTexture = newTexture;
-                        break;
                     }
                 }
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
                 debugLog(e.Message);
             }
         }
 
-        static void weaponSkinHandler(WeaponRender __instance, playerObject player, string type)
+        static void weaponSkinHandler(WeaponRender __instance, playerObject player)
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
@@ -605,72 +1271,111 @@ namespace Alternion
             switch (renderer.material.mainTexture.name)
             {
                 case "wpn_standardMusket_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "musket");
+                    assignWeaponToRenderer(renderer, player.musketSkinName, "musket");
                     break;
                 case "wpn_standardCutlass_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "cutlass");
+                    assignWeaponToRenderer(renderer, player.cutlassSkinName, "cutlass");
                     break;
                 case "wpn_blunderbuss_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "blunderbuss");
+                    assignWeaponToRenderer(renderer, player.blunderbussSkinName, "blunderbuss");
                     break;
                 case "wpn_nockGun_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "nockgun");
+                    assignWeaponToRenderer(renderer, player.nockgunSkinName, "nockgun");
                     break;
                 case "wpn_handMortar_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "handmortar");
+                    assignWeaponToRenderer(renderer, player.handMortarSkinName, "handmortar");
                     break;
                 case "wpn_rapier_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "rapier");
+                    assignWeaponToRenderer(renderer, player.rapierSkinName, "rapier");
                     break;
                 case "wpn_dagger_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "dagger");
+                    assignWeaponToRenderer(renderer, player.daggerSkinName, "dagger");
                     break;
                 case "wpn_bottle_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "bottle");
+                    assignWeaponToRenderer(renderer, player.bottleSkinName, "bottle");
                     break;
                 case "wpn_rumHealth_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "rum");
+                    assignWeaponToRenderer(renderer, player.healItemSkinName, "healItem");
                     break;
                 case "prp_hammer_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "hammer");
+                    assignWeaponToRenderer(renderer, player.hammerSkinName, "hammer");
                     break;
                 case "wpn_standardPistol_stock_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "standardPistol");
+                    assignWeaponToRenderer(renderer, player.standardPistolSkinName, "standardPistol");
                     break;
                 case "prp_atlas01_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "atlas01");
+                    assignWeaponToRenderer(renderer, player.atlas01SkinName, "atlas01");
                     break;
-                case "prp_bucket_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "bucket");
-                    break;
+                //case "prp_bucket_alb":
+                //    assignWeaponToRenderer(renderer, player, "bucket");
+                //    break;
                 case "wpn_shortpistol_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "shortPistol");
+                    assignWeaponToRenderer(renderer, player.shortPistolSkinName, "shortPistol");
                     break;
                 case "wpn_duckfoot_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "duckfoot");
+                    assignWeaponToRenderer(renderer, player.duckfootSkinName, "duckfoot");
                     break;
                 case "wpn_annelyRevolver_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "annelyRevolver");
+                    assignWeaponToRenderer(renderer, player.annelyRevolverSkinName, "annelyRevolver");
                     break;
                 case "wpn_tomohawk_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "tomohawk");
+                    assignWeaponToRenderer(renderer, player.tomohawkSkinName, "tomohawk");
                     break;
                 case "wpn_matchlockRevolver_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "matchlockRevolver");
+                    assignWeaponToRenderer(renderer, player.matchlockRevolverSkinName, "matchlockRevolver");
                     break;
                 case "wpn_twoHandAxe_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "axe");
+                    assignWeaponToRenderer(renderer, player.axeSkinName, "axe");
                     break;
                 case "wpn_boardingPike_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "pike");
+                    assignWeaponToRenderer(renderer, player.pikeSkinName, "pike");
                     break;
                 case "wpn_spyglass_alb":
-                    assignWeaponToRenderer(__instance, renderer, player, "spyglass");
+                    assignWeaponToRenderer(renderer, player.spyglassSkinName, "spyglass");
                     break;
                 default:
                     // If not known, output here
-                    logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+                    //logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
+            }
+        }
+
+        //Debugging purposes
+        static void logLow(string message)
+        {
+            //Just easier to type than Log.logger.Log
+            // Also lets me just set logLevel to 0 if I dont want to deal with the spam.
+            if (AlternionSettings.loggingLevel > 0)
+            {
+                Log.logger.Log(message);
+            }
+        }
+        
+        //ALWAYS RUNS
+        static void debugLog(string message)
+        {
+            //Just easier to type than Log.logger.Log
+            //Will always log, so only use in try{} catch(Exception e) {} when absolutely needed
+            Log.logger.Log(message);
+        }
+
+        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
+        {
+            try
+            {
+                byte[] fileData = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
+
+                Texture2D tex = new Texture2D(imgWidth, imgHeight, TextureFormat.RGB24, false);
+                tex.LoadImage(fileData);
+                return tex;
+
+            }
+            catch (Exception e)
+            {
+                debugLog(string.Format("Error loading texture {0}", texName));
+                debugLog(e.Message);
+                // Return default white texture on failing to load
+                return Texture2D.whiteTexture;
             }
         }
 
@@ -728,10 +1433,11 @@ namespace Alternion
                     }
                     PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
                     string steamID = plyrInf.steamID.ToString();
-
+                    logLow("[GA] Gotten: " + steamID);
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
-                        weaponSkinHandler(__instance, player, "3p");
+                        logLow("[GA] Gotten player");
+                        weaponSkinHandler(__instance, player);
                     }
                 }
                 catch (Exception e)
@@ -808,9 +1514,11 @@ namespace Alternion
                     {
                         //Grab local steamID
                         string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+                        logLow("[WS] Gotten: " + steamID);
                         if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            weaponSkinHandler(__instance, player, "1p");
+                            logLow("[WS] Gotten player");
+                            weaponSkinHandler(__instance, player);
                         }
                     }
                 }
