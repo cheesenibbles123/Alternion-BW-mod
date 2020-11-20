@@ -31,3 +31,5 @@ The original goal was simply to modify and allow for custom badges, and well... 
  - I suck at this
  - Enjoy my crappy code
  - To those interested, there is a beta branch, however this one likely wont work, as its me messing about with unstable code, and using it to save it whilst I work on other stuff
+   - Beta-Local (up-to-date version)
+   - Beta (code storage)
