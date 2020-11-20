@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +16,7 @@ namespace Alternion
     public class Mainmod : MonoBehaviour
     {
         Texture2D watermarkTex;
+        static Transform menuCharacter;
 
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
@@ -36,12 +36,13 @@ namespace Alternion
                 StartCoroutine(waterMark());
 
                 //Rotate Character
-                //InvokeRepeating("rotateMainMenuCharacter", 1, 0.1f);
+                setMenuCharacter();
             }
             catch (Exception e)
             {
                 debugLog(e.Message);
             }
+
         }
 
         void OnGUI()
@@ -49,6 +50,19 @@ namespace Alternion
             if (watermarkTex != null)
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
+            }
+        }
+        void Update()
+        {
+            // If it has been found
+            if (menuCharacter)
+            {
+                // Rotate on RMB hold
+                if (global::Input.GetMouseButton(1))
+                {
+                    // Rotation code copied from CharacterCustomizationUI
+                    menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+                }
             }
         }
 
@@ -1119,9 +1133,7 @@ namespace Alternion
                 string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
                 if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                 {
-                    //if (player.weaponSkins.TryGetValue("musket", out string weaponSkin))
-                    //{
-                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
+                    var musket = GameObject.Find("wpn_standardMusket_LOD1");
                     if (musket != null)
                     {
                         if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
@@ -1133,7 +1145,6 @@ namespace Alternion
                     {
                         debugLog("Main menu musket not found.");
                     }
-                    //}
                 }
             }
             catch (Exception e)
@@ -1143,7 +1154,21 @@ namespace Alternion
 
             LoadingBar.updatePercentage(100, "Finished!");
         }
-
+        static void setMenuCharacter()
+        {
+            var musket = GameObject.Find("wpn_standardMusket_LOD1");
+            if (musket != null)
+            {
+                Transform rootTransf = musket.transform.root;
+                foreach (Transform transform in rootTransf)
+                {
+                    if (transform.name == "default_character_rig")
+                    {
+                        menuCharacter = transform;
+                    }
+                }
+            }
+        }
         static void resetAllShipsToDefault()
         {
             // Loop through all ships, and set all visuals to defaults in the following order:
@@ -1395,7 +1420,7 @@ namespace Alternion
                     {
                         if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                         {
-                            if (theGreatCacher.badges.TryGetValue(steamID, out Texture newTexture))
+                            if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTexture))
                             {
                                 __instance.éòëèïòëóæèó.texture = newTexture; // loadTexture(badgeName[i], 110, 47);
                             }
@@ -1433,10 +1458,8 @@ namespace Alternion
                     }
                     PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
                     string steamID = plyrInf.steamID.ToString();
-                    logLow("[GA] Gotten: " + steamID);
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
-                        logLow("[GA] Gotten player");
                         weaponSkinHandler(__instance, player);
                     }
                 }
@@ -1479,8 +1502,10 @@ namespace Alternion
         {
             static void Postfix(MainMenu __instance)
             {
+                // Call these so that they set correctly again on returning to the main menu
                 setMainmenuBadge();
                 setMainMenuWeaponSkin();
+                setMenuCharacter();
             }
         }
 
@@ -1514,10 +1539,8 @@ namespace Alternion
                     {
                         //Grab local steamID
                         string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                        logLow("[WS] Gotten: " + steamID);
                         if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            logLow("[WS] Gotten player");
                             weaponSkinHandler(__instance, player);
                         }
                     }
