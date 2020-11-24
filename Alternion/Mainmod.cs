@@ -71,7 +71,7 @@ namespace Alternion
         {
             LoadingBar.updatePercentage(0, "Fetching Players");
 
-            WWW www = new WWW(mainUrl + "playerObjectList2.json");
+            WWW www = new WWW(mainUrl + "playerObjectList2-test.json");
             yield return www;
 
             try
@@ -132,7 +132,7 @@ namespace Alternion
                 foreach (KeyValuePair<string, playerObject> player in theGreatCacher.players)
                 {
                     // Badges
-                    if (player.Value.badgeName != "null")
+                    if (player.Value.badgeName != "default")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.badgeName);
                         if (!flag)
@@ -168,7 +168,7 @@ namespace Alternion
                     }
 
                     // Masks
-                    if (player.Value.maskSkinName != "null")
+                    if (player.Value.maskSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.maskSkinName);
                         if (!flag)
@@ -202,7 +202,7 @@ namespace Alternion
                     }
 
                     // Sails
-                    if (player.Value.sailSkinName != "null")
+                    if (player.Value.sailSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.sailSkinName);
                         if (!flag)
@@ -238,7 +238,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.mainSailName != "null")
+                    if (player.Value.mainSailName != "default")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.mainSailName);
                         if (!flag)
@@ -272,7 +272,7 @@ namespace Alternion
                     }
 
                     // Cannons
-                    if (player.Value.cannonSkinName != "null")
+                    if (player.Value.cannonSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                         if (!flag)
@@ -307,7 +307,7 @@ namespace Alternion
                     }
 
                     // Primary weapons
-                    if (player.Value.musketSkinName != "null")
+                    if (player.Value.musketSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("musket_" + player.Value.musketSkinName);
                         if (!flag)
@@ -342,7 +342,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.blunderbussSkinName != "null")
+                    if (player.Value.blunderbussSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("blunderbuss_" + player.Value.blunderbussSkinName);
                         if (!flag)
@@ -377,7 +377,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.nockgunSkinName != "null")
+                    if (player.Value.nockgunSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("nockgun_" + player.Value.nockgunSkinName);
                         if (!flag)
@@ -412,7 +412,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.handMortarSkinName != "null")
+                    if (player.Value.handMortarSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("handmortar_" + player.Value.handMortarSkinName);
                         if (!flag)
@@ -448,7 +448,7 @@ namespace Alternion
                     }
 
                     // Secondary Weapons
-                    if (player.Value.standardPistolSkinName != "null")
+                    if (player.Value.standardPistolSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("standardPistol_" + player.Value.standardPistolSkinName);
                         if (!flag)
@@ -483,7 +483,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.shortPistolSkinName != "null")
+                    if (player.Value.shortPistolSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("shortPistol_" +  player.Value.shortPistolSkinName);
                         if (!flag)
@@ -518,7 +518,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.duckfootSkinName != "null")
+                    if (player.Value.duckfootSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("duckfoot_" + player.Value.duckfootSkinName);
                         if (!flag)
@@ -553,7 +553,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.matchlockRevolverSkinName != "null")
+                    if (player.Value.matchlockRevolverSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("matchlock_" + player.Value.matchlockRevolverSkinName);
                         if (!flag)
@@ -588,7 +588,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.annelyRevolverSkinName != "null")
+                    if (player.Value.annelyRevolverSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("annelyRevolver_" + player.Value.annelyRevolverSkinName);
                         if (!flag)
@@ -624,7 +624,7 @@ namespace Alternion
                     }
 
                     // Melee weapons
-                    if (player.Value.axeSkinName != "null")
+                    if (player.Value.axeSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("axe_" + player.Value.axeSkinName);
                         if (!flag)
@@ -659,7 +659,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.rapierSkinName != "null")
+                    if (player.Value.rapierSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("rapier_" + player.Value.rapierSkinName);
                         if (!flag)
@@ -694,7 +694,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.daggerSkinName != "null")
+                    if (player.Value.daggerSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("dagger_" + player.Value.daggerSkinName);
                         if (!flag)
@@ -729,7 +729,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.bottleSkinName != "null")
+                    if (player.Value.bottleSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("bottle_" + player.Value.bottleSkinName);
                         if (!flag)
@@ -764,7 +764,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.cutlassSkinName != "null")
+                    if (player.Value.cutlassSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("cutlass_" + player.Value.cutlassSkinName);
                         if (!flag)
@@ -799,7 +799,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.pikeSkinName != "null")
+                    if (player.Value.pikeSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("pike_" + player.Value.pikeSkinName);
                         if (!flag)
@@ -835,7 +835,7 @@ namespace Alternion
                     }
 
                     // Specials
-                    if (player.Value.tomohawkSkinName != "null")
+                    if (player.Value.tomohawkSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("tomohawk_" + player.Value.tomohawkSkinName);
                         if (!flag)
@@ -870,7 +870,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.spyglassSkinName != "null")
+                    if (player.Value.spyglassSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("spyglass_" + player.Value.spyglassSkinName);
                         if (!flag)
@@ -905,7 +905,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.grenadeSkinName != "null")
+                    if (player.Value.grenadeSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("grenade_" + player.Value.grenadeSkinName);
                         if (!flag)
@@ -940,7 +940,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.healItemSkinName != "null")
+                    if (player.Value.healItemSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("healItem_" + player.Value.healItemSkinName);
                         if (!flag)
@@ -976,7 +976,7 @@ namespace Alternion
                     }
 
                     // Hammer
-                    if (player.Value.hammerSkinName != "null")
+                    if (player.Value.hammerSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("hammer_" + player.Value.hammerSkinName);
                         if (!flag)
@@ -1011,7 +1011,7 @@ namespace Alternion
                         }
                     }
 
-                    if (player.Value.atlas01SkinName != "null")
+                    if (player.Value.atlas01SkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("atlas01_" + player.Value.atlas01SkinName);
                         if (!flag)
@@ -1274,7 +1274,7 @@ namespace Alternion
             {
                 // If the player Dict contains a reference to the specific weapon, output the texture
                 logLow(weapon + "_" + weaponSkin);
-                if (weaponSkin != "null")
+                if (weaponSkin != "default")
                 {
                     if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out Texture newTexture))
                     {
@@ -1598,7 +1598,7 @@ namespace Alternion
                                     }
 
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1610,7 +1610,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1654,7 +1654,7 @@ namespace Alternion
                                     }
 
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1666,7 +1666,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1707,7 +1707,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1719,7 +1719,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1761,7 +1761,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1773,7 +1773,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1815,7 +1815,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1827,7 +1827,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1869,7 +1869,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1881,7 +1881,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1923,7 +1923,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1935,7 +1935,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -1977,7 +1977,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -1989,7 +1989,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -2031,7 +2031,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -2043,7 +2043,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -2085,7 +2085,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -2097,7 +2097,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -2139,7 +2139,7 @@ namespace Alternion
                                         theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
                                     }
 
-                                    if (player.mainSailName != "null")
+                                    if (player.mainSailName != "default")
                                     {
                                         if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
                                         {
@@ -2151,7 +2151,7 @@ namespace Alternion
                                         __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                                     }
                                 }
-                                else if (player.sailSkinName != "null" && AlternionSettings.useSecondarySails)
+                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
                                 {
                                     if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
                                     {
@@ -2219,7 +2219,7 @@ namespace Alternion
                         }
 
                         // If they have a custom texture, use it, else use default skin
-                        if (player.cannonSkinName != "null")
+                        if (player.cannonSkinName != "default")
                         {
                             if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                             {
@@ -2260,6 +2260,7 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
+                return;
                 try
                 {
                     if (!AlternionSettings.useCannonSkins)
@@ -2285,7 +2286,7 @@ namespace Alternion
 
 
                         // If they have a cannon skin then apply
-                        if (player.cannonSkinName != "null")
+                        if (player.cannonSkinName != "default")
                         {
                             if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                             {
