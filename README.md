@@ -1,4 +1,16 @@
 # Alternion
+
+![Issues](https://img.shields.io/github/issues/cheesenibbles123/Alternion-BW-mod?label=Issues)
+![Issues Closed](https://img.shields.io/github/issues-closed/cheesenibbles123/Alternion-BW-mod?label=Issues)
+![License](https://img.shields.io/github/license/cheesenibbles123/Alternion-BW-mod)
+![Stars](https://img.shields.io/github/stars/cheesenibbles123/Alternion-BW-mod)
+![Code Size](https://img.shields.io/github/languages/code-size/cheesenibbles123/Alternion-BW-mod)
+![Repo Size](https://img.shields.io/github/repo-size/cheesenibbles123/Alternion-BW-mod)
+![Downloads](https://img.shields.io/github/downloads/cheesenibbles123/Alternion-BW-mod/total)
+![Latest Release](https://img.shields.io/github/v/release/cheesenibbles123/Alternion-BW-mod)
+![Latest Release Date](https://img.shields.io/github/release-date/cheesenibbles123/Alternion-BW-mod)
+![Top Language](https://img.shields.io/github/languages/top/cheesenibbles123/Alternion-BW-mod)
+
 ![custom Image](https://github.com/cheesenibbles123/Alternion-BW-mod/blob/master/Images/bwCsharp.jpg)
 
 This is a split off from my first mod which was initially created for custom badges and outfits. That one allowed for a user to use a local file to assign badges to players, and replace outfits, however this was't replicated across all mod users. Hence why this was made, the original mod can still be found here: 
@@ -31,5 +43,5 @@ The original goal was simply to modify and allow for custom badges, and well... 
  - I suck at this
  - Enjoy my crappy code
  - To those interested, there is a beta branch, however this one likely wont work, as its me messing about with unstable code, and using it to save it whilst I work on other stuff
-   - Beta-Local (up-to-date version)
+   - Beta-Local (up-to-date version) ![latest version](https://img.shields.io/github/v/release/cheesenibbles123/Alternion-BW-mod?include_prereleases)
    - Beta (code storage)
