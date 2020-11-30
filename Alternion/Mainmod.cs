@@ -45,7 +45,6 @@ namespace Alternion
             }
 
         }
-
         void OnGUI()
         {
             if (watermarkTex != null)
@@ -80,6 +79,7 @@ namespace Alternion
 
             try
             {
+                // I didn't want to do this, but unity has forced my hand
                 string[] json = www.text.Split('&');
                 for (int i = 0; i < json.Length; i++)
                 {
@@ -100,6 +100,7 @@ namespace Alternion
         }
         private IEnumerator waterMark()
         {
+            // Check if pfp is already downloaded or not
             if (!File.Exists(Application.dataPath + texturesFilePath + "pfp.png"))
             {
                 WWW www = new WWW(mainUrl + "pfp.png");
@@ -123,6 +124,7 @@ namespace Alternion
         private IEnumerator DownloadTextures()
         {
             List<string> alreadyDownloaded = new List<string>();
+            // pre-declare so I don't create lots of new objects each loop, and to keep it readable
             WWW www;
             bool flag;
             Texture newTex;
@@ -135,6 +137,8 @@ namespace Alternion
             {
                 foreach (KeyValuePair<string, playerObject> player in theGreatCacher.players)
                 {
+                    // I don't think I have ever typed the word "default" as much as I did the last few days
+
                     // Badges
                     if (player.Value.badgeName != "default")
                     {
@@ -1160,14 +1164,17 @@ namespace Alternion
         }
         static void setMenuCharacter()
         {
+            // Find the musket object
             var musket = GameObject.Find("wpn_standardMusket_LOD1");
             if (musket != null)
             {
+                // If it exists, then go to root and find the character model in the heirachy
                 Transform rootTransf = musket.transform.root;
                 foreach (Transform transform in rootTransf)
                 {
                     if (transform.name == "default_character_rig")
                     {
+                        // Save it for the rotating in Update()
                         menuCharacter = transform;
                     }
                 }
@@ -1287,7 +1294,6 @@ namespace Alternion
                 //Ignore Exception
             }
         }
-
         static void assignWeaponToRenderer(Renderer renderer, string weaponSkin, string weapon)
         {
             try
@@ -1307,12 +1313,13 @@ namespace Alternion
                 debugLog(e.Message);
             }
         }
-
         static void weaponSkinHandler(WeaponRender __instance, playerObject player)
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
-
+            // Needs a rework as the following share the same texture, and so return the same texture name:
+            // Axe + Rapier
+            // Dagger + Cutlass
             switch (renderer.material.mainTexture.name)
             {
                 case "wpn_standardMusket_stock_alb":
@@ -1395,7 +1402,6 @@ namespace Alternion
                 Log.logger.Log(message);
             }
         }
-        
         //ALWAYS RUNS
         static void debugLog(string message)
         {
@@ -1438,11 +1444,12 @@ namespace Alternion
                     string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
+                        // if they have a TW badge, this will dictate if it should or shouldn't override it visually
                         if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                         {
                             if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTexture))
                             {
-                                __instance.éòëèïòëóæèó.texture = newTexture; // loadTexture(badgeName[i], 110, 47);
+                                __instance.éòëèïòëóæèó.texture = newTexture;
                             }
                         }
                     }
@@ -2210,6 +2217,7 @@ namespace Alternion
             }
         }
 
+        // Borked
         [HarmonyPatch(typeof(CannonUse), "OnEnable")]
         static class cannonOperationalSkinPatch
         {
@@ -2274,7 +2282,7 @@ namespace Alternion
                 }
             }
         }
-
+        // Borked
         [HarmonyPatch(typeof(CannonDestroy), "Start")]
         static class cannonDestroySkinPatch
         {
