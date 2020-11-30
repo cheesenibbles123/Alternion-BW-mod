@@ -37,6 +37,7 @@ namespace Alternion
 
                 //Rotate Character
                 setMenuCharacter();
+
             }
             catch (Exception e)
             {
@@ -57,11 +58,14 @@ namespace Alternion
             // If it has been found
             if (menuCharacter)
             {
-                // Rotate on RMB hold
-                if (global::Input.GetMouseButton(1))
+                if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf)
                 {
-                    // Rotation code copied from CharacterCustomizationUI
-                    menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+                    // Rotate on RMB hold
+                    if (global::Input.GetMouseButton(1))
+                    {
+                        // Rotation code copied from CharacterCustomizationUI
+                        menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+                    }
                 }
             }
         }
@@ -71,7 +75,7 @@ namespace Alternion
         {
             LoadingBar.updatePercentage(0, "Fetching Players");
 
-            WWW www = new WWW(mainUrl + "playerObjectList2-test.json");
+            WWW www = new WWW(mainUrl + "playerList.json");
             yield return www;
 
             try
@@ -1178,24 +1182,36 @@ namespace Alternion
             // Destroyed cannons
             foreach (KeyValuePair<string, cachedShip> individualShip in theGreatCacher.ships)
             {
-                foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
+                // Only reset if sail texture has been set
+                if (theGreatCacher.defaultSails)
                 {
-                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                    foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
+                    {
+                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                    }
+                }
+                if (theGreatCacher.defaultSails)
+                {
+                    foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
+                    {
+                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                    }
                 }
 
-                foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
+                // Only reset if cannon texture has been set
+                if (theGreatCacher.defaultCannons)
                 {
-                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                    foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
+                    {
+                        indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
+                    }
                 }
-
-                foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
+                if (theGreatCacher.defaultCannons)
                 {
-                    indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
-                }
-
-                foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
-                {
-                    indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
+                    foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
+                    {
+                        indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
+                    }
                 }
             }
         }
@@ -1215,6 +1231,7 @@ namespace Alternion
                 {
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
+                        // Only apply new texture if config has sail textures enabled
                         if (AlternionSettings.useSecondarySails)
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
@@ -1226,6 +1243,7 @@ namespace Alternion
                             }
                         }
 
+                        // Only apply new texture if config has main sail textures enabled
                         if (AlternionSettings.useMainSails)
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
@@ -1237,6 +1255,7 @@ namespace Alternion
                             }
                         }
 
+                        // Only apply new texture if config has cannon textures enabled
                         if (AlternionSettings.useCannonSkins)
                         {
                             foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
@@ -1248,6 +1267,7 @@ namespace Alternion
                             }
                         }
 
+                        // Only apply new texture if config has cannon textures enabled
                         if (AlternionSettings.useCannonSkins)
                         {
                             foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
@@ -2260,7 +2280,6 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
-                return;
                 try
                 {
                     if (!AlternionSettings.useCannonSkins)

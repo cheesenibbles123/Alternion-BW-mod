@@ -22,7 +22,7 @@ namespace Alternion
 
         static string configFile = "AlternionConfig.cfg";
 
-        void log(string msg)
+        static void log(string msg)
         {
             Log.logger.Log(msg);
         }
@@ -54,7 +54,7 @@ namespace Alternion
             useMainSails = true;
             useSecondarySails = true;
             useWeaponSkins = true;
-            useCannonSkins = true;
+            useCannonSkins = false;
             configKeyInput = "]";
 
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -192,7 +192,34 @@ namespace Alternion
             }
         }
 
-        int checkBool(bool checking)
+        public static void saveSettings()
+        {
+            StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
+            streamWriter.WriteLine("[Alternion config file]");
+            streamWriter.WriteLine("");
+            streamWriter.WriteLine("[General]");
+            streamWriter.WriteLine("configMenuHotkey=" + configKeyInput);
+            streamWriter.WriteLine("loggingLevel=" + loggingLevel);
+            streamWriter.WriteLine("");
+            streamWriter.WriteLine("[Visuals]");
+            streamWriter.WriteLine("------------");
+            streamWriter.WriteLine("Format:");
+            streamWriter.WriteLine("1 : Enabled");
+            streamWriter.WriteLine("0 : Disabled");
+            streamWriter.WriteLine("------------");
+            streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
+            streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
+            streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
+            streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
+            streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
+            streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.Close();
+
+            log("Saved config to file.");
+        }
+
+        static int checkBool(bool checking)
         {
             if (checking)
             {

@@ -23,17 +23,27 @@ namespace Alternion
         //Centre Vertical = 120
         static Vector4 boxSettings = new Vector4(20, 60, 250, 300);
         //BUTTONS
+        //Start X, Y
+        //Width, Height
         Vector2 horizontalButton = new Vector2(30, 90);
         Vector2 buttonWH = new Vector2(120, 40);
 
+        //Start X, Y (assigned on startup)
+        //Width, Height
         Vector2 horizontalCheckBox;
         Vector2 checkWH = new Vector2(20, 20);
 
+        //Start X, Y
+        //Width, Height
         static Vector2 labelBox = new Vector2(30, 70);
         Vector2 labelWH = new Vector2(boxSettings.z - boxSettings.x - 20, boxSettings.w - boxSettings.y -210);
+        
+        // Start X1, Y1, X2, Y2
+        static Vector4 switchPageForwardsBackwardsStartPositions = new Vector4(220, 300, 30, 300);
+        static Vector2 switchPageButtonWH = new Vector2(40, 40);
 
-        Vector4 switchPageForwardsBackwardsStartPositions = new Vector4(220, 300, 30, 300);
-        Vector2 switchPageButtonWH = new Vector2(40, 40);
+        // Format X, Y, Width, Height
+        Vector4 saveButton = new Vector4(90,300,110,40);
 
         int buttonOffset = 50;
 
@@ -204,6 +214,12 @@ namespace Alternion
                 {
                     AlternionSettings.configMenuPageNumber -= 1;
                 }
+            }
+
+            //Save Button
+            if (GUI.Button(new Rect(saveButton.x, saveButton.y, saveButton.z, saveButton.w), "Save"))
+            {
+                AlternionSettings.saveSettings();
             }
 
             GUI.skin.button.normal.background = defaultGUIBackground;
