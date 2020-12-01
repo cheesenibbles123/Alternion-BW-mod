@@ -67,6 +67,11 @@ namespace Alternion
                     }
                 }
             }
+
+            if (Input.GetKeyUp("*"))
+            {
+                debugLog("v6.0");
+            }
         }
 
         //Fetching players and textures
@@ -129,9 +134,9 @@ namespace Alternion
             bool flag;
             Texture newTex;
             string fullWeaponString;
-            LoadingBar.updatePercentage(20, "Preparing to download");
-            //Grab UI textures
-            logLow("Player Count:" + theGreatCacher.players.Count.ToString());
+            // Update loading image
+            LoadingBar.updatePercentage(20, "Downloading and assigning assets...");
+
             //Grab Player textures
             for (int i = 0; i < theGreatCacher.players.Count; i++)
             {
@@ -145,16 +150,19 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.badgeName);
                         if (!flag)
                         {
-                            www = new WWW(mainUrl + "Badges/" + player.Value.badgeName + ".png");
-                            yield return www;
-                            try
+                            if (AlternionSettings.downloadOnStartup)
                             {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                www = new WWW(mainUrl + "Badges/" + player.Value.badgeName + ".png");
+                                yield return www;
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -181,16 +189,19 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.maskSkinName);
                         if (!flag)
                         {
-                            www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + ".png");
-                            yield return www;
-                            try
+                            if (AlternionSettings.downloadOnStartup)
                             {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + player.Value.maskSkinName + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + ".png");
+                                yield return www;
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + player.Value.maskSkinName + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
                             try
                             {
@@ -215,19 +226,22 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.sailSkinName);
                         if (!flag)
                         {
-                            www = new WWW(mainUrl + "SailSkins/" + player.Value.sailSkinName + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "SailSkins/" + player.Value.sailSkinName + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog("------------------");
-                                debugLog("Sail Skin Download Error");
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog("------------------");
+                                    debugLog("Sail Skin Download Error");
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -251,17 +265,20 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.mainSailName);
                         if (!flag)
                         {
-                            www = new WWW(mainUrl + "MainSailSkins/" + player.Value.mainSailName + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "MainSailSkins/" + player.Value.mainSailName + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
                             try
                             {
@@ -285,17 +302,20 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                         if (!flag)
                         {
-                            www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -321,17 +341,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "musket_" + player.Value.musketSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -356,17 +379,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -391,17 +417,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -426,19 +455,22 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
-
-                            try
+                            if (AlternionSettings.downloadOnStartup)
                             {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
-                            }
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
+
+                            }
                             try
                             {
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
@@ -462,17 +494,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -497,17 +532,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -532,17 +570,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -567,17 +608,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -602,17 +646,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + "annelyRevolver_" + player.Value.annelyRevolverSkinName + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + "annelyRevolver_" + player.Value.annelyRevolverSkinName + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
                             try
                             {
@@ -638,17 +685,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "axe_" + player.Value.axeSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -673,17 +723,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "rapier_" + player.Value.rapierSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -708,17 +761,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "dagger_" + player.Value.daggerSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -743,17 +799,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "bottle_" + player.Value.bottleSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -778,17 +837,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -813,17 +875,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "pike_" + player.Value.pikeSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -849,17 +914,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "tomohawk_" + player.Value.tomohawkSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -884,17 +952,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -919,17 +990,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -954,17 +1028,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "healItem_" + player.Value.healItemSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
                             
                             try
@@ -990,17 +1067,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "hammer_" + player.Value.hammerSkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try
@@ -1025,17 +1105,20 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "atlas01_" + player.Value.atlas01SkinName;
-                            www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                            yield return www;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
 
-                            try
-                            {
-                                byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                            }
-                            catch (Exception e)
-                            {
-                                debugLog(e.Message);
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
                             }
 
                             try

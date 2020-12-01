@@ -16,6 +16,7 @@ namespace Alternion
         public static bool useSecondarySails;
         public static bool useWeaponSkins;
         public static bool useCannonSkins;
+        public static bool downloadOnStartup;
         public static string configKeyInput;
         public static int configMenuPageNumber = 1;
         public static int configMenuMaxPages = 2;
@@ -55,6 +56,7 @@ namespace Alternion
             useSecondarySails = true;
             useWeaponSkins = true;
             useCannonSkins = false;
+            downloadOnStartup = true;
             configKeyInput = "]";
 
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -77,6 +79,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.Close();
 
             log("No config file found. Created default config file.");
@@ -184,6 +187,16 @@ namespace Alternion
                                     useCannonSkins = false;
                                 }
                                 break;
+                            case "downloadOnStartup":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    downloadOnStartup = true;
+                                }
+                                else
+                                {
+                                    downloadOnStartup = false;
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -214,6 +227,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.Close();
 
             log("Saved config to file.");
