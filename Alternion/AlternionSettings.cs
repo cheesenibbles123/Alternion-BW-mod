@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BWModLoader;
 using System.IO;
 using UnityEngine;
@@ -20,13 +16,14 @@ namespace Alternion
         public static bool useSecondarySails;
         public static bool useWeaponSkins;
         public static bool useCannonSkins;
+        public static bool downloadOnStartup;
         public static string configKeyInput;
         public static int configMenuPageNumber = 1;
         public static int configMenuMaxPages = 2;
 
         static string configFile = "AlternionConfig.cfg";
 
-        void log(string msg)
+        static void log(string msg)
         {
             Log.logger.Log(msg);
         }
@@ -34,6 +31,7 @@ namespace Alternion
         void Start()
         {
             checkConfig();
+            setTextures();
         }
 
         void checkConfig()
@@ -57,7 +55,8 @@ namespace Alternion
             useMainSails = true;
             useSecondarySails = true;
             useWeaponSkins = true;
-            useCannonSkins = true;
+            useCannonSkins = false;
+            downloadOnStartup = true;
             configKeyInput = "]";
 
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -80,6 +79,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.Close();
 
             log("No config file found. Created default config file.");
@@ -187,6 +187,16 @@ namespace Alternion
                                     useCannonSkins = false;
                                 }
                                 break;
+                            case "downloadOnStartup":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    downloadOnStartup = true;
+                                }
+                                else
+                                {
+                                    downloadOnStartup = false;
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -195,7 +205,35 @@ namespace Alternion
             }
         }
 
-        int checkBool(bool checking)
+        public static void saveSettings()
+        {
+            StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
+            streamWriter.WriteLine("[Alternion config file]");
+            streamWriter.WriteLine("");
+            streamWriter.WriteLine("[General]");
+            streamWriter.WriteLine("configMenuHotkey=" + configKeyInput);
+            streamWriter.WriteLine("loggingLevel=" + loggingLevel);
+            streamWriter.WriteLine("");
+            streamWriter.WriteLine("[Visuals]");
+            streamWriter.WriteLine("------------");
+            streamWriter.WriteLine("Format:");
+            streamWriter.WriteLine("1 : Enabled");
+            streamWriter.WriteLine("0 : Disabled");
+            streamWriter.WriteLine("------------");
+            streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
+            streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
+            streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
+            streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
+            streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
+            streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
+            streamWriter.Close();
+
+            log("Saved config to file.");
+        }
+
+        static int checkBool(bool checking)
         {
             if (checking)
             {
@@ -204,6 +242,39 @@ namespace Alternion
             else
             {
                 return 0;
+            }
+        }
+
+        void setTextures()
+        {
+            var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
+            //Texture background;
+            foreach (Texture texture in mainTex)
+            {
+                switch (texture.name)
+                {
+                    case "oldmap1":
+                        ModGUI.setMainBoxBackground(texture);
+                        break;
+                    case "panel_medium":
+                        ModGUI.setMainButtonBackground(texture);
+                        break;
+                    case "Checkmark":
+                        ModGUI.setCheckmark(texture);
+                        break;
+                    case "UISprite":
+                        ModGUI.setCheckBox(texture);
+                        break;
+                    case "prp_cannon_alb":
+                        theGreatCacher.setDefaultCannons(texture);
+                        break;
+                    case "ships_sails_alb":
+                        theGreatCacher.setDefaultSails(texture);
+                        break;
+                    default:
+                        //log(texture.name);
+                        break;
+                }
             }
         }
     }
