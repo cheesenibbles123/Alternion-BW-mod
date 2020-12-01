@@ -1,4 +1,17 @@
 # Alternion
+
+![Issues](https://img.shields.io/github/issues/cheesenibbles123/Alternion-BW-mod?label=Issues)
+![Issues Closed](https://img.shields.io/github/issues-closed/cheesenibbles123/Alternion-BW-mod?label=Issues)
+![License](https://img.shields.io/github/license/cheesenibbles123/Alternion-BW-mod)
+![Stars](https://img.shields.io/github/stars/cheesenibbles123/Alternion-BW-mod)
+![Code Size](https://img.shields.io/github/languages/code-size/cheesenibbles123/Alternion-BW-mod)
+![Repo Size](https://img.shields.io/github/repo-size/cheesenibbles123/Alternion-BW-mod)
+![Downloads](https://img.shields.io/github/downloads/cheesenibbles123/Alternion-BW-mod/total)
+![Latest Release](https://img.shields.io/github/v/release/cheesenibbles123/Alternion-BW-mod)
+![Latest Release Date](https://img.shields.io/github/release-date/cheesenibbles123/Alternion-BW-mod)
+![Top Language](https://img.shields.io/github/languages/top/cheesenibbles123/Alternion-BW-mod)
+![Commit frequency](https://img.shields.io/github/commit-activity/m/cheesenibbles123/Alternion-BW-Mod)
+
 ![custom Image](https://github.com/cheesenibbles123/Alternion-BW-mod/blob/master/Images/bwCsharp.jpg)
 
 This is a split off from my first mod which was initially created for custom badges and outfits. That one allowed for a user to use a local file to assign badges to players, and replace outfits, however this was't replicated across all mod users. Hence why this was made, the original mod can still be found here: 
@@ -28,8 +41,8 @@ The original goal was simply to modify and allow for custom badges, and well... 
  
 # Additional notes:
  - All required files will be downloaded automatically by the mod when it runs
- - On launching into the main menu, press **Insert** and go to the **logs** tab, scroll down and when it says either **Cannons Downloaded.** *OR* **All Textures Downloaded!** you can go join a server, this is because the mod downloads all required assets on starup as mentioned above, however as more and more stuff gets added, it will take longer and longer to load up. For now however it should be ok as there is still a very small pool of items.
- 
  - I suck at this
  - Enjoy my crappy code
  - To those interested, there is a beta branch, however this one likely wont work, as its me messing about with unstable code, and using it to save it whilst I work on other stuff
+   - Beta-Local (up-to-date version) ![latest version](https://img.shields.io/github/v/release/cheesenibbles123/Alternion-BW-mod?include_prereleases)
+   - Beta (code storage)
