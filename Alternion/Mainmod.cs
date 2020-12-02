@@ -74,6 +74,11 @@ namespace Alternion
             }
         }
 
+        void resetChangeTeamTimer()
+        {
+
+        }
+
         //Fetching players and textures
         private IEnumerator loadJsonFile()
         {
@@ -2313,8 +2318,14 @@ namespace Alternion
                         return;
                     }
                     Transform child = __instance.transform.FindChild("cannon");
-                    int.TryParse( child.transform.root.name.Split('m')[1] , out int index);
-                    string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
+                    int.TryParse(__instance.transform.root.name.Split('m')[1], out int index);
+                    logLow($"Going for root {__instance.transform.root.name}");
+                    logLow($"Gotten root index {index - 1} - ({__instance.transform.root.name.Split('m')[1]} - 1)");
+                    string steamID = "0";
+                    if (GameMode.Instance.teamCaptains[index - 1])
+                    {
+                        steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
+                    }
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
                         // If vessel is already cached, grab it and add, otherwise create new vessel
@@ -2347,7 +2358,10 @@ namespace Alternion
                     }
                     else
                     {
-                        child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
+                        if (theGreatCacher.defaultCannons != null)
+                        {
+                            child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -2371,6 +2385,7 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
+
                 try
                 {
                     if (!AlternionSettings.useCannonSkins)
@@ -2378,8 +2393,13 @@ namespace Alternion
                         return;
                     }
 
-                    int.TryParse(__instance.æïìçñðåììêç.transform.root.name.Split('m')[1], out int index);
-                    string steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
+                    int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
+                    logLow($"Gotten root index {index}");
+                    string steamID = "0";
+                    if (GameMode.Instance.teamCaptains[index])
+                    {
+                        steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                    }
                     if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
                         // If vessel is cached, add cannon to it, else create new vessel
@@ -2398,6 +2418,7 @@ namespace Alternion
                         // If they have a cannon skin then apply
                         if (player.cannonSkinName != "default")
                         {
+                            logLow("Searching for player.");
                             if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                             {
                                 __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);
@@ -2405,7 +2426,10 @@ namespace Alternion
                         }
                     }else
                     {
-                        __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
+                        if (theGreatCacher.defaultCannons != null)
+                        {
+                            __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
+                        }
                     }
                 }catch (Exception e)
                 {
