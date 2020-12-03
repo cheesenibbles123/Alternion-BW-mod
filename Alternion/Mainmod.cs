@@ -74,11 +74,6 @@ namespace Alternion
             }
         }
 
-        void resetChangeTeamTimer()
-        {
-
-        }
-
         //Fetching players and textures
         private IEnumerator loadJsonFile()
         {
@@ -1405,6 +1400,32 @@ namespace Alternion
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
+
+            logLow("__instance.transform.parent:");
+            MeshFilter msh = __instance.transform.parent.GetComponent<MeshFilter>();
+            if (msh != null)
+            {
+                logLow("Gotten mesh filter!");
+                logLow(msh.mesh.name);
+            }
+
+            logLow("__instance.transform.parent.parent:");
+            MeshFilter msh2 = __instance.transform.parent.parent.GetComponent<MeshFilter>();
+            if (msh2 != null)
+            {
+                logLow("Gotten mesh filter!");
+                logLow(msh2.mesh.name);
+            }
+            //foreach (Transform transf in __instance.transform.parent)
+            //{
+            //logLow(transf.name);
+            //}
+            //logLow("__instance.transform.parent.parent:");
+            //foreach (Transform transf in __instance.transform.parent.parent)
+            //{
+            //    logLow(transf.name);
+            //}
+
             // Needs a rework as the following share the same texture, and so return the same texture name:
             // Axe + Rapier
             // Dagger + Cutlass
