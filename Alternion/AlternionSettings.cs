@@ -19,7 +19,7 @@ namespace Alternion
         public static bool downloadOnStartup;
         public static string configKeyInput;
         public static int configMenuPageNumber = 1;
-        public static int configMenuMaxPages = 2;
+        public static int configMenuMaxPages = 3;
         public static bool updateDuringRuntime;
 
         static string configFile = "AlternionConfig.cfg";

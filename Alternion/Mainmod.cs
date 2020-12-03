@@ -105,6 +105,7 @@ namespace Alternion
         }
         private IEnumerator waterMark()
         {
+            byte[] bytes = null;
             // Check if pfp is already downloaded or not
             if (!File.Exists(Application.dataPath + texturesFilePath + "pfp.png"))
             {
@@ -113,7 +114,7 @@ namespace Alternion
 
                 try
                 {
-                    byte[] bytes = www.texture.EncodeToPNG();
+                    bytes = www.texture.EncodeToPNG();
                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "pfp.png", bytes);
                 }
                 catch (Exception e)
@@ -124,7 +125,7 @@ namespace Alternion
 
             }
 
-            watermarkTex = loadTexture("pfp", texturesFilePath, 258, 208);
+            watermarkTex = loadTexture("pfp", texturesFilePath, 258, 208, bytes);
         }
         private IEnumerator DownloadTextures()
         {
@@ -150,13 +151,14 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.badgeName);
                         if (!flag)
                         {
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "Badges/" + player.Value.badgeName + ".png");
                                 yield return www;
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -167,7 +169,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40);
+                                newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40, bytes);
                                 newTex.name = player.Value.badgeName;
                                 theGreatCacher.badges.Add(player.Value.badgeName, newTex);
                                 alreadyDownloaded.Add(player.Value.badgeName);
@@ -189,13 +191,14 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.maskSkinName);
                         if (!flag)
                         {
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + ".png");
                                 yield return www;
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + player.Value.maskSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -206,7 +209,7 @@ namespace Alternion
                             try
                             {
 
-                                newTex = loadTexture(player.Value.maskSkinName, texturesFilePath + "MaskSkins/", 100, 40);
+                                newTex = loadTexture(player.Value.maskSkinName, texturesFilePath + "MaskSkins/", 100, 40, bytes);
                                 newTex.name = player.Value.maskSkinName;
                                 theGreatCacher.maskSkins.Add(player.Value.maskSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.maskSkinName);
@@ -226,6 +229,7 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.sailSkinName);
                         if (!flag)
                         {
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "SailSkins/" + player.Value.sailSkinName + ".png");
@@ -233,7 +237,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -246,7 +250,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048, bytes);
                                 newTex.name = player.Value.sailSkinName;
                                 theGreatCacher.secondarySails.Add(player.Value.sailSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.sailSkinName);
@@ -265,6 +269,7 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.mainSailName);
                         if (!flag)
                         {
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "MainSailSkins/" + player.Value.mainSailName + ".png");
@@ -272,7 +277,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -282,7 +287,7 @@ namespace Alternion
                             }
                             try
                             {
-                                newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048, bytes);
                                 newTex.name = player.Value.mainSailName;
                                 theGreatCacher.mainSails.Add(player.Value.mainSailName, newTex);
                                 alreadyDownloaded.Add(player.Value.mainSailName);
@@ -302,6 +307,7 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                         if (!flag)
                         {
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
@@ -309,7 +315,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -320,7 +326,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048, bytes);
                                 newTex.name = player.Value.cannonSkinName;
                                 theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.cannonSkinName);
@@ -341,6 +347,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "musket_" + player.Value.musketSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -348,7 +355,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -359,7 +366,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -379,6 +386,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -386,7 +394,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -397,7 +405,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -417,6 +425,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -424,7 +433,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -435,7 +444,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -455,6 +464,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -462,7 +472,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -473,7 +483,7 @@ namespace Alternion
                             }
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -494,6 +504,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -501,7 +512,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -512,7 +523,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -532,6 +543,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -539,7 +551,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -550,7 +562,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -570,6 +582,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -577,7 +590,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -588,7 +601,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -608,6 +621,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -615,7 +629,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -626,7 +640,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -646,6 +660,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + "annelyRevolver_" + player.Value.annelyRevolverSkinName + ".png");
@@ -653,7 +668,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -663,7 +678,7 @@ namespace Alternion
                             }
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -685,6 +700,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "axe_" + player.Value.axeSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -692,7 +708,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -703,7 +719,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -723,6 +739,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "rapier_" + player.Value.rapierSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -730,7 +747,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -741,7 +758,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -761,6 +778,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "dagger_" + player.Value.daggerSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -768,7 +786,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -779,7 +797,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -799,6 +817,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "bottle_" + player.Value.bottleSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -806,7 +825,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -817,7 +836,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -837,6 +856,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -844,7 +864,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -855,7 +875,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -875,6 +895,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "pike_" + player.Value.pikeSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -882,7 +903,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -893,7 +914,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -914,6 +935,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "tomohawk_" + player.Value.tomohawkSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -921,7 +943,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -932,7 +954,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -952,6 +974,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -959,7 +982,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -970,7 +993,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -990,6 +1013,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -997,7 +1021,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1008,7 +1032,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1028,6 +1052,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "healItem_" + player.Value.healItemSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1035,7 +1060,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1046,7 +1071,7 @@ namespace Alternion
                             
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1067,6 +1092,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "hammer_" + player.Value.hammerSkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1074,7 +1100,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1085,7 +1111,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1105,6 +1131,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "atlas01_" + player.Value.atlas01SkinName;
+                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1112,7 +1139,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1123,7 +1150,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1163,7 +1190,7 @@ namespace Alternion
             logLow("Starting JSON fetch");
             StartCoroutine(loadJsonFile());
         }
-        static void setupMainMenu()
+        public static void setupMainMenu()
         {
             LoadingBar.updatePercentage(90, "Preparing Main Menu");
             if (!AlternionSettings.useWeaponSkins && !AlternionSettings.useBadges)
@@ -1522,14 +1549,16 @@ namespace Alternion
             Log.logger.Log(message);
         }
 
-        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
+        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight, byte[] data)
         {
             try
             {
-                byte[] fileData = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
-
+                if (data == null)
+                {
+                    data = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
+                }
                 Texture2D tex = new Texture2D(imgWidth, imgHeight, TextureFormat.RGB24, false);
-                tex.LoadImage(fileData);
+                tex.LoadImage(data);
                 return tex;
 
             }
@@ -2343,8 +2372,6 @@ namespace Alternion
                     }
                     Transform child = __instance.transform.FindChild("cannon");
                     int.TryParse(__instance.transform.root.name.Split('m')[1], out int index);
-                    logLow($"Going for root {__instance.transform.root.name}");
-                    logLow($"Gotten root index {index - 1} - ({__instance.transform.root.name.Split('m')[1]} - 1)");
                     string steamID = "0";
                     if (GameMode.Instance.teamCaptains[index - 1])
                     {
@@ -2418,7 +2445,6 @@ namespace Alternion
                     }
 
                     int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
-                    logLow($"Gotten root index {index}");
                     string steamID = "0";
                     if (GameMode.Instance.teamCaptains[index])
                     {
@@ -2442,7 +2468,6 @@ namespace Alternion
                         // If they have a cannon skin then apply
                         if (player.cannonSkinName != "default")
                         {
-                            logLow("Searching for player.");
                             if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                             {
                                 __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);

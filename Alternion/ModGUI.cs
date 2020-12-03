@@ -197,6 +197,43 @@ namespace Alternion
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
             }
+            else if (AlternionSettings.configMenuPageNumber == 3)
+            {
+                defaultColour = GUI.contentColor;
+                GUI.contentColor = Color.black;
+
+                GUI.Label(new Rect(labelBox.x, labelBox.y, labelWH.x, labelWH.y), "Setup");
+
+                GUI.contentColor = defaultColour;
+
+                // Force Update
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y, buttonWH.x, buttonWH.y), "Force Update"))
+                {
+                    ThreadCreationProgram.updateAllPlayers();
+                }
+
+                // Download On Startup
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 1), buttonWH.x, buttonWH.y), "Startup Download"))
+                {
+                    AlternionSettings.downloadOnStartup = !AlternionSettings.downloadOnStartup;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 1), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.downloadOnStartup)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 1), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+
+                // Runtime Updates
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 2), buttonWH.x, buttonWH.y), "Runtime Update"))
+                {
+                    AlternionSettings.updateDuringRuntime = !AlternionSettings.updateDuringRuntime;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.updateDuringRuntime)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+            }
 
             //Forwards Button
             if (GUI.Button(new Rect(switchPageForwardsBackwardsStartPositions.x, switchPageForwardsBackwardsStartPositions.y, switchPageButtonWH.x, switchPageButtonWH.y), ">"))
