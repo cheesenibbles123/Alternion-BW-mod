@@ -16,6 +16,7 @@ namespace Alternion
     public class Mainmod : MonoBehaviour
     {
         Texture2D watermarkTex;
+        bool setWatermark = false;
         static Transform menuCharacter;
 
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
@@ -47,25 +48,19 @@ namespace Alternion
         }
         void OnGUI()
         {
-            if (watermarkTex != null)
+            if (setWatermark && AlternionSettings.enableWaterMark)
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
             }
         }
         void Update()
         {
-            // If it has been found
-            if (menuCharacter)
+            if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
             {
-                if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf)
-                {
-                    // Rotate on RMB hold
-                    if (global::Input.GetMouseButton(1))
-                    {
-                        // Rotation code copied from CharacterCustomizationUI
-                        menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
-                    }
-                }
+                // If it has been found
+                // Rotation code copied from CharacterCustomizationUI
+                menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+
             }
 
             if (Input.GetKeyUp("*"))
@@ -79,29 +74,30 @@ namespace Alternion
         {
             LoadingBar.updatePercentage(0, "Fetching Players");
 
-            WWW www = new WWW(mainUrl + "playerList.json");
+            WWW www = new WWW(mainUrl + "playerList2.json");
             yield return www;
+            string[] json = www.text.Split('&');
 
-            try
+            for (int i = 0; i < json.Length; i++)
             {
                 // I didn't want to do this, but unity has forced my hand
-                string[] json = www.text.Split('&');
-                for (int i = 0; i < json.Length; i++)
+                playerObject player = JsonUtility.FromJson<playerObject>(json[i]);
+                try
                 {
-                    playerObject player = JsonUtility.FromJson<playerObject>(json[i]);
                     theGreatCacher.players.Add(player.steamID, player);
-                    LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players");
                 }
-            }
-            catch (Exception e)
-            {
-                debugLog("------------------");
-                debugLog("Loading from JSON error");
-                debugLog(e.Message);
-                debugLog("------------------");
+                catch (Exception e)
+                {
+                    debugLog("------------------");
+                    debugLog("Loading from JSON error");
+                    debugLog("Attempted User: " + player.steamID);
+                    debugLog(e.Message);
+                    debugLog("------------------");
+                }
+                LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players...");
             }
             LoadingBar.updatePercentage(20, "Finished getting players");
-            StartCoroutine(DownloadTextures());
+            StartCoroutine(downloadTextures());
         }
         private IEnumerator waterMark()
         {
@@ -125,9 +121,13 @@ namespace Alternion
 
             }
 
-            watermarkTex = loadTexture("pfp", texturesFilePath, 258, 208, bytes);
+            watermarkTex = loadTexture("pfp", texturesFilePath, 258, 208);
+            if (watermarkTex != null)
+            {
+                setWatermark = true;
+            }
         }
-        private IEnumerator DownloadTextures()
+        private IEnumerator downloadTextures()
         {
             List<string> alreadyDownloaded = new List<string>();
             // pre-declare so I don't create lots of new objects each loop, and to keep it readable
@@ -151,14 +151,13 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.badgeName);
                         if (!flag)
                         {
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "Badges/" + player.Value.badgeName + ".png");
                                 yield return www;
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -169,7 +168,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40, bytes);
+                                newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40);
                                 newTex.name = player.Value.badgeName;
                                 theGreatCacher.badges.Add(player.Value.badgeName, newTex);
                                 alreadyDownloaded.Add(player.Value.badgeName);
@@ -191,14 +190,13 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.maskSkinName);
                         if (!flag)
                         {
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + ".png");
                                 yield return www;
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + player.Value.maskSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -206,10 +204,11 @@ namespace Alternion
                                     debugLog(e.Message);
                                 }
                             }
+
                             try
                             {
 
-                                newTex = loadTexture(player.Value.maskSkinName, texturesFilePath + "MaskSkins/", 100, 40, bytes);
+                                newTex = loadTexture(player.Value.maskSkinName, texturesFilePath + "MaskSkins/", 1024, 1024);
                                 newTex.name = player.Value.maskSkinName;
                                 theGreatCacher.maskSkins.Add(player.Value.maskSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.maskSkinName);
@@ -219,6 +218,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Mask Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -229,7 +229,6 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.sailSkinName);
                         if (!flag)
                         {
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "SailSkins/" + player.Value.sailSkinName + ".png");
@@ -237,7 +236,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -250,7 +249,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
                                 newTex.name = player.Value.sailSkinName;
                                 theGreatCacher.secondarySails.Add(player.Value.sailSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.sailSkinName);
@@ -258,6 +257,7 @@ namespace Alternion
                             catch (Exception e)
                             {
                                 debugLog("------------------");
+                                debugLog("Normal Sail Setup Error");
                                 debugLog(e.Message);
                                 debugLog("------------------");
                             }
@@ -269,7 +269,6 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.mainSailName);
                         if (!flag)
                         {
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "MainSailSkins/" + player.Value.mainSailName + ".png");
@@ -277,7 +276,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -285,9 +284,10 @@ namespace Alternion
                                     debugLog(e.Message);
                                 }
                             }
+
                             try
                             {
-                                newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
                                 newTex.name = player.Value.mainSailName;
                                 theGreatCacher.mainSails.Add(player.Value.mainSailName, newTex);
                                 alreadyDownloaded.Add(player.Value.mainSailName);
@@ -297,6 +297,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Main Sail Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -307,7 +308,6 @@ namespace Alternion
                         flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                         if (!flag)
                         {
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
@@ -315,7 +315,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -326,7 +326,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
                                 newTex.name = player.Value.cannonSkinName;
                                 theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName, newTex);
                                 alreadyDownloaded.Add(player.Value.cannonSkinName);
@@ -336,6 +336,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Cannon Skin Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -347,7 +348,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "musket_" + player.Value.musketSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -355,7 +356,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -366,7 +367,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -376,6 +377,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Musket Skin Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -386,7 +388,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -394,7 +396,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -405,7 +407,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -415,6 +417,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Blunderbuss Skin Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -425,7 +428,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -433,7 +436,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -444,7 +447,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -454,6 +457,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Nockgun Skin Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -464,7 +468,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -472,7 +476,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -481,9 +485,10 @@ namespace Alternion
                                 }
 
                             }
+
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -493,6 +498,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Handmortar Skin Download Error");
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -504,7 +510,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -512,7 +518,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -523,7 +529,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -533,17 +539,18 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Standard Pistol Skin Download Error: " + player.Value.standardPistolSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
 
                     if (player.Value.shortPistolSkinName != "default")
                     {
-                        flag = alreadyDownloaded.Contains("shortPistol_" +  player.Value.shortPistolSkinName);
+                        flag = alreadyDownloaded.Contains("shortPistol_" + player.Value.shortPistolSkinName);
                         if (!flag)
                         {
                             fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -551,7 +558,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -562,7 +569,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -572,6 +579,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Short Pistol Skin Download Error: " + player.Value.shortPistolSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -582,7 +590,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -590,7 +598,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -601,7 +609,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -611,6 +619,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Duckfoot Skin Download Error: " + player.Value.duckfootSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -621,7 +630,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -629,7 +638,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -640,7 +649,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -650,6 +659,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Matchlock Skin Download Error: " + player.Value.matchlockRevolverSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -660,7 +670,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + "annelyRevolver_" + player.Value.annelyRevolverSkinName + ".png");
@@ -668,7 +678,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -676,9 +686,10 @@ namespace Alternion
                                     debugLog(e.Message);
                                 }
                             }
+
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -688,6 +699,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Annely Skin Download Error: " + player.Value.annelyRevolverSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
 
                         }
@@ -700,7 +712,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "axe_" + player.Value.axeSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -708,7 +720,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -719,7 +731,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -729,6 +741,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Axe Skin Download Error: " + player.Value.axeSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -739,7 +752,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "rapier_" + player.Value.rapierSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -747,7 +760,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -758,7 +771,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -768,6 +781,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Rapier Skin Download Error: " + player.Value.rapierSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -778,7 +792,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "dagger_" + player.Value.daggerSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -786,7 +800,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -797,7 +811,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -807,6 +821,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Dagger Skin Download Error: " + player.Value.daggerSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -817,7 +832,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "bottle_" + player.Value.bottleSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -825,7 +840,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -836,7 +851,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -846,6 +861,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Bottle Skin Download Error: " + player.Value.bottleSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -856,7 +872,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -864,7 +880,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -875,7 +891,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -885,6 +901,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Cutlass Skin Download Error: " + player.Value.cutlassSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -895,7 +912,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "pike_" + player.Value.pikeSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -903,7 +920,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -914,7 +931,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -924,6 +941,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Pike Skin Download Error: " + player.Value.pikeSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -935,7 +953,7 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "tomohawk_" + player.Value.tomohawkSkinName;
-                            byte[] bytes = null;
+
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -943,7 +961,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -954,7 +972,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -964,6 +982,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Tomohawk Skin Download Error: " + player.Value.tomohawkSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -974,7 +993,6 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -982,7 +1000,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -993,7 +1011,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1003,6 +1021,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Spyglass Skin Download Error: " + player.Value.spyglassSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -1013,7 +1032,6 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1021,7 +1039,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1032,7 +1050,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1042,6 +1060,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Grenade Skin Download Error: " + player.Value.grenadeSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -1052,7 +1071,6 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "healItem_" + player.Value.healItemSkinName;
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1060,7 +1078,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1068,10 +1086,10 @@ namespace Alternion
                                     debugLog(e.Message);
                                 }
                             }
-                            
+
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1081,6 +1099,125 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("HealItem Skin Download Error: " + player.Value.healItemSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
+                            }
+                        }
+                    }
+
+                    if (player.Value.teaCupSkinName != "default")
+                    {
+                        flag = alreadyDownloaded.Contains("teaCup_" + player.Value.teaCupSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "teaCup_" + player.Value.teaCupSkinName;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
+
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                logLow($"Added {fullWeaponString}");
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Teacup Skin Download Error: " + player.Value.teaCupSkinName);
+                                debugLog(e.Message);
+                                debugLog("------------------");
+                            }
+                        }
+                    }
+
+                    if (player.Value.teaWaterSkinName != "default")
+                    {
+                        flag = alreadyDownloaded.Contains("teaWater_" + player.Value.teaWaterSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "teaWater_" + player.Value.teaWaterSkinName;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
+
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("Tea Water Skin Download Error: " + player.Value.teaWaterSkinName);
+                                debugLog(e.Message);
+                                debugLog("------------------");
+                            }
+                        }
+                    }
+
+                    if (player.Value.bucketSkinName != "default")
+                    {
+                        flag = alreadyDownloaded.Contains("bucket_" + player.Value.bucketSkinName);
+                        if (!flag)
+                        {
+                            fullWeaponString = "bucket_" + player.Value.bucketSkinName;
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                yield return www;
+
+                                try
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                }
+                                catch (Exception e)
+                                {
+                                    debugLog(e.Message);
+                                }
+                            }
+
+                            try
+                            {
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex.name = fullWeaponString;
+                                theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
+                                alreadyDownloaded.Add(fullWeaponString);
+                            }
+                            catch (Exception e)
+                            {
+                                debugLog("------------------");
+                                debugLog("HealItem Skin Download Error: " + player.Value.bucketSkinName);
+                                debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -1092,7 +1229,6 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "hammer_" + player.Value.hammerSkinName;
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1100,7 +1236,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1111,7 +1247,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1121,6 +1257,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Hammer Skin Download Error: " + player.Value.hammerSkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -1131,7 +1268,6 @@ namespace Alternion
                         if (!flag)
                         {
                             fullWeaponString = "atlas01_" + player.Value.atlas01SkinName;
-                            byte[] bytes = null;
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
@@ -1139,7 +1275,7 @@ namespace Alternion
 
                                 try
                                 {
-                                    bytes = www.texture.EncodeToPNG();
+                                    byte[] bytes = www.texture.EncodeToPNG();
                                     File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 catch (Exception e)
@@ -1150,7 +1286,7 @@ namespace Alternion
 
                             try
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048, bytes);
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
@@ -1160,6 +1296,7 @@ namespace Alternion
                                 debugLog("------------------");
                                 debugLog("Atlas Skin Download Error: " + player.Value.atlas01SkinName);
                                 debugLog(e.Message);
+                                debugLog("------------------");
                             }
                         }
                     }
@@ -1190,6 +1327,7 @@ namespace Alternion
             logLow("Starting JSON fetch");
             StartCoroutine(loadJsonFile());
         }
+
         public static void setupMainMenu()
         {
             LoadingBar.updatePercentage(90, "Preparing Main Menu");
@@ -1198,9 +1336,9 @@ namespace Alternion
                 LoadingBar.updatePercentage(100, "Finished!");
                 return;
             }
-            setMainmenuBadge();
+            setMainMenuBadge();
         }
-        static void setMainmenuBadge()
+        static void setMainMenuBadge()
         {
 
             if (!AlternionSettings.useBadges)
@@ -1219,6 +1357,7 @@ namespace Alternion
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
                 if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                 {
+                    debugLog($"Got player {player.steamID} => {player.badgeName}");
                     if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                     {
                         if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
@@ -1241,33 +1380,31 @@ namespace Alternion
         }
         static void setMainMenuWeaponSkin()
         {
-            try
+            if (AlternionSettings.useWeaponSkins)
             {
-                if (!AlternionSettings.useWeaponSkins)
+                try
                 {
-                    LoadingBar.updatePercentage(100, "Finished!");
-                    return;
-                }
-                string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                {
-                    var musket = GameObject.Find("wpn_standardMusket_LOD1");
-                    if (musket != null)
+                    string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                     {
-                        if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
+                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
+                        if (musket != null)
                         {
-                            musket.GetComponent<Renderer>().material.mainTexture = newTex;
+                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
+                            {
+                                musket.GetComponent<Renderer>().material.mainTexture = newTex;
+                            }
+                        }
+                        else
+                        {
+                            debugLog("Main menu musket not found.");
                         }
                     }
-                    else
-                    {
-                        debugLog("Main menu musket not found.");
-                    }
                 }
-            }
-            catch (Exception e)
-            {
-                debugLog(e.Message);
+                catch (Exception e)
+                {
+                    debugLog(e.Message);
+                }
             }
 
             LoadingBar.updatePercentage(100, "Finished!");
@@ -1286,6 +1423,7 @@ namespace Alternion
                     {
                         // Save it for the rotating in Update()
                         menuCharacter = transform;
+                        break;
                     }
                 }
             }
@@ -1409,11 +1547,13 @@ namespace Alternion
             try
             {
                 // If the player Dict contains a reference to the specific weapon, output the texture
-                logLow(weapon + "_" + weaponSkin);
+                logLow($"Searching for -{weaponSkin}- for -{weapon}-");
+                logLow($"-{weapon}_{weaponSkin}-");
                 if (weaponSkin != "default")
                 {
                     if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out Texture newTexture))
                     {
+                        logLow("Found: " + newTexture);
                         renderer.material.mainTexture = newTexture;
                     }
                 }
@@ -1427,25 +1567,6 @@ namespace Alternion
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
-            bool run = false;
-            if (run)
-            {
-                logLow("__instance.transform.parent:");
-                MeshFilter msh = __instance.transform.parent.GetComponent<MeshFilter>();
-                if (msh != null)
-                {
-                    logLow("Gotten mesh filter!");
-                    logLow(msh.mesh.name);
-                }
-
-                logLow("__instance.transform.parent.parent:");
-                MeshFilter msh2 = __instance.transform.parent.parent.GetComponent<MeshFilter>();
-                if (msh2 != null)
-                {
-                    logLow("Gotten mesh filter!");
-                    logLow(msh2.mesh.name);
-                }
-            }
             //foreach (Transform transf in __instance.transform.parent)
             //{
             //logLow(transf.name);
@@ -1465,7 +1586,14 @@ namespace Alternion
                     assignWeaponToRenderer(renderer, player.musketSkinName, "musket");
                     break;
                 case "wpn_standardCutlass_alb":
-                    assignWeaponToRenderer(renderer, player.cutlassSkinName, "cutlass");
+                    if (renderer.name == "Cutlass" || renderer.name == "wpn_cutlass_LOD1")
+                    {
+                        assignWeaponToRenderer(renderer, player.cutlassSkinName, "cutlass");
+                    }
+                    else if (renderer.name == "wpn_dagger")
+                    {
+                        assignWeaponToRenderer(renderer, player.daggerSkinName, "dagger");
+                    }
                     break;
                 case "wpn_blunderbuss_alb":
                     assignWeaponToRenderer(renderer, player.blunderbussSkinName, "blunderbuss");
@@ -1476,9 +1604,6 @@ namespace Alternion
                 case "wpn_handMortar_alb":
                     assignWeaponToRenderer(renderer, player.handMortarSkinName, "handmortar");
                     break;
-                case "wpn_rapier_alb":
-                    assignWeaponToRenderer(renderer, player.rapierSkinName, "rapier");
-                    break;
                 case "wpn_dagger_alb":
                     assignWeaponToRenderer(renderer, player.daggerSkinName, "dagger");
                     break;
@@ -1486,7 +1611,7 @@ namespace Alternion
                     assignWeaponToRenderer(renderer, player.bottleSkinName, "bottle");
                     break;
                 case "wpn_rumHealth_alb":
-                    assignWeaponToRenderer(renderer, player.healItemSkinName, "healItem");
+                    assignWeaponToRenderer(renderer, player.healItemSkinName, "bottleHealth");
                     break;
                 case "prp_hammer_alb":
                     assignWeaponToRenderer(renderer, player.hammerSkinName, "hammer");
@@ -1497,9 +1622,9 @@ namespace Alternion
                 case "prp_atlas01_alb":
                     assignWeaponToRenderer(renderer, player.atlas01SkinName, "atlas01");
                     break;
-                //case "prp_bucket_alb":
-                //    assignWeaponToRenderer(renderer, player, "bucket");
-                //    break;
+                case "prp_bucket_alb":
+                    assignWeaponToRenderer(renderer, player.bucketSkinName, "bucket");
+                    break;
                 case "wpn_shortpistol_alb":
                     assignWeaponToRenderer(renderer, player.shortPistolSkinName, "shortPistol");
                     break;
@@ -1516,7 +1641,14 @@ namespace Alternion
                     assignWeaponToRenderer(renderer, player.matchlockRevolverSkinName, "matchlockRevolver");
                     break;
                 case "wpn_twoHandAxe_alb":
-                    assignWeaponToRenderer(renderer, player.axeSkinName, "axe");
+                    if (renderer.name == "wpn_twoHandAxe")
+                    {
+                        assignWeaponToRenderer(renderer, player.axeSkinName, "axe");
+                    }
+                    else if (renderer.name == "wpn_rapier")
+                    {
+                        assignWeaponToRenderer(renderer, player.rapierSkinName, "rapier");
+                    }
                     break;
                 case "wpn_boardingPike_alb":
                     assignWeaponToRenderer(renderer, player.pikeSkinName, "pike");
@@ -1524,8 +1656,15 @@ namespace Alternion
                 case "wpn_spyglass_alb":
                     assignWeaponToRenderer(renderer, player.spyglassSkinName, "spyglass");
                     break;
+                case "prp_teaCup_alb":
+                    assignWeaponToRenderer(renderer, player.teaCupSkinName, "teaCup");
+                    break;
+                case "tea_alb":
+                    assignWeaponToRenderer(renderer, player.teaWaterSkinName, "teaWater");
+                    break;
                 default:
                     // If not known, output here
+                    //logLow("Type name: -" + renderer.name + "-");
                     //logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
             }
@@ -1549,18 +1688,14 @@ namespace Alternion
             Log.logger.Log(message);
         }
 
-        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight, byte[] data)
+        public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
         {
             try
             {
-                if (data == null)
-                {
-                    data = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
-                }
+                byte[] fileData = File.ReadAllBytes(Application.dataPath + filePath + texName + ".png");
                 Texture2D tex = new Texture2D(imgWidth, imgHeight, TextureFormat.RGB24, false);
-                tex.LoadImage(data);
+                tex.LoadImage(fileData);
                 return tex;
-
             }
             catch (Exception e)
             {
@@ -1572,40 +1707,39 @@ namespace Alternion
         }
 
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
-        static class ScoreBoardSlotAdjuster
+        static class scoreBoardSlotAdjuster
         {
             static void Postfix(ScoreboardSlot __instance, string ìåäòäóëäêèæ, int óîèòèðîðçîì, string ñíçæóñðæéòó, int çïîèïçïñêïæ, int äïóïåòòéðåç, int ìëäòìèçñçìí, int óíïòðíäóïçç, int íîóìóíèíñìå, bool ðèæòðìêóëïð, bool äåîéíèñèììñ, bool æíèòîîìðçóî, int ïîñíñóóåîîñ, int æìíñèéçñîíí, bool òêóçíïåæíîë, bool æåèòðéóçêçó, bool èëçòëæêäêîå, bool ëååííåïäæîè, bool ñîäèñæïîóçó)
             {
-                try
+                if (AlternionSettings.useBadges)
                 {
-                    if (!AlternionSettings.useBadges)
+                    try
                     {
-                        return;
-                    }
-                    string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                    {
-                        // if they have a TW badge, this will dictate if it should or shouldn't override it visually
-                        if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+                        string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
+                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTexture))
+                            // if they have a TW badge, this will dictate if it should or shouldn't override it visually
+                            if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
                             {
-                                __instance.éòëèïòëóæèó.texture = newTexture;
+                                if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTexture))
+                                {
+                                    __instance.éòëèïòëóæèó.texture = newTexture;
+                                }
                             }
                         }
-                    }
 
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.Contains("Object reference not set to an instance of an object"))
-                    {
-                        //Go do one
                     }
-                    else
+                    catch (Exception e)
                     {
-                        debugLog("Failed to assign custom badge to a player:");
-                        debugLog(e.Message);
+                        if (e.Message.Contains("Object reference not set to an instance of an object"))
+                        {
+                            //Go do one
+                        }
+                        else
+                        {
+                            debugLog("Failed to assign custom badge to a player:");
+                            debugLog(e.Message);
+                        }
                     }
                 }
 
@@ -1618,22 +1752,21 @@ namespace Alternion
         {
             static void Postfix(WeaponRender __instance)
             {
-                try
+                if (AlternionSettings.useWeaponSkins)
                 {
-                    if (!AlternionSettings.useWeaponSkins)
+                    try
                     {
-                        return;
+                        //PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
+                        string steamID = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString();
+                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                        {
+                            weaponSkinHandler(__instance, player);
+                        }
                     }
-                    PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
-                    string steamID = plyrInf.steamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                    catch (Exception e)
                     {
-                        weaponSkinHandler(__instance, player);
+                        debugLog("err: " + e.Message);
                     }
-                }
-                catch (Exception e)
-                {
-                    debugLog("err: " + e.Message);
                 }
             }
         }
@@ -1652,8 +1785,8 @@ namespace Alternion
                         {  
                             if (theGreatCacher.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
                             {
-                                Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
-                                renderer.material.mainTexture = newTex;
+                                // Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
+                                __instance.éäéïéðïåææè.transform.GetComponent<Renderer>().material.mainTexture = newTex;
                             }
                         }
                     }
@@ -1671,8 +1804,7 @@ namespace Alternion
             static void Postfix(MainMenu __instance)
             {
                 // Call these so that they set correctly again on returning to the main menu
-                setMainmenuBadge();
-                setMainMenuWeaponSkin();
+                setupMainMenu();
                 setMenuCharacter();
             }
         }
@@ -1682,11 +1814,11 @@ namespace Alternion
         {
             static void Postfix(MainMenu __instance, bool on)
             {
-                if (!AlternionSettings.useBadges)
+                if (AlternionSettings.useBadges)
                 {
                     if (!on)
                     {
-                        setMainmenuBadge();
+                        setMainMenuBadge();
                     }
                 }
             }
@@ -1697,25 +1829,24 @@ namespace Alternion
         {
             static void Postfix(WeaponRender __instance)
             {
-                try
+                if (AlternionSettings.useWeaponSkins)
                 {
-                    if (!AlternionSettings.useWeaponSkins)
+                    try
                     {
-                        return;
-                    }
-                    if (!__instance.åïääìêêäéèç)
-                    {
-                        //Grab local steamID
-                        string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                        if (!__instance.åïääìêêäéèç)
                         {
-                            weaponSkinHandler(__instance, player);
+                            //Grab local steamID
+                            string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+                            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                            {
+                                weaponSkinHandler(__instance, player);
+                            }
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    debugLog(e.Message);
+                    catch (Exception e)
+                    {
+                        debugLog(e.Message);
+                    }
                 }
             }
         }
@@ -1725,635 +1856,641 @@ namespace Alternion
         {
             static void Postfix(SailHealth __instance)
             {
-                try
+                if (AlternionSettings.useMainSails || AlternionSettings.useSecondarySails)
                 {
-                    if (!AlternionSettings.useMainSails && !AlternionSettings.useSecondarySails)
+                    try
                     {
-                        return;
+                        Transform shipTransf = __instance.transform.root;
+                        if (shipTransf)
+                        {
+                            int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
+
+                            string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
+
+                            if (!theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                            {
+                                __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                return;
+                            }
+
+                            string shipType = GameMode.Instance.shipTypes[teamNum - 1];
+                            shipType = shipType.Remove(shipType.Length - 1);
+
+
+                            switch (shipType)
+                            {
+                                case "cruiser":
+                                    if (__instance.name == "hmsSophie_sails08" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+
+                                        if (player.mainSailName != "default")
+                                        {
+
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (theGreatCacher.defaultSails != null)
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+
+
+                                    if (__instance.name != "hmsSophie_sails08")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "galleon":
+                                    if (__instance.name == "galleon_sails_01" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (theGreatCacher.defaultSails != null)
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+
+                                    if (__instance.name != "galleon_sails_01")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "brig":
+                                    if (__instance.name == "hmsSpeedy_sails04" && AlternionSettings.useMainSails)
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "hmsSpeedy_sails04")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "xebec":
+                                    if (__instance.name == "xebec_sail03" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "xebec_sail03")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "bombvessel":
+                                    if (__instance.name == "bombVessel_sails07" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "bombVessel_sails07")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "gunboat":
+                                    if (__instance.name == "gunboat_sails02" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "gunboat_sails02")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "cutter":
+                                    if (__instance.name == "hmsAlert_sails02" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "hmsAlert_sails02")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "bombketch":
+                                    if (__instance.name == "bombKetch_sails06" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "bombKetch_sails06")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "carrack":
+                                    if (__instance.name == "carrack_sail03" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "carrack_sail03")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "junk":
+                                    if (__instance.name == "junk_sails_01" && AlternionSettings.useMainSails)
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "junk_sails_01")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                case "schooner":
+                                    if ((__instance.name == "schooner_sails02" && AlternionSettings.useMainSails) || (__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
+                                    {
+
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.mainSailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+
+                                        if (player.mainSailName != "default")
+                                        {
+                                            if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
+                                            {
+                                                __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                        }
+                                    }
+                                    else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
+                                    {
+                                        if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
+                                        {
+                                            __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                    }
+
+                                    if (__instance.name != "schooner_sails02" && __instance.name != "schooner_sails00")
+                                    {
+                                        if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                                        {
+                                            vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                                        }
+                                        else
+                                        {
+                                            cachedShip newVessel = new cachedShip();
+                                            newVessel.sailDict.Add("1", __instance);
+                                            theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                        }
+                                    }
+
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
-                    Transform shipTransf = __instance.transform.root;
-                    if (shipTransf)
+                    catch (Exception e)
                     {
-                        int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
-
-                        string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
-
-                        if (!theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                        {
-                            __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                            return;
-                        }
-
-                        string shipType = GameMode.Instance.shipTypes[teamNum - 1];
-                        shipType = shipType.Remove(shipType.Length - 1);
-
-
-                        switch (shipType)
-                        {
-                            case "cruiser":
-                                if (__instance.name == "hmsSophie_sails08" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-
-                                if (__instance.name != "hmsSophie_sails08")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "galleon":
-                                if (__instance.name == "galleon_sails_01" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "galleon_sails_01")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "brig":
-                                if (__instance.name == "hmsSpeedy_sails04" && AlternionSettings.useMainSails)
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "hmsSpeedy_sails04")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "xebec":
-                                if (__instance.name == "xebec_sail03" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "xebec_sail03")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "bombvessel":
-                                if (__instance.name == "bombVessel_sails07" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "bombVessel_sails07")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "gunboat":
-                                if (__instance.name == "gunboat_sails02" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "gunboat_sails02")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "cutter":
-                                if (__instance.name == "hmsAlert_sails02" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "hmsAlert_sails02")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "bombketch":
-                                if (__instance.name == "bombKetch_sails06" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "bombKetch_sails06")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "carrack":
-                                if (__instance.name == "carrack_sail03" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "carrack_sail03")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "junk":
-                                if (__instance.name == "junk_sails_01" && AlternionSettings.useMainSails)
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "junk_sails_01")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            case "schooner":
-                                if ((__instance.name == "schooner_sails02" && AlternionSettings.useMainSails) || (__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
-                                {
-
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.mainSailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-
-                                    if (player.mainSailName != "default")
-                                    {
-                                        if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out Texture mainSail))
-                                        {
-                                            __instance.GetComponent<Renderer>().material.mainTexture = mainSail;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                    }
-                                }
-                                else if (player.sailSkinName != "default" && AlternionSettings.useSecondarySails)
-                                {
-                                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out Texture secondarySail))
-                                    {
-                                        __instance.GetComponent<Renderer>().material.mainTexture = secondarySail;
-                                    }
-                                }
-                                else
-                                {
-                                    __instance.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                                }
-
-                                if (__instance.name != "schooner_sails02" && __instance.name != "schooner_sails00")
-                                {
-                                    if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                                    {
-                                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                                    }
-                                    else
-                                    {
-                                        cachedShip newVessel = new cachedShip();
-                                        newVessel.sailDict.Add("1", __instance);
-                                        theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                    }
-                                }
-
-                                break;
-                            default:
-                                break;
-                        }
+                        debugLog(e.Message);
                     }
-                }
-                catch (Exception e)
-                {
-                    debugLog(e.Message);
                 }
             }
         }
@@ -2364,39 +2501,45 @@ namespace Alternion
         {
             static void Postfix(CannonUse __instance)
             {
-                try
+                if (AlternionSettings.useCannonSkins)
                 {
-                    if (!AlternionSettings.useCannonSkins)
+                    try
                     {
-                        return;
-                    }
-                    Transform child = __instance.transform.FindChild("cannon");
-                    int.TryParse(__instance.transform.root.name.Split('m')[1], out int index);
-                    string steamID = "0";
-                    if (GameMode.Instance.teamCaptains[index - 1])
-                    {
-                        steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
-                    }
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                    {
-                        // If vessel is already cached, grab it and add, otherwise create new vessel
-                        if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                        Transform child = __instance.transform.FindChild("cannon");
+                        int.TryParse(__instance.transform.root.name.Split('m')[1], out int index);
+                        string steamID = "0";
+                        if (GameMode.Instance.teamCaptains[index - 1])
                         {
-                            vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
+                            steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
                         }
-                        else
+                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            cachedShip newVessel = new cachedShip();
-                            newVessel.cannonOperationalDict.Add("1", __instance);
-                            theGreatCacher.ships.Add(index.ToString(), newVessel);
-                        }
-
-                        // If they have a custom texture, use it, else use default skin
-                        if (player.cannonSkinName != "default")
-                        {
-                            if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
+                            // If vessel is already cached, grab it and add, otherwise create new vessel
+                            if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                             {
-                                child.GetComponent<Renderer>().material.mainTexture = newTex;
+                                vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
+                            }
+                            else
+                            {
+                                cachedShip newVessel = new cachedShip();
+                                newVessel.cannonOperationalDict.Add("1", __instance);
+                                theGreatCacher.ships.Add(index.ToString(), newVessel);
+                            }
+
+                            // If they have a custom texture, use it, else use default skin
+                            if (player.cannonSkinName != "default")
+                            {
+                                if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
+                                {
+                                    child.GetComponent<Renderer>().material.mainTexture = newTex;
+                                }
+                            }
+                            else
+                            {
+                                if (theGreatCacher.defaultCannons != null)
+                                {
+                                    child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
+                                }
                             }
                         }
                         else
@@ -2407,25 +2550,18 @@ namespace Alternion
                             }
                         }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        if (theGreatCacher.defaultCannons != null)
+                        if (e.Message.Contains("Object reference not set to an instance of an object"))
                         {
-                            child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
+                            //Go do one
                         }
-                    }
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.Contains("Object reference not set to an instance of an object"))
-                    {
-                        //Go do one
-                    }
-                    else
-                    {
-                        debugLog("Cannon operational error start");
-                        debugLog(e.Message);
-                        debugLog("Cannon operational error end");
+                        else
+                        {
+                            debugLog("Cannon operational error start");
+                            debugLog(e.Message);
+                            debugLog("Cannon operational error end");
+                        }
                     }
                 }
             }
@@ -2436,55 +2572,55 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
-
-                try
+                if (AlternionSettings.useCannonSkins)
                 {
-                    if (!AlternionSettings.useCannonSkins)
+                    try
                     {
-                        return;
-                    }
 
-                    int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
-                    string steamID = "0";
-                    if (GameMode.Instance.teamCaptains[index])
-                    {
-                        steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-                    }
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                    {
-                        // If vessel is cached, add cannon to it, else create new vessel
-                        if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                        int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
+                        string steamID = "0";
+                        if (GameMode.Instance.teamCaptains[index])
                         {
-                            vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
+                            steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                        }
+                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                        {
+                            // If vessel is cached, add cannon to it, else create new vessel
+                            if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                            {
+                                vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
+                            }
+                            else
+                            {
+                                cachedShip newVessel = new cachedShip();
+                                newVessel.cannonDestroyDict.Add("1", __instance);
+                                theGreatCacher.ships.Add(index.ToString(), newVessel);
+                            }
+
+
+                            // If they have a cannon skin then apply
+                            if (player.cannonSkinName != "default")
+                            {
+                                if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
+                                {
+                                    __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);
+                                }
+                            }
                         }
                         else
                         {
-                            cachedShip newVessel = new cachedShip();
-                            newVessel.cannonDestroyDict.Add("1", __instance);
-                            theGreatCacher.ships.Add(index.ToString(), newVessel);
-                        }
-
-
-                        // If they have a cannon skin then apply
-                        if (player.cannonSkinName != "default")
-                        {
-                            if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
+                            if (theGreatCacher.defaultCannons != null)
                             {
-                                __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);
+                                __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
                             }
                         }
-                    }else
-                    {
-                        if (theGreatCacher.defaultCannons != null)
-                        {
-                            __instance.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.defaultCannons);
-                        }
                     }
-                }catch (Exception e)
-                {
-                    debugLog("Cannon destroy start");
-                    debugLog(e.Message);
-                    debugLog("Cannon destroy end");
+                    catch (Exception e)
+                    {
+                        debugLog("Cannon destroy start");
+                        debugLog(e.Message);
+                        debugLog("Cannon destroy end");
+                    }
                 }
             }
         }
@@ -2495,24 +2631,23 @@ namespace Alternion
             static void Postfix(AccoladeItem __instance, string óéíïñîèëëêð, int òææóïíéñåïñ, string çìîñìëðêëéò, CSteamID ìçíêääéïíòç)
             {
                 // Sets win screen badges
-                try
+                if (AlternionSettings.useBadges)
                 {
-                    if (!AlternionSettings.useBadges)
+                    try
                     {
-                        return;
-                    }
-                    string steamID = ìçíêääéïíòç.m_SteamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                    {
-                        if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
+                        string steamID = ìçíêääéïíòç.m_SteamID.ToString();
+                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            __instance.äæåéåîèòéîñ.texture = newTex;
+                            if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
+                            {
+                                __instance.äæåéåîèòéîñ.texture = newTex;
+                            }
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    debugLog(e.Message);
+                    catch (Exception e)
+                    {
+                        debugLog(e.Message);
+                    }
                 }
             }
         }
@@ -2533,12 +2668,21 @@ namespace Alternion
             static void Prefix(PlayerOptions __instance)
             {
                 // Untested
-                if (LocalPlayer.îêêæëçäëèñî.äíìíëðñïñéè.isCaptain())
+                try
                 {
-                    PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
-                    string steamNewCaptainID = player.steamID.ToString();
-                    string teamNum = player.team.ToString();
-                    assignNewTexturesToShips(steamNewCaptainID, teamNum);
+                    if (LocalPlayer.îêêæëçäëèñî.äíìíëðñïñéè.isCaptain())
+                    {
+                        PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
+                        string steamNewCaptainID = player.steamID.ToString();
+                        string teamNum = player.team.ToString();
+                        assignNewTexturesToShips(steamNewCaptainID, teamNum);
+                    }
+                }catch (Exception e)
+                {
+                    debugLog("##########################################################");
+                    debugLog("Pass captain patch.");
+                    debugLog(e.Message);
+                    debugLog("##########################################################");
                 }
             }
         }

@@ -19,14 +19,17 @@ namespace Alternion
         public static Dictionary<string, Texture> secondarySails = new Dictionary<string, Texture>();
         public static Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
         public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
+
         void Start()
         {
             isActive = true;
         }
+
         public static void setDefaultSails(Texture newTexture)
         {
             defaultSails = newTexture;
         }
+
         public static void setDefaultCannons(Texture newTexture)
         {
             defaultCannons = newTexture;

@@ -65,7 +65,7 @@
     <Compile Include="cachedShip.cs" />
     <Compile Include="LoadingBar.cs" />
     <Compile Include="Threading.cs" />
-    <Compile Include="webPlayerObject.cs" />
+    <Compile Include="playerObject.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mainmod.cs" />
     <Compile Include="ModGUI.cs" />

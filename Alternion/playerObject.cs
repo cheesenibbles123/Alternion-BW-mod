@@ -39,6 +39,9 @@ namespace Alternion
         public string spyglassSkinName;
         public string grenadeSkinName;
         public string healItemSkinName;
+        public string teaCupSkinName;
+        public string teaWaterSkinName;
+        public string bucketSkinName;
 
         public string hammerSkinName;
 

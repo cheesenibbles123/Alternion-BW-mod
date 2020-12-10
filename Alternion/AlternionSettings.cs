@@ -20,6 +20,7 @@ namespace Alternion
         public static string configKeyInput;
         public static int configMenuPageNumber = 1;
         public static int configMenuMaxPages = 3;
+        public static bool enableWaterMark = true;
         public static bool updateDuringRuntime;
 
         static string configFile = "AlternionConfig.cfg";
@@ -56,7 +57,7 @@ namespace Alternion
             useMainSails = true;
             useSecondarySails = true;
             useWeaponSkins = true;
-            useCannonSkins = false;
+            useCannonSkins = true;
             downloadOnStartup = true;
             updateDuringRuntime = true;
             configKeyInput = "]";

@@ -104,7 +104,7 @@ namespace Alternion
             if (AlternionSettings.configMenuPageNumber == 1)
             {
                 defaultColour = GUI.contentColor;
-                GUI.contentColor = Color.black;
+                GUI.contentColor = Color.white;
 
                 GUI.Label(new Rect(labelBox.x, labelBox.y, labelWH.x, labelWH.y), "Player");
 
@@ -158,7 +158,7 @@ namespace Alternion
             else if (AlternionSettings.configMenuPageNumber == 2)
             {
                 defaultColour = GUI.contentColor;
-                GUI.contentColor = Color.black;
+                GUI.contentColor = Color.white;
 
                 GUI.Label(new Rect(labelBox.x, labelBox.y, labelWH.x, labelWH.y), "Ship");
 
@@ -200,7 +200,7 @@ namespace Alternion
             else if (AlternionSettings.configMenuPageNumber == 3)
             {
                 defaultColour = GUI.contentColor;
-                GUI.contentColor = Color.black;
+                GUI.contentColor = Color.white;
 
                 GUI.Label(new Rect(labelBox.x, labelBox.y, labelWH.x, labelWH.y), "Setup");
 
@@ -233,21 +233,32 @@ namespace Alternion
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
+
+                // Toggle Watermark
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Watermark"))
+                {
+                    AlternionSettings.enableWaterMark = !AlternionSettings.enableWaterMark;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.enableWaterMark)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
             }
 
             //Forwards Button
-            if (GUI.Button(new Rect(switchPageForwardsBackwardsStartPositions.x, switchPageForwardsBackwardsStartPositions.y, switchPageButtonWH.x, switchPageButtonWH.y), ">"))
+            if (AlternionSettings.configMenuPageNumber < AlternionSettings.configMenuMaxPages)
             {
-                if (AlternionSettings.configMenuPageNumber < AlternionSettings.configMenuMaxPages)
+                if (GUI.Button(new Rect(switchPageForwardsBackwardsStartPositions.x, switchPageForwardsBackwardsStartPositions.y, switchPageButtonWH.x, switchPageButtonWH.y), ">"))
                 {
                     AlternionSettings.configMenuPageNumber += 1;
                 }
             }
 
             //Back button
-            if (GUI.Button(new Rect(switchPageForwardsBackwardsStartPositions.z, switchPageForwardsBackwardsStartPositions.w, switchPageButtonWH.x, switchPageButtonWH.y), "<"))
+            if (AlternionSettings.configMenuPageNumber > 1)
             {
-                if (AlternionSettings.configMenuPageNumber > 1)
+                if (GUI.Button(new Rect(switchPageForwardsBackwardsStartPositions.z, switchPageForwardsBackwardsStartPositions.w, switchPageButtonWH.x, switchPageButtonWH.y), "<"))
                 {
                     AlternionSettings.configMenuPageNumber -= 1;
                 }
