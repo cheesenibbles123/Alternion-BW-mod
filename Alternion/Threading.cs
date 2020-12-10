@@ -74,7 +74,6 @@ namespace Alternion
         {
             // Sleep as it takes a while before the steamID is actually assigned to the PlayerInfo
             Thread.Sleep(500);
-            debugLog("Started Thread");
             string steamID = "0";
             if (GameMode.getPlayerInfo(pName) != null)
             {
@@ -82,11 +81,10 @@ namespace Alternion
                 steamID = plrInf.steamID.ToString();
             }
 
-            debugLog($"Gotten => {steamID}");
 
             WebClient webCli = new WebClient();
             // Fetch all players
-            string response = webCli.DownloadString("http://www.archiesbots.com/BlackwakeStuff/playerList.json");
+            string response = webCli.DownloadString("http://www.archiesbots.com/BlackwakeStuff/playerList2.json");
             string[] json = response.Split('&');
 
             for (int i = 0; i < json.Length; i++)
@@ -103,12 +101,8 @@ namespace Alternion
                         {
                             try
                             {
-                                debugLog($"Original duckfoot => {theGreatCacher.players[steamID].duckfootSkinName}");
                                 updateUser(steamID, player, webCli);
-                                debugLog("Updated User");
                                 theGreatCacher.players[steamID] = player;
-                                debugLog($"Assigned => {player.steamID}");
-                                debugLog($"New duckfoot => {theGreatCacher.players[steamID].duckfootSkinName}");
                             }
                             catch (Exception e)
                             {
@@ -147,55 +141,40 @@ namespace Alternion
             }
 
             Texture2D newTex;
-            debugLog("Set tex");
             try
             {
-                debugLog("Setting " + type);
                 switch (type)
                 {
                     case "badge":
-                        debugLog("Init A");
                         newTex = loadTexture(assetName, bytes, 100, 40);
                         newTex.name = assetName;
                         theGreatCacher.badges.Add(assetName, newTex);
-                        debugLog("Downloaded Badge Skin");
                         break;
                     case "sail":
-                        debugLog("Init B");
                         newTex = loadTexture(assetName, bytes, 2048, 2048);
                         newTex.name = assetName;
                         theGreatCacher.secondarySails.Add(assetName, newTex);
-                        debugLog("Downloaded Sail Skin");
                         break;
                     case "mainsail":
-                        debugLog("Init C");
                         newTex = loadTexture(assetName, bytes, 2048, 2048);
                         newTex.name = assetName;
                         theGreatCacher.mainSails.Add(assetName, newTex);
-                        debugLog("Downloaded MainSail Skin");
                         break;
                     case "cannon":
                         debugLog("Init D");
                         newTex = loadTexture(assetName, bytes, 2048, 2048);
                         newTex.name = assetName;
                         theGreatCacher.cannonSkins.Add(assetName, newTex);
-                        debugLog("Downloaded Cannon Skin");
                         break;
                     case "goldmask":
-                        debugLog("Init E");
                         newTex = loadTexture(assetName, bytes, 1024, 1024);
                         newTex.name = assetName;
                         theGreatCacher.maskSkins.Add(assetName, newTex);
-                        debugLog("Downloaded Mask Skin");
                         break;
                     case "weaponskin":
-                        debugLog("Init F");
                         newTex = loadTexture(assetName, bytes, 2048, 2048);
-                        debugLog("loaded texture");
                         newTex.name = assetName;
-                        debugLog($"set name => {newTex.name}");
                         theGreatCacher.weaponSkins.Add(assetName, newTex);
-                        debugLog("Downloaded Weapon Skin");
                         break;
                     default:
                         break;
@@ -204,7 +183,6 @@ namespace Alternion
             {
                 debugLog(e.Message);
             }
-            debugLog("Complete!");
         }
 
         private static bool checkIfItemIsCached(string type, string assetName)
@@ -274,7 +252,6 @@ namespace Alternion
         {
             // Overall stuff
             bool enableThread = false;
-            debugLog($"Updating user => {steamID}");
             if (theGreatCacher.players[steamID].badgeName != player.badgeName)
             {
                 if (!checkIfItemIsCached("badge", player.badgeName))
@@ -946,7 +923,6 @@ namespace Alternion
 
         private static void ChildThreadUpdateAll()
         {
-            debugLog("Updating all");
             WebClient webCli = new WebClient();
             string response = webCli.DownloadString("http://www.archiesbots.com/BlackwakeStuff/playerList.json");
             string[] json = response.Split('&');
