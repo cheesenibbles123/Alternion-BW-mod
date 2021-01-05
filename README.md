@@ -21,7 +21,7 @@ This is a split off from my first mod which was initially created for custom bad
 The original goal was simply to modify and allow for custom badges, and well... it kind of spiralled from there onto what it is now. If you come across any issues/feature requests make sure to mention/report them, either here or to me on discord **Archie the inventor#4744**
 
 # Features:
- - Custom Badges based on steamID's managed by a website
+ - Custom Badges based on steamID's
  - Custom Sail skins based on captain's steamID
  - Custom Cannon skins based on captain's steamID
  - Custom Weapon skins based on player's steamID
