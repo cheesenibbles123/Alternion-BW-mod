@@ -2,10 +2,12 @@
 using Harmony;
 using Steamworks;
 using UnityEngine;
+using BWModLoader;
 
 namespace Alternion
 {
-    class WeaponSkinHandler
+    [Mod]
+    public class WeaponSkinHandler
     {
 
         /// <summary>

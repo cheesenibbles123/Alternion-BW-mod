@@ -4,12 +4,14 @@ using System.IO;
 using Harmony;
 using UnityEngine;
 using System.Collections;
+using BWModLoader;
 
 namespace Alternion
 {
     /// <summary>
-    /// Originally for multithreading stuff.
+    /// Runtime Updater
     /// </summary>
+    [Mod]
     public class RuntimeUpdater : MonoBehaviour
     {
         /// <summary>
