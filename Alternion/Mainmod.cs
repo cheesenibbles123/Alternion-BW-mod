@@ -1321,7 +1321,7 @@ namespace Alternion
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
             // outputPlayerDict();
-            logLow("Complete download!");
+            Logger.logLow("Complete download!");
             setupMainMenu();
         }
 
@@ -1617,20 +1617,6 @@ namespace Alternion
                     //logLow("Type name: -" + renderer.name + "-");
                     //logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
-            }
-        }
-
-        /// <summary>
-        /// Logs low priority stuff.
-        /// </summary>
-        /// <param name="message">Message to Log</param>
-        static void logLow(string message)
-        {
-            //Just easier to type than Log.logger.Log
-            // Also lets me just set logLevel to 0 if I dont want to deal with the spam.
-            if (AlternionSettings.loggingLevel > 0)
-            {
-                Log.logger.Log(message);
             }
         }
 
