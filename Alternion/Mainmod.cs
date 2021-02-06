@@ -26,10 +26,6 @@ namespace Alternion
         /// </summary>
         bool setWatermark = false;
         /// <summary>
-        /// Main menu character transform.
-        /// </summary>
-        static Transform menuCharacter;
-        /// <summary>
         /// Filepath to the textures.
         /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
@@ -64,14 +60,10 @@ namespace Alternion
 
                 //Setup watermark
                 StartCoroutine(waterMark());
-
-                //Rotate Character
-                setMenuCharacter();
-
             }
             catch (Exception e)
             {
-                debugLog(e.Message);
+                Logger.debugLog(e.Message);
             }
 
         }
@@ -80,21 +72,6 @@ namespace Alternion
             if (setWatermark && AlternionSettings.enableWaterMark)
             {
                 GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTex, ScaleMode.ScaleToFit);
-            }
-        }
-        void Update()
-        {
-            if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
-            {
-                // If it has been found
-                // Rotation code copied from CharacterCustomizationUI
-                menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
-
-            }
-
-            if (Input.GetKeyUp("`"))
-            {
-                debugLog("v7.0");
             }
         }
 
@@ -121,11 +98,11 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    debugLog("------------------");
-                    debugLog("Loading from JSON error");
-                    debugLog("Attempted User: " + player.steamID);
-                    debugLog(e.Message);
-                    debugLog("------------------");
+                    Logger.debugLog("------------------");
+                    Logger.debugLog("Loading from JSON error");
+                    Logger.debugLog("Attempted User: " + player.steamID);
+                    Logger.debugLog(e.Message);
+                    Logger.debugLog("------------------");
                 }
                 LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players...");
             }
@@ -151,8 +128,8 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    debugLog("Error downloading watermark:");
-                    debugLog(e.Message);
+                    Logger.debugLog("Error downloading watermark:");
+                    Logger.debugLog(e.Message);
                 }
 
             }
@@ -201,7 +178,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -214,10 +191,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Badge Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Badge Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
 
                         }
@@ -240,7 +217,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -254,10 +231,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Mask Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Mask Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -280,9 +257,9 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog("------------------");
-                                    debugLog("Sail Skin Download Error");
-                                    debugLog(e.Message);
+                                    Logger.debugLog("------------------");
+                                    Logger.debugLog("Sail Skin Download Error");
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -295,10 +272,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Normal Sail Setup Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Normal Sail Setup Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -320,7 +297,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -333,10 +310,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Main Sail Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Main Sail Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -359,7 +336,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -372,10 +349,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Cannon Skin Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Cannon Skin Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -400,7 +377,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -413,10 +390,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Musket Skin Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Musket Skin Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -440,7 +417,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -453,10 +430,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Blunderbuss Skin Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Blunderbuss Skin Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -480,7 +457,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -493,10 +470,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Nockgun Skin Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Nockgun Skin Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -520,7 +497,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
 
                             }
@@ -534,10 +511,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Handmortar Skin Download Error");
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Handmortar Skin Download Error");
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -562,7 +539,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -575,10 +552,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Standard Pistol Skin Download Error: " + player.Value.standardPistolSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Standard Pistol Skin Download Error: " + player.Value.standardPistolSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -602,7 +579,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -615,10 +592,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Short Pistol Skin Download Error: " + player.Value.shortPistolSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Short Pistol Skin Download Error: " + player.Value.shortPistolSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -642,7 +619,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -655,10 +632,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Duckfoot Skin Download Error: " + player.Value.duckfootSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Duckfoot Skin Download Error: " + player.Value.duckfootSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -682,7 +659,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -695,10 +672,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Matchlock Skin Download Error: " + player.Value.matchlockRevolverSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Matchlock Skin Download Error: " + player.Value.matchlockRevolverSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -722,7 +699,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -735,10 +712,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Annely Skin Download Error: " + player.Value.annelyRevolverSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Annely Skin Download Error: " + player.Value.annelyRevolverSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
 
                         }
@@ -764,7 +741,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -777,10 +754,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Axe Skin Download Error: " + player.Value.axeSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Axe Skin Download Error: " + player.Value.axeSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -804,7 +781,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -817,10 +794,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Rapier Skin Download Error: " + player.Value.rapierSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Rapier Skin Download Error: " + player.Value.rapierSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -844,7 +821,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -857,10 +834,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Dagger Skin Download Error: " + player.Value.daggerSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Dagger Skin Download Error: " + player.Value.daggerSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -884,7 +861,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -897,10 +874,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Bottle Skin Download Error: " + player.Value.bottleSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Bottle Skin Download Error: " + player.Value.bottleSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -924,7 +901,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -937,10 +914,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Cutlass Skin Download Error: " + player.Value.cutlassSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Cutlass Skin Download Error: " + player.Value.cutlassSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -964,7 +941,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -977,10 +954,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Pike Skin Download Error: " + player.Value.pikeSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Pike Skin Download Error: " + player.Value.pikeSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1005,7 +982,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1018,10 +995,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Tomahawk Skin Download Error: " + player.Value.tomahawkSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Tomahawk Skin Download Error: " + player.Value.tomahawkSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1044,7 +1021,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1057,10 +1034,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Spyglass Skin Download Error: " + player.Value.spyglassSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Spyglass Skin Download Error: " + player.Value.spyglassSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1083,7 +1060,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1096,10 +1073,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Grenade Skin Download Error: " + player.Value.grenadeSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Grenade Skin Download Error: " + player.Value.grenadeSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1122,7 +1099,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1135,10 +1112,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("HealItem Skin Download Error: " + player.Value.healItemSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("HealItem Skin Download Error: " + player.Value.healItemSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1161,7 +1138,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1174,10 +1151,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Teacup Skin Download Error: " + player.Value.teaCupSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Teacup Skin Download Error: " + player.Value.teaCupSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1200,7 +1177,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1213,10 +1190,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Tea Water Skin Download Error: " + player.Value.teaWaterSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Tea Water Skin Download Error: " + player.Value.teaWaterSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1239,7 +1216,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1252,10 +1229,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("HealItem Skin Download Error: " + player.Value.bucketSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("HealItem Skin Download Error: " + player.Value.bucketSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1279,7 +1256,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1292,10 +1269,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Hammer Skin Download Error: " + player.Value.hammerSkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Hammer Skin Download Error: " + player.Value.hammerSkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1318,7 +1295,7 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    debugLog(e.Message);
+                                    Logger.debugLog(e.Message);
                                 }
                             }
 
@@ -1331,10 +1308,10 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog("------------------");
-                                debugLog("Atlas Skin Download Error: " + player.Value.atlas01SkinName);
-                                debugLog(e.Message);
-                                debugLog("------------------");
+                                Logger.debugLog("------------------");
+                                Logger.debugLog("Atlas Skin Download Error: " + player.Value.atlas01SkinName);
+                                Logger.debugLog(e.Message);
+                                Logger.debugLog("------------------");
                             }
                         }
                     }
@@ -1380,107 +1357,9 @@ namespace Alternion
                 LoadingBar.updatePercentage(100, "Finished!");
                 return;
             }
-            setMainMenuBadge();
+            MainMenuCL.setMainMenuBadge();
         }
-        /// <summary>
-        /// Sets the main menu badge.
-        /// </summary>
-        static void setMainMenuBadge()
-        {
 
-            if (!AlternionSettings.useBadges)
-            {
-                LoadingBar.updatePercentage(95, "applying weapon skin");
-                setMainMenuWeaponSkin();
-                return;
-            }
-
-            //Only main menu that you will really see is the one intially started
-            //This doesn't work if you return to the main menu from a server
-            MainMenu mm = FindObjectOfType<MainMenu>();
-
-            try
-            {
-                string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-                if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                {
-                    debugLog($"Got player {player.steamID} => {player.badgeName}");
-                    if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
-                    {
-                        if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
-                        {
-                            mm.menuBadge.texture = newTex;
-                        }
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                debugLog("Failed to assign custom badge to a player:");
-                debugLog(e.Message);
-            }
-
-            LoadingBar.updatePercentage(95, "Applying weapon skin");
-            setMainMenuWeaponSkin();
-
-        }
-        /// <summary>
-        /// Sets the main menu weapon skin.
-        /// </summary>
-        static void setMainMenuWeaponSkin()
-        {
-            if (AlternionSettings.useWeaponSkins)
-            {
-                try
-                {
-                    string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
-                    {
-                        var musket = GameObject.Find("wpn_standardMusket_LOD1");
-                        if (musket != null)
-                        {
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
-                            {
-                                musket.GetComponent<Renderer>().material.mainTexture = newTex;
-                            }
-                        }
-                        else
-                        {
-                            debugLog("Main menu musket not found.");
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    debugLog(e.Message);
-                }
-            }
-
-            LoadingBar.updatePercentage(100, "Finished!");
-        }
-        /// <summary>
-        /// Sets the main menu character transform.
-        /// </summary>
-        static void setMenuCharacter()
-        {
-            // Find the musket object
-            var musket = GameObject.Find("wpn_standardMusket_LOD1");
-            if (musket != null)
-            {
-                // If it exists, then go to root and find the character model in the heirachy
-                Transform rootTransf = musket.transform.root;
-                foreach (Transform transform in rootTransf)
-                {
-                    if (transform.name == "default_character_rig")
-                    {
-                        // Save it for the rotating in Update()
-                        menuCharacter = transform;
-                        break;
-                    }
-                }
-            }
-        }
         /// <summary>
         /// Resets all ship assets to default textures. Cannons + Sails
         /// </summary>
@@ -1599,10 +1478,11 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                debugLog(e.Message);
+                Logger.debugLog(e.Message);
                 //Ignore Exception
             }
         }
+
         /// <summary>
         /// Assigns the weapon skin to the weapon.
         /// </summary>
@@ -1613,7 +1493,6 @@ namespace Alternion
         {
             try
             {
-                debugLog($"Applying: {weaponSkin} to {weapon}");
                 // If the player Dict contains a reference to the specific weapon, output the texture
                 if (weaponSkin != "default")
                 {
@@ -1625,9 +1504,10 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                debugLog(e.Message);
+                Logger.debugLog(e.Message);
             }
         }
+
         /// <summary>
         /// Handles the finding of which skin, to apply to the weapon, based off the player setup and weapon equipped.
         /// </summary>
@@ -1753,16 +1633,6 @@ namespace Alternion
                 Log.logger.Log(message);
             }
         }
-        /// <summary>
-        /// Always logs, no matter the logging level.
-        /// </summary>
-        /// <param name="message">Message to Log</param>
-        static void debugLog(string message)
-        {
-            //Just easier to type than Log.logger.Log
-            //Will always log, so only use in try{} catch(Exception e) {} when absolutely needed
-            Log.logger.Log(message);
-        }
 
         /// <summary>
         /// Loads a texture based on the name, width and height.
@@ -1782,8 +1652,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                debugLog(string.Format("Error loading texture {0}", texName));
-                debugLog(e.Message);
+                Logger.debugLog(string.Format("Error loading texture {0}", texName));
+                Logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 return Texture2D.whiteTexture;
             }
@@ -1820,8 +1690,8 @@ namespace Alternion
                         }
                         else
                         {
-                            debugLog("Failed to assign custom badge to a player:");
-                            debugLog(e.Message);
+                            Logger.debugLog("Failed to assign custom badge to a player:");
+                            Logger.debugLog(e.Message);
                         }
                     }
                 }
@@ -1848,7 +1718,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog("err: " + e.Message);
+                        Logger.debugLog("err: " + e.Message);
                     }
                 }
             }
@@ -1876,33 +1746,7 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    debugLog("err: " + e.Message);
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(MainMenu), "Start")]
-        static class mainMenuStuffPatch
-        {
-            static void Postfix(MainMenu __instance)
-            {
-                // Call these so that they set correctly again on returning to the main menu
-                setupMainMenu();
-                setMenuCharacter();
-            }
-        }
-
-        [HarmonyPatch(typeof(MainMenu), "toggleKSBadge")]
-        static class toggleKSPatch
-        {
-            static void Postfix(MainMenu __instance, bool on)
-            {
-                if (AlternionSettings.useBadges)
-                {
-                    if (!on)
-                    {
-                        setMainMenuBadge();
-                    }
+                    Logger.debugLog("err: " + e.Message);
                 }
             }
         }
@@ -1928,7 +1772,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog(e.Message);
+                        Logger.debugLog(e.Message);
                     }
                 }
             }
@@ -2572,7 +2416,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog(e.Message);
+                        Logger.debugLog(e.Message);
                     }
                 }
             }
@@ -2591,35 +2435,35 @@ namespace Alternion
                     {
                         Transform child = __instance.transform.FindChild("cannon");
                         int.TryParse(__instance.transform.root.name.Split('m')[1], out index);
-                        logLow($"Got Operational index: -{index}-");
+                        Logger.logLow($"Got Operational index: -{index}-");
                         string steamID = "0";
                         if (GameMode.Instance.teamCaptains[index - 1])
                         {
-                            logLow("Team has captain");
+                            Logger.logLow("Team has captain");
                             steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
                         }
                         else
                         {
-                            logLow($"Team has not got a captain at index: -{index}- (position: {index-1})");
+                            Logger.logLow($"Team has not got a captain at index: -{index}- (position: {index-1})");
                         }
                         if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
-                            logLow("Gotten player with steamID: " + steamID);
+                            Logger.logLow("Gotten player with steamID: " + steamID);
                             // If vessel is already cached, grab it and add, otherwise create new vessel
                             if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                             {
-                                logLow($"Adding to ship at index: -{index}- (position: {index - 1})");
+                                Logger.logLow($"Adding to ship at index: -{index}- (position: {index - 1})");
                                 vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
-                                logLow($"Added to ship at index: -{vessel.cannonOperationalDict.Count + 1}- (position: {index - 1})");
+                                Logger.logLow($"Added to ship at index: -{vessel.cannonOperationalDict.Count + 1}- (position: {index - 1})");
                             }
                             else
                             {
                                 cachedShip newVessel = new cachedShip();
-                                logLow("Generated new ship");
+                                Logger.logLow("Generated new ship");
                                 newVessel.cannonOperationalDict.Add("0", __instance);
-                                logLow($"Added 1st cannon to ship at index: -{index}- (position: {index - 1})");
+                                Logger.logLow($"Added 1st cannon to ship at index: -{index}- (position: {index - 1})");
                                 theGreatCacher.ships.Add(index.ToString(), newVessel);
-                                logLow($"Added bessel to ship cache: -{index}-");
+                                Logger.logLow($"Added bessel to ship cache: -{index}-");
                             }
 
                             // If they have a custom texture, use it, else use default skin
@@ -2627,14 +2471,14 @@ namespace Alternion
                             {
                                 if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                                 {
-                                    logLow("Applying skin: " + newTex.name);
+                                    Logger.logLow("Applying skin: " + newTex.name);
                                     child.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
                                 else
                                 {
                                     if (theGreatCacher.defaultCannons != null)
                                     {
-                                        logLow("Applying default to custom");
+                                        Logger.logLow("Applying default to custom");
                                         child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
                                     }
 
@@ -2644,7 +2488,7 @@ namespace Alternion
                             {
                                 if (theGreatCacher.defaultCannons != null)
                                 {
-                                    logLow("Applying default as default");
+                                    Logger.logLow("Applying default as default");
                                     child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
                                 }
                             }
@@ -2653,7 +2497,7 @@ namespace Alternion
                         {
                             if (theGreatCacher.defaultCannons != null)
                             {
-                                logLow("Applying default as null");
+                                Logger.logLow("Applying default as null");
                                 child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
                             }
                         }
@@ -2666,23 +2510,23 @@ namespace Alternion
                         }
                         else
                         {
-                            debugLog("Cannon operational error start");
-                            debugLog(e.Message);
-                            debugLog($"Issue at index: -{index}- (position {index-1})");
-                            debugLog($"Team: -{__instance.transform.root.name}-");
-                            debugLog($"Num: -{__instance.transform.root.name.Split('m')[1]}-");
+                            Logger.debugLog("Cannon operational error start");
+                            Logger.debugLog(e.Message);
+                            Logger.debugLog($"Issue at index: -{index}- (position {index-1})");
+                            Logger.debugLog($"Team: -{__instance.transform.root.name}-");
+                            Logger.debugLog($"Num: -{__instance.transform.root.name.Split('m')[1]}-");
                             for (int i = 0; i < GameMode.Instance.teamCaptains.Length; i++)
                             {
                                 if (GameMode.Instance.teamCaptains[i])
                                 {
-                                    debugLog($"Got captain at index -{i}- with steamID -{GameMode.Instance.teamCaptains[i].steamID}-");
+                                    Logger.debugLog($"Got captain at index -{i}- with steamID -{GameMode.Instance.teamCaptains[i].steamID}-");
                                 }
                                 else
                                 {
-                                    debugLog($"No captain at index -{i}-");
+                                    Logger.debugLog($"No captain at index -{i}-");
                                 }
                             }
-                            debugLog("Cannon operational error end");
+                            Logger.debugLog("Cannon operational error end");
                         }
                     }
                 }
@@ -2739,9 +2583,9 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog("Cannon destroy start");
-                        debugLog(e.Message);
-                        debugLog("Cannon destroy end");
+                        Logger.debugLog("Cannon destroy start");
+                        Logger.debugLog(e.Message);
+                        Logger.debugLog("Cannon destroy end");
                     }
                 }
             }
@@ -2768,7 +2612,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog(e.Message);
+                        Logger.debugLog(e.Message);
                     }
                 }
             }
@@ -2801,10 +2645,10 @@ namespace Alternion
                     }
                 }catch (Exception e)
                 {
-                    debugLog("##########################################################");
-                    debugLog("Pass captain patch.");
-                    debugLog(e.Message);
-                    debugLog("##########################################################");
+                    Logger.debugLog("##########################################################");
+                    Logger.debugLog("Pass captain patch.");
+                    Logger.debugLog(e.Message);
+                    Logger.debugLog("##########################################################");
                 }
             }
         }
