@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 using System.IO;
 using Harmony;
 using UnityEngine;
@@ -12,14 +10,14 @@ namespace Alternion
     /// <summary>
     /// Originally for multithreading stuff.
     /// </summary>
-    class ThreadCreationProgram : MonoBehaviour
+    class RuntimeUpdater : MonoBehaviour
     {
         /// <summary>
         /// Textures file path.
         /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
-        public static ThreadCreationProgram Instance;
+        public static RuntimeUpdater Instance;
         static Texture2D tex;
 
         void Awake()
