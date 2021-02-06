@@ -1836,8 +1836,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.debugLog(string.Format("Error loading texture {0}", texName));
-                Logger.debugLog(e.Message);
+                Logger.logLow(string.Format("Error loading texture {0}", texName));
+                Logger.logLow(e.Message);
                 // Return default white texture on failing to load
                 Texture2D tex = Texture2D.whiteTexture;
                 tex.name = "FAILED";
