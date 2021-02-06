@@ -10,7 +10,7 @@ namespace Alternion
     /// <summary>
     /// Originally for multithreading stuff.
     /// </summary>
-    class RuntimeUpdater : MonoBehaviour
+    public class RuntimeUpdater : MonoBehaviour
     {
         /// <summary>
         /// Textures file path.
