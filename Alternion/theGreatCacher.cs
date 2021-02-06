@@ -11,6 +11,8 @@ namespace Alternion
     public class theGreatCacher : MonoBehaviour
     {
         public static bool isActive = false;
+        public static bool setCannonDefaults = false;
+        public static bool setSailDefaults = false;
         /// <summary>
         /// Default sail texture.
         /// </summary>
