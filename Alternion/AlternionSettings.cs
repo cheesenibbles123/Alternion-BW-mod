@@ -75,14 +75,6 @@ namespace Alternion
         /// </summary>
         public static string remoteFile = "playerList.json";
 
-        /// <summary>
-        /// Logs stuff.
-        /// </summary>
-        static void log(string msg)
-        {
-            Log.logger.Log(msg);
-        }
-
         void Start()
         {
             checkConfig();
@@ -145,7 +137,7 @@ namespace Alternion
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
 
-            log("No config file found. Created default config file.");
+            Logger.debugLog("No config file found. Created default config file.");
         }
 
         /// <summary>
@@ -155,7 +147,7 @@ namespace Alternion
         {
             if (!File.Exists(configFile))
             {
-                log("No config found!");
+                Logger.debugLog("No config found!");
                 return;
             }
             string[] array = File.ReadAllLines(configFile);
@@ -178,8 +170,8 @@ namespace Alternion
                                     loggingLevel = Convert.ToInt32(splitArr[1]);
                                 }catch (Exception e)
                                 {
-                                    log("Error loading loggingLevel config option. Setting default of 0.");
-                                    log(e.Message);
+                                    Logger.debugLog("Error loading loggingLevel config option. Setting default of 0.");
+                                    Logger.debugLog(e.Message);
                                     loggingLevel = 0;
                                 }
                                 break;
@@ -310,7 +302,7 @@ namespace Alternion
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
 
-            log("Saved config to file.");
+            Logger.debugLog("Saved config to file.");
         }
 
         /// <summary>
