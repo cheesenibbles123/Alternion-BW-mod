@@ -161,7 +161,7 @@ namespace Alternion
                 foreach (KeyValuePair<string, playerObject> player in theGreatCacher.players)
                 {
                     // I don't think I have ever typed the word "default" as much as I did the last few days
-
+                    Logger.debugLog("Looping over player: " + i + ", with ID: " + player.Value.steamID);
                     // Badges
                     if (player.Value.badgeName != "default")
                     {
@@ -200,7 +200,6 @@ namespace Alternion
 
                         }
                     }
-
                     // Masks
                     if (player.Value.maskSkinName != "default")
                     {
@@ -239,7 +238,6 @@ namespace Alternion
                             }
                         }
                     }
-
                     // Sails
                     if (player.Value.sailSkinName != "default")
                     {
@@ -318,7 +316,6 @@ namespace Alternion
                             }
                         }
                     }
-
                     // Cannons
                     if (player.Value.cannonSkinName != "default")
                     {
@@ -362,12 +359,11 @@ namespace Alternion
                             newTex = loadTexture(player.Value.cannonSkinName + "_met", texturesFilePath + "CannonSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName, newTex);
+                                theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
                             }
                             alreadyDownloaded.Add(player.Value.cannonSkinName);
                         }
                     }
-
                     // Primary weapons
                     if (player.Value.musketSkinName != "default")
                     {
@@ -423,7 +419,6 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
                     if (player.Value.blunderbussSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("blunderbuss_" + player.Value.blunderbussSkinName);
@@ -475,7 +470,6 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
                     if (player.Value.nockgunSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("nockgun_" + player.Value.nockgunSkinName);
@@ -528,7 +522,6 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
                     if (player.Value.handMortarSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("handmortar_" + player.Value.handMortarSkinName);
@@ -581,7 +574,6 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
                     // Secondary Weapons
                     if (player.Value.standardPistolSkinName != "default")
                     {
@@ -635,7 +627,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
+                   
                     if (player.Value.shortPistolSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("shortPistol_" + player.Value.shortPistolSkinName);
@@ -1166,7 +1158,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
+                    Logger.debugLog("melee");
                     // Specials
                     if (player.Value.tomahawkSkinName != "default")
                     {
@@ -1220,7 +1212,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-
+                    Logger.debugLog("tomahawk");
                     if (player.Value.spyglassSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("spyglass_" + player.Value.spyglassSkinName);
@@ -1639,7 +1631,9 @@ namespace Alternion
                     }
                 }
 
-                float newPercentage = 20 + (60 * ((float)i / (float)theGreatCacher.players.Count));
+                float newPercentage = 20 + (60 * (i / theGreatCacher.players.Count));
+                Logger.debugLog(newPercentage.ToString() + "%");
+
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
             // outputPlayerDict();
