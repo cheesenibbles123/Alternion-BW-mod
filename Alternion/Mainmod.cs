@@ -199,6 +199,7 @@ namespace Alternion
 
                     }
                 }
+
                 // Masks
                 if (player.Value.maskSkinName != "default")
                 {
@@ -237,6 +238,7 @@ namespace Alternion
                         }
                     }
                 }
+
                 // Sails
                 if (player.Value.sailSkinName != "default")
                 {
@@ -277,7 +279,6 @@ namespace Alternion
                         }
                     }
                 }
-
                 if (player.Value.mainSailName != "default")
                 {
                     flag = alreadyDownloaded.Contains(player.Value.mainSailName);
@@ -315,6 +316,7 @@ namespace Alternion
                         }
                     }
                 }
+
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
                 {
@@ -361,6 +363,37 @@ namespace Alternion
                             theGreatCacher.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
                         }
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
+                    }
+                }
+
+                // Flags
+                if (player.Value.flagSkinName != "default")
+                {
+                    flag = alreadyDownloaded.Contains(player.Value.flagSkinName);
+                    if (!flag)
+                    {
+                        if (AlternionSettings.downloadOnStartup)
+                        {
+                            www = new WWW(mainUrl + "Flags/" + player.Value.flagSkinName + ".png");
+                            yield return www;
+
+                            if (string.IsNullOrEmpty(www.error))
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.flagSkinName + ".png", bytes);
+                            }
+                            else
+                            {
+                                Logger.logLow("No alb found for " + player.Value.flagSkinName);
+                            }
+
+                        }
+                        newTex = loadTexture(player.Value.flagSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                        if (newTex.name != "FAILED")
+                        {
+                            theGreatCacher.cannonSkins.Add(player.Value.flagSkinName, newTex);
+                        }
+                        alreadyDownloaded.Add(player.Value.flagSkinName);
                     }
                 }
 
@@ -628,7 +661,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.shortPistolSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("shortPistol_" + player.Value.shortPistolSkinName);
@@ -681,7 +713,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.duckfootSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("duckfoot_" + player.Value.duckfootSkinName);
@@ -734,7 +765,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.matchlockRevolverSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("matchlock_" + player.Value.matchlockRevolverSkinName);
@@ -787,7 +817,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.annelyRevolverSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("annelyRevolver_" + player.Value.annelyRevolverSkinName);
@@ -894,7 +923,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.rapierSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("rapier_" + player.Value.rapierSkinName);
@@ -947,7 +975,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.daggerSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("dagger_" + player.Value.daggerSkinName);
@@ -1000,7 +1027,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.bottleSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("bottle_" + player.Value.bottleSkinName);
@@ -1053,7 +1079,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.cutlassSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("cutlass_" + player.Value.cutlassSkinName);
@@ -1106,7 +1131,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.pikeSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("pike_" + player.Value.pikeSkinName);
@@ -1213,7 +1237,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.spyglassSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("spyglass_" + player.Value.spyglassSkinName);
@@ -1265,7 +1288,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.grenadeSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("grenade_" + player.Value.grenadeSkinName);
@@ -1317,7 +1339,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.healItemSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("healItem_" + player.Value.healItemSkinName);
@@ -1369,7 +1390,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.teaCupSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("teaCup_" + player.Value.teaCupSkinName);
@@ -1421,7 +1441,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.teaWaterSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("teaWater_" + player.Value.teaWaterSkinName);
@@ -1473,7 +1492,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
                 if (player.Value.bucketSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains("bucket_" + player.Value.bucketSkinName);

@@ -65,6 +65,10 @@ namespace Alternion
         /// Update players during runtime.
         /// </summary>
         public static bool updateDuringRuntime;
+        /// <summary>
+        /// Use Tournamentwake badges.
+        /// </summary>
+        public static bool showFlags;
 
         /// <summary>
         /// Config file location.
@@ -111,6 +115,7 @@ namespace Alternion
             useCannonSkins = true;
             downloadOnStartup = true;
             updateDuringRuntime = true;
+            showFlags = true;
             configKeyInput = "]";
 
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -127,6 +132,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
             streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
@@ -265,6 +271,16 @@ namespace Alternion
                                     updateDuringRuntime = false;
                                 }
                                 break;
+                            case "showFlags":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    showFlags = true;
+                                }
+                                else
+                                {
+                                    showFlags = false;
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -292,6 +308,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
             streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));

@@ -58,6 +58,10 @@ namespace Alternion
         /// </summary>
         public static Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
         /// <summary>
+        /// Stores all cached flags
+        /// </summary>
+        public static Dictionary<string, Texture> flags = new Dictionary<string, Texture>();
+        /// <summary>
         /// Stores all cached player loadouts.
         /// </summary>
         public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();

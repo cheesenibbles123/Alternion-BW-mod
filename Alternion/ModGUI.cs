@@ -188,7 +188,7 @@ namespace AlternionGUI
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
-            }
+            } // Player
             else if (AlternionSettings.configMenuPageNumber == 2)
             {
                 defaultColour = GUI.contentColor;
@@ -220,17 +220,28 @@ namespace AlternionGUI
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 1), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
 
-                //Cannon Skins
-                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 2), buttonWH.x, buttonWH.y), "Cannon Skins"))
+                //Flag Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 2), buttonWH.x, buttonWH.y), "Flag Skins"))
                 {
-                    AlternionSettings.useCannonSkins = !AlternionSettings.useCannonSkins;
+                    AlternionSettings.showFlags = !AlternionSettings.showFlags;
                 }
                 GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
-                if (AlternionSettings.useCannonSkins)
+                if (AlternionSettings.showFlags)
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
-            }
+
+                //Cannon Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Cannon Skins"))
+                {
+                    AlternionSettings.useCannonSkins = !AlternionSettings.useCannonSkins;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.useCannonSkins)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+            } // Ship
             else if (AlternionSettings.configMenuPageNumber == 3)
             {
                 defaultColour = GUI.contentColor;
@@ -278,7 +289,7 @@ namespace AlternionGUI
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
-            }
+            } // Tech
 
             //Forwards Button
             if (AlternionSettings.configMenuPageNumber < AlternionSettings.configMenuMaxPages)
