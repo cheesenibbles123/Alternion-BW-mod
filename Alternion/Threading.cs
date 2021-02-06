@@ -34,13 +34,6 @@ namespace Alternion
             }
         }
 
-        static void debugLog(string message)
-        {
-            //Just easier to type than Log.logger.Log
-            //Will always log, so only use in try{} catch(Exception e) {} when absolutely needed
-            Log.logger.Log(message);
-        }
-
         public static Texture2D loadTexture(string texName, byte[] fileData, int imgWidth, int imgHeight)
         {
             try
@@ -52,8 +45,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                debugLog(string.Format("Error loading texture {0}", texName));
-                debugLog(e.Message);
+                Logger.debugLog(string.Format("Error loading texture {0}", texName));
+                Logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 return Texture2D.whiteTexture;
             }
@@ -74,7 +67,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        debugLog(e.Message);
+                        Logger.debugLog(e.Message);
                     }
                 }
             }
@@ -155,7 +148,7 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                debugLog(e.Message);
+                                Logger.debugLog(e.Message);
                             }
                         }
                     }
