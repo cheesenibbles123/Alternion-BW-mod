@@ -5,20 +5,35 @@ using System.Threading;
 using System.IO;
 using Harmony;
 using UnityEngine;
+using System.Collections;
 
 namespace Alternion
 {
+    /// <summary>
+    /// For multithreading stuff.
+    /// </summary>
     class ThreadCreationProgram : MonoBehaviour
     {
-
+        /// <summary>
+        /// Textures file path.
+        /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
+        public static ThreadCreationProgram Instance;
         static Texture2D tex;
 
-        void Start()
+        void Awake()
         {
-            debugLog("Started threader object");
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
         }
+
         static void debugLog(string message)
         {
             //Just easier to type than Log.logger.Log
@@ -59,8 +74,7 @@ namespace Alternion
                     try
                     {
                         tex = new Texture2D(100, 100, TextureFormat.RGB24, false);
-                        Thread childThread = new Thread(() => ChildThreadJoinIngame(pName));
-                        childThread.Start();
+                        Instance.StartCoroutine(Instance.userJoined(pName));
                     }
                     catch (Exception e)
                     {
@@ -70,10 +84,49 @@ namespace Alternion
             }
         }
 
-        public static void ChildThreadJoinIngame(string pName)
+        private IEnumerator textureSetup(string path, string tName, string type)
+        {
+            WWW www = new WWW(mainUrl + path);
+            yield return www;
+
+            if (!File.Exists(Application.dataPath + texturesFilePath + tName))
+            {
+                File.WriteAllBytes(Application.dataPath + texturesFilePath + tName, www.texture.EncodeToPNG());
+            }
+
+            Texture newTex = www.texture;
+            newTex.name = tName;
+
+            switch (type)
+            {
+                case "badge":
+                    theGreatCacher.badges.Add(tName, newTex);
+                    break;
+                case "sail":
+                    theGreatCacher.secondarySails.Add(tName, newTex);
+                    break;
+                case "mainsail":
+                    theGreatCacher.mainSails.Add(tName, newTex);
+                    break;
+                case "cannon":
+                    theGreatCacher.cannonSkins.Add(tName, newTex);
+                    break;
+                case "goldmask":
+                    theGreatCacher.maskSkins.Add(tName, newTex);
+                    break;
+                case "weaponskin":
+                    theGreatCacher.weaponSkins.Add(tName, newTex);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public IEnumerator userJoined(string pName)
         {
             // Sleep as it takes a while before the steamID is actually assigned to the PlayerInfo
-            Thread.Sleep(500);
+            yield return new WaitForSeconds(.1f);
+
             string steamID = "0";
             if (GameMode.getPlayerInfo(pName) != null)
             {
@@ -84,7 +137,7 @@ namespace Alternion
 
             WebClient webCli = new WebClient();
             // Fetch all players
-            string response = webCli.DownloadString("http://www.archiesbots.com/BlackwakeStuff/playerList2.json");
+            string response = webCli.DownloadString(mainUrl + AlternionSettings.remoteFile);
             string[] json = response.Split('&');
 
             for (int i = 0; i < json.Length; i++)
@@ -101,7 +154,7 @@ namespace Alternion
                         {
                             try
                             {
-                                updateUser(steamID, player, webCli);
+                                updateUser(steamID, player);
                                 theGreatCacher.players[steamID] = player;
                             }
                             catch (Exception e)
@@ -112,76 +165,11 @@ namespace Alternion
                     }
                     else
                     {
+                        addNewPlayer(player);
                         theGreatCacher.players.Add(player.steamID, player);
                     }
                     break;
                 }
-            }
-        }
-
-        public static void updateAllPlayers()
-        {
-            Thread childThread = new Thread(ChildThreadUpdateAll);
-            childThread.Start();
-        }
-
-        private static void ChildThreadGetAsset(string filepath, string URL, string assetName, string type, WebClient webCli)
-        {
-            //debugLog($"Downloading => -{assetName}-");
-
-            byte[] bytes;
-            try
-            {
-                bytes = webCli.DownloadData(URL);
-                File.WriteAllBytes(Application.dataPath + filepath, bytes);
-            }catch (Exception e)
-            {
-                debugLog(e.Message);
-                bytes = null;
-            }
-
-            Texture2D newTex;
-            try
-            {
-                switch (type)
-                {
-                    case "badge":
-                        newTex = loadTexture(assetName, bytes, 100, 40);
-                        newTex.name = assetName;
-                        theGreatCacher.badges.Add(assetName, newTex);
-                        break;
-                    case "sail":
-                        newTex = loadTexture(assetName, bytes, 2048, 2048);
-                        newTex.name = assetName;
-                        theGreatCacher.secondarySails.Add(assetName, newTex);
-                        break;
-                    case "mainsail":
-                        newTex = loadTexture(assetName, bytes, 2048, 2048);
-                        newTex.name = assetName;
-                        theGreatCacher.mainSails.Add(assetName, newTex);
-                        break;
-                    case "cannon":
-                        debugLog("Init D");
-                        newTex = loadTexture(assetName, bytes, 2048, 2048);
-                        newTex.name = assetName;
-                        theGreatCacher.cannonSkins.Add(assetName, newTex);
-                        break;
-                    case "goldmask":
-                        newTex = loadTexture(assetName, bytes, 1024, 1024);
-                        newTex.name = assetName;
-                        theGreatCacher.maskSkins.Add(assetName, newTex);
-                        break;
-                    case "weaponskin":
-                        newTex = loadTexture(assetName, bytes, 2048, 2048);
-                        newTex.name = assetName;
-                        theGreatCacher.weaponSkins.Add(assetName, newTex);
-                        break;
-                    default:
-                        break;
-                }
-            }catch (Exception e)
-            {
-                debugLog(e.Message);
             }
         }
 
@@ -248,67 +236,47 @@ namespace Alternion
            }
         }
 
-        private static void updateUser(string steamID, playerObject player, WebClient webCli)
+        private static void updateUser(string steamID, playerObject player)
         {
             // Overall stuff
-            bool enableThread = false;
             if (theGreatCacher.players[steamID].badgeName != player.badgeName)
             {
                 if (!checkIfItemIsCached("badge", player.badgeName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "Badges/" + player.badgeName + ".png";
-                        Thread childThreadBadges = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.badgeName, "badge", webCli));
-                        childThreadBadges.Start();
-                    }
+                    string filePathEnd = "Badges/" + player.badgeName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.badgeName, "badge"));
                 }
             }
             if (theGreatCacher.players[steamID].sailSkinName != player.sailSkinName)
             {
                 if (!checkIfItemIsCached("sail", player.sailSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "SailSkins/" + player.sailSkinName + ".png";
-                        Thread childThreadSails = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.sailSkinName, "sail", webCli));
-                        childThreadSails.Start();
-                    }
+                    string filePathEnd = "SailSkins/" + player.sailSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.sailSkinName, "sail"));
                 }
             }
             if (theGreatCacher.players[steamID].mainSailName != player.mainSailName)
             {
                 if (!checkIfItemIsCached("mainsail", player.mainSailName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "MainSailSkins/" + player.mainSailName + ".png";
-                        Thread childThreadMainSails = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.mainSailName, "mainsail", webCli));
-                        childThreadMainSails.Start();
-                    }
+                    string filePathEnd = "MainSailSkins/" + player.mainSailName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.mainSailName, "mainsail"));
                 }
             }
             if (theGreatCacher.players[steamID].cannonSkinName != player.cannonSkinName)
             {
                 if (!checkIfItemIsCached("cannon", player.cannonSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "CannonSkins/" + player.cannonSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.cannonSkinName, "cannon", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "CannonSkins/" + player.cannonSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cannonSkinName, "cannon"));
                 }
             }
             if (theGreatCacher.players[steamID].maskSkinName != player.maskSkinName)
             {
                 if (!checkIfItemIsCached("goldmask", player.maskSkinName))
-                {if (enableThread)
-                    {
-                        string filePathEnd = "MaskSkins/" + player.maskSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.maskSkinName, "goldmask", webCli));
-                        childThreadCannons.Start();
-                    }
+                {
+                    string filePathEnd = "MaskSkins/" + player.maskSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.maskSkinName, "goldmask"));
                 }
             }
 
@@ -317,48 +285,33 @@ namespace Alternion
             {
                 if (!checkIfItemIsCached("weaponskin", "musket_" + player.musketSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "musket_" + player.musketSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "musket_" + player.musketSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "musket_" + player.musketSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.musketSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].blunderbussSkinName != player.blunderbussSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "blunderbuss_" + player.blunderbussSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "blunderbuss_" + player.blunderbussSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "blunderbuss_" + player.blunderbussSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "blunderbuss_" + player.blunderbussSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.blunderbussSkinName, "weaponskin"));
+
                 }
             }
             if (theGreatCacher.players[steamID].nockgunSkinName != player.nockgunSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "nockgun_" + player.nockgunSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "nockgun_" + player.nockgunSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "nockgun_" + player.nockgunSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "nockgun_" + player.nockgunSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.nockgunSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].handMortarSkinName != player.handMortarSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "handmortar_" + player.handMortarSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "handmortar_" + player.handMortarSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "handmortar_" + player.handMortarSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "handmortar_" + player.handMortarSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.handMortarSkinName, "weaponskin"));
                 }
             }
 
@@ -366,60 +319,40 @@ namespace Alternion
             {
                 if (!checkIfItemIsCached("weaponskin", "standardPistol_" + player.standardPistolSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "standardPistol_" + player.standardPistolSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "standardPistol_" + player.standardPistolSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "standardPistol_" + player.standardPistolSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.standardPistolSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].shortPistolSkinName != player.shortPistolSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "shortPistol_" + player.shortPistolSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "shortPistol_" + player.shortPistolSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "shortPistol_" + player.shortPistolSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "shortPistol_" + player.shortPistolSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.standardPistolSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].duckfootSkinName != player.duckfootSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "duckfoot_" + player.duckfootSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "duckfoot_" + player.duckfootSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "duckfoot_" + player.duckfootSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "duckfoot_" + player.duckfootSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.duckfootSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].matchlockRevolverSkinName != player.matchlockRevolverSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "matchlock_" + player.matchlockRevolverSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "matchlock_" + player.matchlockRevolverSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "matchlock_" + player.matchlockRevolverSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "matchlock_" + player.matchlockRevolverSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.matchlockRevolverSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].annelyRevolverSkinName != player.annelyRevolverSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "annelyRevolver_" + player.annelyRevolverSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "annelyRevolver_" + player.annelyRevolverSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "annelyRevolver_" + player.annelyRevolverSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "annelyRevolver_" + player.annelyRevolverSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.annelyRevolverSkinName, "weaponskin"));
                 }
             }
 
@@ -427,121 +360,81 @@ namespace Alternion
             {
                 if (!checkIfItemIsCached("weaponskin", "axe_" + player.axeSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "axe_" + player.axeSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "axe_" + player.axeSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "axe_" + player.axeSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.axeSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].rapierSkinName != player.rapierSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "rapier_" + player.rapierSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "rapier_" + player.rapierSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "rapier_" + player.rapierSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "rapier_" + player.rapierSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.rapierSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].daggerSkinName != player.daggerSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "dagger_" + player.daggerSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "dagger_" + player.daggerSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "dagger_" + player.daggerSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "dagger_" + player.daggerSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.daggerSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].bottleSkinName != player.bottleSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "bottle_" + player.bottleSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "bottle_" + player.bottleSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "bottle_" + player.bottleSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "bottle_" + player.bottleSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.bottleSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].cutlassSkinName != player.cutlassSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "cutlass_" + player.cutlassSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "cutlass_" + player.cutlassSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "cutlass_" + player.cutlassSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "cutlass_" + player.cutlassSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cutlassSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].pikeSkinName != player.pikeSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "pike_" + player.pikeSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "pike_" + player.pikeSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "pike_" + player.pikeSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "pike_" + player.pikeSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.pikeSkinName, "weaponskin"));
                 }
             }
 
-            if (theGreatCacher.players[steamID].tomohawkSkinName != player.tomohawkSkinName)
+            if (theGreatCacher.players[steamID].tomahawkSkinName != player.tomahawkSkinName)
             {
-                if (!checkIfItemIsCached("weaponskin", "tomohawk_" + player.tomohawkSkinName))
+                if (!checkIfItemIsCached("weaponskin", "tomahawk_" + player.tomahawkSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "tomohawk_" + player.tomohawkSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "tomohawk_" + player.tomohawkSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "tomahawk_" + player.tomahawkSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.tomahawkSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].spyglassSkinName != player.spyglassSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "spyglass_" + player.spyglassSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "spyglass_" + player.spyglassSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "spyglass_" + player.spyglassSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "spyglass_" + player.spyglassSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.spyglassSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].grenadeSkinName != player.grenadeSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "grenade_" + player.grenadeSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "grenade_" + player.grenadeSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "grenade_" + player.grenadeSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "grenade_" + player.grenadeSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.grenadeSkinName, "weaponskin"));
                 }
             }
             if (theGreatCacher.players[steamID].healItemSkinName != player.healItemSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "healItem_" + player.healItemSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "healItem_" + player.healItemSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "healItem_" + player.healItemSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "healItem_" + player.healItemSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.healItemSkinName, "weaponskin"));
                 }
             }
 
@@ -549,12 +442,8 @@ namespace Alternion
             {
                 if (!checkIfItemIsCached("weaponskin", "hammer_" + player.hammerSkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "hammer_" + player.hammerSkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "hammer_" + player.hammerSkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "hammer_" + player.hammerSkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.hammerSkinName, "weaponskin"));
                 }
             }
 
@@ -562,201 +451,154 @@ namespace Alternion
             {
                 if (!checkIfItemIsCached("weaponskin", "atlas01_" + player.atlas01SkinName))
                 {
-                    if (enableThread)
-                    {
-                        string filePathEnd = "WeaponSkins/" + "atlas01_" + player.atlas01SkinName + ".png";
-                        Thread childThreadCannons = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, "atlas01_" + player.atlas01SkinName, "weaponskin", webCli));
-                        childThreadCannons.Start();
-                    }
+                    string filePathEnd = "WeaponSkins/" + "atlas01_" + player.atlas01SkinName + ".png";
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.atlas01SkinName, "weaponskin"));
                 }
             }
         }
 
-        private static void addNewPlayer(playerObject player, WebClient webCli)
+        private static void addNewPlayer(playerObject player)
         {
             string fullWeaponString;
-            List<string> alreadyDownloaded = new List<string>();
 
             // Badges
             if (player.badgeName != "default")
             {
-                bool flag = alreadyDownloaded.Contains(player.badgeName);
-                if (!flag)
+                if (!theGreatCacher.badges.ContainsKey(player.badgeName))
                 {
                     string filePathEnd = "Badges/" + player.badgeName + ".png";
-                    Thread childThreadBadges = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.badgeName, "badge", webCli));
-                    childThreadBadges.Start();
-                    alreadyDownloaded.Add(player.badgeName);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.atlas01SkinName, "badge"));
                 }
             }
 
             // Masks
             if (player.maskSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains(player.maskSkinName);
-                if (!flag)
+                if (!theGreatCacher.maskSkins.ContainsKey(player.maskSkinName))
                 {
                     string filePathEnd = "MaskSkins/" + player.maskSkinName + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.maskSkinName, "goldmask", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(player.maskSkinName);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.maskSkinName, "goldmask"));
                 }
             }
 
             // Sails
             if (player.sailSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains(player.sailSkinName);
-                if (!flag)
+                if (!theGreatCacher.secondarySails.ContainsKey(player.sailSkinName))
                 {
                     string filePathEnd = "SailSkins/" + player.sailSkinName + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.sailSkinName, "sail", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(player.maskSkinName);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.sailSkinName, "sail"));
                 }
             }
 
             if (player.mainSailName != "default")
             {
-                bool flag = alreadyDownloaded.Contains(player.mainSailName);
-                if (!flag)
+                if (!theGreatCacher.mainSails.ContainsKey(player.mainSailName))
                 {
                     string filePathEnd = "MainSailSkins/" + player.mainSailName + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.mainSailName, "mainsail", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(player.mainSailName);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.mainSailName, "mainsail"));
                 }
             }
 
             // Cannons
             if (player.cannonSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains(player.cannonSkinName);
-                if (!flag)
+                if (!theGreatCacher.cannonSkins.ContainsKey(player.cannonSkinName))
                 {
                     string filePathEnd = "CannonSkins/" + player.cannonSkinName + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, player.cannonSkinName, "cannon", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(player.cannonSkinName);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cannonSkinName, "cannon"));
                 }
             }
 
             // Primary weapons
             if (player.musketSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("musket_" + player.musketSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.musketSkinName))
                 {
                     fullWeaponString = "musket_" + player.musketSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.musketSkinName, "weapon"));
                 }
             }
 
             if (player.blunderbussSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("blunderbuss_" + player.blunderbussSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.blunderbussSkinName))
                 {
                     fullWeaponString = "blunderbuss_" + player.blunderbussSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.blunderbussSkinName, "weapon"));
                 }
             }
 
             if (player.nockgunSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("nockgun_" + player.nockgunSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.nockgunSkinName))
                 {
                     fullWeaponString = "nockgun_" + player.nockgunSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.nockgunSkinName, "weapon"));
                 }
             }
 
             if (player.handMortarSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("handmortar_" + player.handMortarSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.handMortarSkinName))
                 {
                     fullWeaponString = "handmortar_" + player.handMortarSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.handMortarSkinName, "weapon"));
                 }
             }
 
             // Secondary Weapons
             if (player.standardPistolSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("standardPistol_" + player.standardPistolSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.standardPistolSkinName))
                 {
                     fullWeaponString = "standardPistol_" + player.standardPistolSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.standardPistolSkinName, "weapon"));
                 }
             }
 
             if (player.shortPistolSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("shortPistol_" + player.shortPistolSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.shortPistolSkinName))
                 {
                     fullWeaponString = "shortPistol_" + player.shortPistolSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.shortPistolSkinName, "weapon"));
                 }
             }
 
             if (player.duckfootSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("duckfoot_" + player.duckfootSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.duckfootSkinName))
                 {
                     fullWeaponString = "duckfoot_" + player.duckfootSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.duckfootSkinName, "weapon"));
                 }
             }
 
             if (player.matchlockRevolverSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("matchlock_" + player.matchlockRevolverSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.matchlockRevolverSkinName))
                 {
                     fullWeaponString = "matchlock_" + player.matchlockRevolverSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.matchlockRevolverSkinName, "weapon"));
                 }
             }
 
             if (player.annelyRevolverSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("annelyRevolver_" + player.annelyRevolverSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.annelyRevolverSkinName))
                 {
                     fullWeaponString = "annelyRevolver_" + player.annelyRevolverSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.annelyRevolverSkinName, "weapon"));
 
                 }
             }
@@ -764,181 +606,126 @@ namespace Alternion
             // Melee weapons
             if (player.axeSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("axe_" + player.axeSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.axeSkinName))
                 {
                     fullWeaponString = "axe_" + player.axeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.axeSkinName, "weapon"));
                 }
             }
 
             if (player.rapierSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("rapier_" + player.rapierSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.rapierSkinName))
                 {
                     fullWeaponString = "rapier_" + player.rapierSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.rapierSkinName, "weapon"));
                 }
             }
 
             if (player.daggerSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("dagger_" + player.daggerSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.daggerSkinName))
                 {
                     fullWeaponString = "dagger_" + player.daggerSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.daggerSkinName, "weapon"));
                 }
             }
 
             if (player.bottleSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("bottle_" + player.bottleSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.bottleSkinName))
                 {
                     fullWeaponString = "bottle_" + player.bottleSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.bottleSkinName, "weapon"));
                 }
             }
 
             if (player.cutlassSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("cutlass_" + player.cutlassSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.cutlassSkinName))
                 {
                     fullWeaponString = "cutlass_" + player.cutlassSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cutlassSkinName, "weapon"));
                 }
             }
 
             if (player.pikeSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("pike_" + player.pikeSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.pikeSkinName))
                 {
                     fullWeaponString = "pike_" + player.pikeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.pikeSkinName, "weapon"));
                 }
             }
 
             // Specials
-            if (player.tomohawkSkinName != "default")
+            if (player.tomahawkSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("tomohawk_" + player.tomohawkSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.tomahawkSkinName))
                 {
-                    fullWeaponString = "tomohawk_" + player.tomohawkSkinName;
+                    fullWeaponString = "tomohawk_" + player.tomahawkSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.tomahawkSkinName, "weapon"));
                 }
             }
 
             if (player.spyglassSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("spyglass_" + player.spyglassSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.spyglassSkinName))
                 {
                     fullWeaponString = "spyglass_" + player.spyglassSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.spyglassSkinName, "weapon"));
                 }
             }
 
             if (player.grenadeSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("grenade_" + player.grenadeSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.grenadeSkinName))
                 {
                     fullWeaponString = "grenade_" + player.grenadeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.grenadeSkinName, "weapon"));
                 }
             }
 
             if (player.healItemSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("healItem_" + player.healItemSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.healItemSkinName))
                 {
                     fullWeaponString = "healItem_" + player.healItemSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.healItemSkinName, "weapon"));
                 }
             }
 
             // Hammer
             if (player.hammerSkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("hammer_" + player.hammerSkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.hammerSkinName))
                 {
                     fullWeaponString = "hammer_" + player.hammerSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.hammerSkinName, "weapon"));
                 }
             }
 
             if (player.atlas01SkinName != "default")
             {
-                bool flag = alreadyDownloaded.Contains("atlas01_" + player.atlas01SkinName);
-                if (!flag)
+                if (!theGreatCacher.weaponSkins.ContainsKey(player.atlas01SkinName))
                 {
                     fullWeaponString = "atlas01_" + player.atlas01SkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
-                    Thread childThreadMasks = new Thread(() => ChildThreadGetAsset(texturesFilePath + filePathEnd, mainUrl + filePathEnd, fullWeaponString, "weaponskin", webCli));
-                    childThreadMasks.Start();
-                    alreadyDownloaded.Add(fullWeaponString);
+                    Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.atlas01SkinName, "weapon"));
                 }
             }
         }
-
-        private static void ChildThreadUpdateAll()
-        {
-            WebClient webCli = new WebClient();
-            string response = webCli.DownloadString("http://www.archiesbots.com/BlackwakeStuff/playerList.json");
-            string[] json = response.Split('&');
-            for (int i = 0; i < json.Length; i++)
-            {
-                playerObject player = JsonUtility.FromJson<playerObject>(json[i]);
-                if (theGreatCacher.players.ContainsKey(player.steamID))
-                {
-                    updateUser(player.steamID, player, webCli);
-                }
-                else
-                {
-                    Thread childThread = new Thread(() => addNewPlayer(player, webCli));
-                    childThread.Start();
-                }
-            }
-        }
+        
     }
 }

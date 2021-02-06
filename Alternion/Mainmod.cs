@@ -10,18 +10,47 @@ using Steamworks;
 
 namespace Alternion
 {
-    
 
+    /// <summary>
+    /// Main class.
+    /// </summary>
     [Mod]
     public class Mainmod : MonoBehaviour
     {
+        /// <summary>
+        /// Watermark Texture
+        /// </summary>
         Texture2D watermarkTex;
+        /// <summary>
+        /// True if watermark has been setup.
+        /// </summary>
         bool setWatermark = false;
+        /// <summary>
+        /// Main menu character transform.
+        /// </summary>
         static Transform menuCharacter;
-
+        /// <summary>
+        /// Filepath to the textures.
+        /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
+        /// <summary>
+        /// Website URL.
+        /// </summary>
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
+        public static Mainmod Instance;
+
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
+        }
         void Start()
         {
             try
@@ -63,18 +92,22 @@ namespace Alternion
 
             }
 
-            if (Input.GetKeyUp("*"))
+            if (Input.GetKeyUp("`"))
             {
-                debugLog("v6.0");
+                debugLog("v7.0");
             }
         }
 
         //Fetching players and textures
+
+        /// <summary>
+        /// Loads the json file from the website.
+        /// </summary>
         private IEnumerator loadJsonFile()
         {
             LoadingBar.updatePercentage(0, "Fetching Players");
 
-            WWW www = new WWW(mainUrl + "playerList2.json");
+            WWW www = new WWW(mainUrl + AlternionSettings.remoteFile);
             yield return www;
             string[] json = www.text.Split('&');
 
@@ -99,6 +132,9 @@ namespace Alternion
             LoadingBar.updatePercentage(20, "Finished getting players");
             StartCoroutine(downloadTextures());
         }
+        /// <summary>
+        /// Fetches and loads the watermark.
+        /// </summary>
         private IEnumerator waterMark()
         {
             byte[] bytes = null;
@@ -127,6 +163,9 @@ namespace Alternion
                 setWatermark = true;
             }
         }
+        /// <summary>
+        /// Downloads all the textures.
+        /// </summary>
         private IEnumerator downloadTextures()
         {
             List<string> alreadyDownloaded = new List<string>();
@@ -947,12 +986,12 @@ namespace Alternion
                     }
 
                     // Specials
-                    if (player.Value.tomohawkSkinName != "default")
+                    if (player.Value.tomahawkSkinName != "default")
                     {
-                        flag = alreadyDownloaded.Contains("tomohawk_" + player.Value.tomohawkSkinName);
+                        flag = alreadyDownloaded.Contains("tomahawk_" + player.Value.tomahawkSkinName);
                         if (!flag)
                         {
-                            fullWeaponString = "tomohawk_" + player.Value.tomohawkSkinName;
+                            fullWeaponString = "tomahawk_" + player.Value.tomahawkSkinName;
 
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -980,7 +1019,7 @@ namespace Alternion
                             catch (Exception e)
                             {
                                 debugLog("------------------");
-                                debugLog("Tomohawk Skin Download Error: " + player.Value.tomohawkSkinName);
+                                debugLog("Tomahawk Skin Download Error: " + player.Value.tomahawkSkinName);
                                 debugLog(e.Message);
                                 debugLog("------------------");
                             }
@@ -1130,7 +1169,6 @@ namespace Alternion
                             {
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 newTex.name = fullWeaponString;
-                                logLow($"Added {fullWeaponString}");
                                 theGreatCacher.weaponSkins.Add(fullWeaponString, newTex);
                                 alreadyDownloaded.Add(fullWeaponString);
                             }
@@ -1306,10 +1344,14 @@ namespace Alternion
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
             // outputPlayerDict();
+            logLow("Complete download!");
             setupMainMenu();
         }
 
-        void createDirectories()
+        /// <summary>
+        /// Creates required directories.
+        /// </summary>
+        public void createDirectories()
         {
             //Create directories prior to downloading all asset files
             if (!File.Exists(Application.dataPath + texturesFilePath))
@@ -1324,10 +1366,12 @@ namespace Alternion
             }
 
             //Grab online JSON file
-            logLow("Starting JSON fetch");
             StartCoroutine(loadJsonFile());
         }
 
+        /// <summary>
+        /// Begins the main menu setup.
+        /// </summary>
         public static void setupMainMenu()
         {
             LoadingBar.updatePercentage(90, "Preparing Main Menu");
@@ -1338,6 +1382,9 @@ namespace Alternion
             }
             setMainMenuBadge();
         }
+        /// <summary>
+        /// Sets the main menu badge.
+        /// </summary>
         static void setMainMenuBadge()
         {
 
@@ -1378,6 +1425,9 @@ namespace Alternion
             setMainMenuWeaponSkin();
 
         }
+        /// <summary>
+        /// Sets the main menu weapon skin.
+        /// </summary>
         static void setMainMenuWeaponSkin()
         {
             if (AlternionSettings.useWeaponSkins)
@@ -1409,6 +1459,9 @@ namespace Alternion
 
             LoadingBar.updatePercentage(100, "Finished!");
         }
+        /// <summary>
+        /// Sets the main menu character transform.
+        /// </summary>
         static void setMenuCharacter()
         {
             // Find the musket object
@@ -1428,6 +1481,9 @@ namespace Alternion
                 }
             }
         }
+        /// <summary>
+        /// Resets all ship assets to default textures. Cannons + Sails
+        /// </summary>
         static void resetAllShipsToDefault()
         {
             // Loop through all ships, and set all visuals to defaults in the following order:
@@ -1472,6 +1528,11 @@ namespace Alternion
         }
 
         //NEEDS FIXING
+        /// <summary>
+        /// Sets the new textures for cached ships.
+        /// </summary>
+        /// <param name="steamID">Captain SteamID</param>
+        /// <param name="index">Ship Index</param>
         static void assignNewTexturesToShips(string steamID, string index)
         {
             try
@@ -1542,18 +1603,22 @@ namespace Alternion
                 //Ignore Exception
             }
         }
+        /// <summary>
+        /// Assigns the weapon skin to the weapon.
+        /// </summary>
+        /// <param name="renderer">Renderer to apply to</param>
+        /// <param name="weaponSkin">Weapon skin to use</param>
+        /// <param name="weapon">Name of the Weapon</param>
         static void assignWeaponToRenderer(Renderer renderer, string weaponSkin, string weapon)
         {
             try
             {
+                debugLog($"Applying: {weaponSkin} to {weapon}");
                 // If the player Dict contains a reference to the specific weapon, output the texture
-                logLow($"Searching for -{weaponSkin}- for -{weapon}-");
-                logLow($"-{weapon}_{weaponSkin}-");
                 if (weaponSkin != "default")
                 {
                     if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out Texture newTexture))
                     {
-                        logLow("Found: " + newTexture);
                         renderer.material.mainTexture = newTexture;
                     }
                 }
@@ -1563,6 +1628,11 @@ namespace Alternion
                 debugLog(e.Message);
             }
         }
+        /// <summary>
+        /// Handles the finding of which skin, to apply to the weapon, based off the player setup and weapon equipped.
+        /// </summary>
+        /// <param name="__instance">WeaponRender Instance</param>
+        /// <param name="player">Player loadout</param>
         static void weaponSkinHandler(WeaponRender __instance, playerObject player)
         {
 
@@ -1635,10 +1705,10 @@ namespace Alternion
                     assignWeaponToRenderer(renderer, player.annelyRevolverSkinName, "annelyRevolver");
                     break;
                 case "wpn_tomohawk_alb":
-                    assignWeaponToRenderer(renderer, player.tomohawkSkinName, "tomohawk");
+                    assignWeaponToRenderer(renderer, player.tomahawkSkinName, "tomahawk");
                     break;
                 case "wpn_matchlockRevolver_alb":
-                    assignWeaponToRenderer(renderer, player.matchlockRevolverSkinName, "matchlockRevolver");
+                    assignWeaponToRenderer(renderer, player.matchlockRevolverSkinName, "matchlock");
                     break;
                 case "wpn_twoHandAxe_alb":
                     if (renderer.name == "wpn_twoHandAxe")
@@ -1670,7 +1740,10 @@ namespace Alternion
             }
         }
 
-        //Debugging purposes
+        /// <summary>
+        /// Logs low priority stuff.
+        /// </summary>
+        /// <param name="message">Message to Log</param>
         static void logLow(string message)
         {
             //Just easier to type than Log.logger.Log
@@ -1680,7 +1753,10 @@ namespace Alternion
                 Log.logger.Log(message);
             }
         }
-        //ALWAYS RUNS
+        /// <summary>
+        /// Always logs, no matter the logging level.
+        /// </summary>
+        /// <param name="message">Message to Log</param>
         static void debugLog(string message)
         {
             //Just easier to type than Log.logger.Log
@@ -1688,6 +1764,13 @@ namespace Alternion
             Log.logger.Log(message);
         }
 
+        /// <summary>
+        /// Loads a texture based on the name, width and height.
+        /// </summary>
+        /// <param name="texName">Image Name</param>
+        /// <param name="imgWidth">Image Width</param>
+        /// <param name="imgHeight">Image Height</param>
+        /// <returns>Texture2D</returns>
         public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
         {
             try
@@ -2501,29 +2584,42 @@ namespace Alternion
         {
             static void Postfix(CannonUse __instance)
             {
+                int index = 1000;
                 if (AlternionSettings.useCannonSkins)
                 {
                     try
                     {
                         Transform child = __instance.transform.FindChild("cannon");
-                        int.TryParse(__instance.transform.root.name.Split('m')[1], out int index);
+                        int.TryParse(__instance.transform.root.name.Split('m')[1], out index);
+                        logLow($"Got Operational index: -{index}-");
                         string steamID = "0";
                         if (GameMode.Instance.teamCaptains[index - 1])
                         {
+                            logLow("Team has captain");
                             steamID = GameMode.Instance.teamCaptains[index - 1].steamID.ToString();
+                        }
+                        else
+                        {
+                            logLow($"Team has not got a captain at index: -{index}- (position: {index-1})");
                         }
                         if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
                         {
+                            logLow("Gotten player with steamID: " + steamID);
                             // If vessel is already cached, grab it and add, otherwise create new vessel
                             if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                             {
+                                logLow($"Adding to ship at index: -{index}- (position: {index - 1})");
                                 vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
+                                logLow($"Added to ship at index: -{vessel.cannonOperationalDict.Count + 1}- (position: {index - 1})");
                             }
                             else
                             {
                                 cachedShip newVessel = new cachedShip();
-                                newVessel.cannonOperationalDict.Add("1", __instance);
+                                logLow("Generated new ship");
+                                newVessel.cannonOperationalDict.Add("0", __instance);
+                                logLow($"Added 1st cannon to ship at index: -{index}- (position: {index - 1})");
                                 theGreatCacher.ships.Add(index.ToString(), newVessel);
+                                logLow($"Added bessel to ship cache: -{index}-");
                             }
 
                             // If they have a custom texture, use it, else use default skin
@@ -2531,13 +2627,24 @@ namespace Alternion
                             {
                                 if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out Texture newTex))
                                 {
+                                    logLow("Applying skin: " + newTex.name);
                                     child.GetComponent<Renderer>().material.mainTexture = newTex;
+                                }
+                                else
+                                {
+                                    if (theGreatCacher.defaultCannons != null)
+                                    {
+                                        logLow("Applying default to custom");
+                                        child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
+                                    }
+
                                 }
                             }
                             else
                             {
                                 if (theGreatCacher.defaultCannons != null)
                                 {
+                                    logLow("Applying default as default");
                                     child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
                                 }
                             }
@@ -2546,6 +2653,7 @@ namespace Alternion
                         {
                             if (theGreatCacher.defaultCannons != null)
                             {
+                                logLow("Applying default as null");
                                 child.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultCannons;
                             }
                         }
@@ -2560,6 +2668,20 @@ namespace Alternion
                         {
                             debugLog("Cannon operational error start");
                             debugLog(e.Message);
+                            debugLog($"Issue at index: -{index}- (position {index-1})");
+                            debugLog($"Team: -{__instance.transform.root.name}-");
+                            debugLog($"Num: -{__instance.transform.root.name.Split('m')[1]}-");
+                            for (int i = 0; i < GameMode.Instance.teamCaptains.Length; i++)
+                            {
+                                if (GameMode.Instance.teamCaptains[i])
+                                {
+                                    debugLog($"Got captain at index -{i}- with steamID -{GameMode.Instance.teamCaptains[i].steamID}-");
+                                }
+                                else
+                                {
+                                    debugLog($"No captain at index -{i}-");
+                                }
+                            }
                             debugLog("Cannon operational error end");
                         }
                     }

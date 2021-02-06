@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using BWModLoader;
+using Alternion;
 
-namespace Alternion
+namespace AlternionGUI
 {
+    /// <summary>
+    /// GUI class.
+    /// </summary>
     [Mod]
     public class ModGUI : MonoBehaviour
     {
@@ -47,19 +51,34 @@ namespace Alternion
 
         int buttonOffset = 50;
 
-        // Setting up initial textures
+        /// <summary>
+        /// Sets the main background image.
+        /// </summary>
+        /// <param name="newTexture">New Background Image</param>
         public static void setMainBoxBackground(Texture newTexture)
         {
             mainBoxBackground = newTexture;
         }
+        /// <summary>
+        /// Sets the main button image.
+        /// </summary>
+        /// <param name="newTexture">New Background Image</param>
         public static void setMainButtonBackground(Texture newTexture)
         {
             mainButtonBackground = newTexture;
         }
+        /// <summary>
+        /// Sets the main checkmark image.
+        /// </summary>
+        /// <param name="newTexture">New Background Image</param>
         public static void setCheckmark(Texture newTexture)
         {
             checkMark = newTexture;
         }
+        /// <summary>
+        /// Sets the main checkbox image.
+        /// </summary>
+        /// <param name="newTexture">New Background Image</param>
         public static void setCheckBox(Texture newTexture)
         {
             checkBox = newTexture;
@@ -69,6 +88,7 @@ namespace Alternion
         {
             horizontalCheckBox = new Vector2(horizontalButton.x + buttonWH.x + 40, horizontalButton.y + 10);
         }
+
         void OnGUI()
         {
             if (isEnabled)
@@ -76,6 +96,7 @@ namespace Alternion
                 displayGUI();
             }
         }
+
         void Update()
         {
             if (Input.GetKeyUp(AlternionSettings.configKeyInput))
@@ -84,6 +105,16 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Toggles the config menu. Is called by the modloader when you press the "menu" button beside the loaded mod.
+        /// </summary>
+        void OnSettingsMenu()
+        {
+            isEnabled = !isEnabled;
+        }
+        /// <summary>
+        /// Draws the main background box.
+        /// </summary>
         void displayBackingBox()
         {
             if (mainBoxBackground != null)
@@ -95,6 +126,9 @@ namespace Alternion
                 GUI.Box(new Rect(boxSettings.x, boxSettings.y, boxSettings.z, boxSettings.w), "Did not load texture.");
             }
         }
+        /// <summary>
+        /// Displays the buttons and checkboxes of the config menu.
+        /// </summary>
         void displayButtons()
         {
             tempHolder = GUI.backgroundColor;
@@ -209,7 +243,7 @@ namespace Alternion
                 // Force Update
                 if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y, buttonWH.x, buttonWH.y), "Force Update"))
                 {
-                    ThreadCreationProgram.updateAllPlayers();
+                    theGreatCacher.forceUpdate();
                 }
 
                 // Download On Startup
@@ -273,6 +307,9 @@ namespace Alternion
             GUI.skin.button.normal.background = defaultGUIBackground;
             GUI.backgroundColor = tempHolder;
         }
+        /// <summary>
+        /// Displays the config menu.
+        /// </summary>
         void displayGUI()
         {
             displayBackingBox();

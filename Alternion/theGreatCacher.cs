@@ -4,20 +4,52 @@ using BWModLoader;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Stores all loaded assets.
+    /// </summary>
     [Mod]
     public class theGreatCacher : MonoBehaviour
     {
-        //Format will be TEAMNUMBER / SHIP
         public static bool isActive = false;
+        /// <summary>
+        /// Default sail texture.
+        /// </summary>
         public static Texture defaultSails;
+        /// <summary>
+        /// Default cannon texture.
+        /// </summary>
         public static Texture defaultCannons;
+        /// <summary>
+        /// Stores all cached ships.
+        /// </summary>
         public static Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
+        /// <summary>
+        /// Stores all cached weapon skins.
+        /// </summary>
         public static Dictionary<string, Texture> weaponSkins = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached badges.
+        /// </summary>
         public static Dictionary<string, Texture> badges = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached gold mask skins.
+        /// </summary>
         public static Dictionary<string, Texture> maskSkins = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached main sails.
+        /// </summary>
         public static Dictionary<string, Texture> mainSails = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached secondary sails.
+        /// </summary>
         public static Dictionary<string, Texture> secondarySails = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached cannon skins.
+        /// </summary>
         public static Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached player loadouts.
+        /// </summary>
         public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
 
         void Start()
@@ -25,14 +57,37 @@ namespace Alternion
             isActive = true;
         }
 
+        /// <summary>
+        /// Sets the default sail texture.
+        /// </summary>
+        /// <param name="newTexture">Default Sail Texture</param>
         public static void setDefaultSails(Texture newTexture)
         {
             defaultSails = newTexture;
         }
 
+        /// <summary>
+        /// Sets the default cannon texture.
+        /// </summary>
+        /// <param name="newTexture">Default Cannon Texture</param>
         public static void setDefaultCannons(Texture newTexture)
         {
             defaultCannons = newTexture;
+        }
+
+        /// <summary>
+        /// Forces an update of all users
+        /// </summary>
+        public static void forceUpdate()
+        {
+            weaponSkins.Clear();
+            badges.Clear();
+            maskSkins.Clear();
+            mainSails.Clear();
+            secondarySails.Clear();
+            cannonSkins.Clear();
+            players.Clear();
+            Mainmod.Instance.createDirectories();
         }
     }
 }
