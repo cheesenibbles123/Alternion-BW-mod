@@ -7,7 +7,7 @@ using BWModLoader;
 namespace Alternion
 {
     [Mod]
-    public class WeaponSkinHandler
+    public class WeaponSkinHandler : MonoBehaviour
     {
 
         /// <summary>
