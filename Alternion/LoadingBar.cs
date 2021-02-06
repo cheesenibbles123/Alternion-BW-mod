@@ -72,14 +72,6 @@ namespace Alternion
         }
 
         /// <summary>
-        /// Logs stuff.
-        /// </summary>
-        static void log(string message)
-        {
-            Log.logger.Log(message);
-        }
-
-        /// <summary>
         /// Gets a new texture to display.
         /// </summary>
         /// <returns>Texture2D</returns>
