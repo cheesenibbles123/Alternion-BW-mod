@@ -161,7 +161,7 @@ namespace Alternion
                 foreach (KeyValuePair<string, playerObject> player in theGreatCacher.players)
                 {
                     // I don't think I have ever typed the word "default" as much as I did the last few days
-                    Logger.debugLog("Looping over player: " + i + ", with ID: " + player.Value.steamID);
+
                     // Badges
                     if (player.Value.badgeName != "default")
                     {
@@ -364,6 +364,7 @@ namespace Alternion
                             alreadyDownloaded.Add(player.Value.cannonSkinName);
                         }
                     }
+
                     // Primary weapons
                     if (player.Value.musketSkinName != "default")
                     {
@@ -574,6 +575,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
+
                     // Secondary Weapons
                     if (player.Value.standardPistolSkinName != "default")
                     {
@@ -1158,7 +1160,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-                    Logger.debugLog("melee");
+
                     // Specials
                     if (player.Value.tomahawkSkinName != "default")
                     {
@@ -1212,7 +1214,7 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-                    Logger.debugLog("tomahawk");
+
                     if (player.Value.spyglassSkinName != "default")
                     {
                         flag = alreadyDownloaded.Contains("spyglass_" + player.Value.spyglassSkinName);
@@ -1629,12 +1631,10 @@ namespace Alternion
                             alreadyDownloaded.Add(fullWeaponString);
                         }
                     }
-                }
 
-                float newPercentage = 20 + (60 * (i / theGreatCacher.players.Count));
-                Logger.debugLog(newPercentage.ToString() + "%");
-
-                LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
+                    float newPercentage = 20.0f + (60.0f * ((float)i / theGreatCacher.players.Count));
+                    LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
+                }            
             }
             // outputPlayerDict();
             Logger.logLow("Complete download!");
