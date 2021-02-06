@@ -16,13 +16,20 @@ namespace Alternion
         {
             if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
             {
+                Texture newTex;
                 if (isMain)
                 {
-
+                    if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out newTex))
+                    {
+                        renderer.material.mainTexture = newTex;
+                    }
                 }
                 else
                 {
-
+                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out newTex))
+                    {
+                        renderer.material.mainTexture = newTex;
+                    }
                 }
             }
             else
