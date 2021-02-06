@@ -23,9 +23,14 @@ namespace Alternion
                 // If the player Dict contains a reference to the specific weapon, output the texture
                 if (weaponSkin != "default")
                 {
-                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out Texture newTexture))
+                    Texture newTex;
+                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
                     {
-                        renderer.material.mainTexture = newTexture;
+                        renderer.material.mainTexture = newTex;
+                    }
+                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
+                    {
+                        renderer.material.SetTexture("_Metallic", newTex);
                     }
                 }
             }

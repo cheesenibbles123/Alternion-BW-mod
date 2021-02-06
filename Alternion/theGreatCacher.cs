@@ -16,9 +16,17 @@ namespace Alternion
         /// </summary>
         public static Texture defaultSails;
         /// <summary>
+        /// Default sail met texture.
+        /// </summary>
+        public static Texture defaultSailsMet;
+        /// <summary>
         /// Default cannon texture.
         /// </summary>
         public static Texture defaultCannons;
+        /// <summary>
+        /// Default cannon met texture.
+        /// </summary>
+        public static Texture defaultCannonsMet;
         /// <summary>
         /// Stores all cached ships.
         /// </summary>

@@ -31,9 +31,14 @@ namespace Alternion
                         var musket = GameObject.Find("wpn_standardMusket_LOD1");
                         if (musket != null)
                         {
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out Texture newTex))
+                            Texture newTex;
+                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out newTex))
                             {
                                 musket.GetComponent<Renderer>().material.mainTexture = newTex;
+                            }
+                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName + "_met", out newTex))
+                            {
+                                musket.GetComponent<Renderer>().material.SetTexture("_Metallic",newTex);
                             }
                         }
                         else
