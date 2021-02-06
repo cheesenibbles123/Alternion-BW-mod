@@ -10,7 +10,7 @@ using System.Collections;
 namespace Alternion
 {
     /// <summary>
-    /// For multithreading stuff.
+    /// Originally for multithreading stuff.
     /// </summary>
     class ThreadCreationProgram : MonoBehaviour
     {
@@ -45,13 +45,9 @@ namespace Alternion
         {
             try
             {
-                debugLog("Loading Texture");
                 tex.Resize(imgWidth, imgHeight);
-                debugLog("Resized Texture");
                 tex.LoadImage(fileData);
-                debugLog("Applied Texture");
                 tex.name = texName;
-                debugLog("Applied Name");
                 return tex;
             }
             catch (Exception e)
