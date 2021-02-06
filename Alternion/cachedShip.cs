@@ -7,6 +7,8 @@ namespace Alternion
     /// </summary>
     public class cachedShip
     {
+        public bool hasChangedCannons;
+        public bool hasChangedSails;
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>
