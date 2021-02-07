@@ -91,7 +91,7 @@ namespace Alternion
                     resetFlag(vessel);
                 }
             }
-            else
+            else // BROKEN
             {
                 cachedShip newVessel = new cachedShip();
                 theGreatCacher.ships.Add(team.ToString(), newVessel);
