@@ -109,7 +109,7 @@ namespace Alternion
                             Logger.logLow($"Team has not got a captain at index: -{index}- (position: {index - 1})");
                         }
 
-                        if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                        if (theGreatCacher.ships.TryGetValue((index - 1).ToString(), out cachedShip vessel))
                         {
                             Logger.logLow($"Adding to ship at index: -{index}- (position: {index - 1})");
                             vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);

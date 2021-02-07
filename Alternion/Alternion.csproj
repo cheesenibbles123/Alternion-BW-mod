@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
     <Compile Include="CannonHandler.cs" />
+    <Compile Include="flagHandler.cs" />
     <Compile Include="MainMenu.cs" />
     <Compile Include="SailHandler.cs" />
     <Compile Include="theGreatCacher.cs" />

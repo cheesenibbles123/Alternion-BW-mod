@@ -13,6 +13,8 @@ namespace Alternion
         public static bool isActive = false;
         public static bool setCannonDefaults = false;
         public static bool setSailDefaults = false;
+        public static bool setNavyFlag = false;
+        public static bool setPirateFlag = false;
         /// <summary>
         /// Default sail texture.
         /// </summary>
@@ -29,6 +31,8 @@ namespace Alternion
         /// Default cannon met texture.
         /// </summary>
         public static Texture defaultCannonsMet;
+        public static Texture navyFlag;
+        public static Texture pirateFlag;
         /// <summary>
         /// Stores all cached ships.
         /// </summary>

@@ -316,7 +316,7 @@ namespace Alternion
                         }
                     }
                 }
-
+                Logger.debugLog("Sails");
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
                 {
@@ -365,7 +365,7 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
                     }
                 }
-
+                Logger.debugLog("Cannons");
                 // Flags
                 if (player.Value.flagSkinName != "default")
                 {
@@ -380,7 +380,7 @@ namespace Alternion
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.flagSkinName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagSkinName + ".png", bytes);
                             }
                             else
                             {
@@ -388,15 +388,16 @@ namespace Alternion
                             }
 
                         }
-                        newTex = loadTexture(player.Value.flagSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                        newTex = loadTexture(player.Value.flagSkinName, texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.cannonSkins.Add(player.Value.flagSkinName, newTex);
+                            theGreatCacher.flags.Add(player.Value.flagSkinName, newTex);
+                            Logger.logLow($"Added -{player.Value.flagSkinName}-");
                         }
                         alreadyDownloaded.Add(player.Value.flagSkinName);
                     }
                 }
-
+                Logger.debugLog("Flags");
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
                 {
@@ -607,7 +608,7 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
+                Logger.debugLog("Primaries");
                 // Secondary Weapons
                 if (player.Value.standardPistolSkinName != "default")
                 {
@@ -1652,8 +1653,7 @@ namespace Alternion
                 count++;
                 float newPercentage = 20.0f + (60.0f * ((float)count / theGreatCacher.players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
-            }            
-            
+            }
             // outputPlayerDict();
             Logger.logLow("Complete download!");
             setupMainMenu();
@@ -1674,6 +1674,7 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/"); 
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MaskSkins/");
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "Flags/");
             }
 
             //Grab online JSON file

@@ -77,7 +77,7 @@ namespace Alternion
         /// <summary>
         /// Website file name.
         /// </summary>
-        public static string remoteFile = "playerList.json";
+        public static string remoteFile = "TESTLIST.json";
 
         void Start()
         {

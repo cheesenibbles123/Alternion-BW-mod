@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Alternion
 {
@@ -9,6 +10,9 @@ namespace Alternion
     {
         public bool hasChangedCannons;
         public bool hasChangedSails;
+        public bool hasChangedFlag;
+        public bool isNavy;
+        public Renderer flag;
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>
