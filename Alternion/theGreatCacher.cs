@@ -10,7 +10,6 @@ namespace Alternion
     [Mod]
     public class theGreatCacher : MonoBehaviour
     {
-        public static bool isActive = false;
         /// <summary>
         /// Check for if the default cannons have been set or not
         /// </summary>
@@ -87,11 +86,6 @@ namespace Alternion
         /// Stores all cached player loadouts.
         /// </summary>
         public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
-
-        void Start()
-        {
-            isActive = true;
-        }
 
         /// <summary>
         /// Sets the default sail texture.
