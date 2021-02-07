@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using BWModLoader;
 using Harmony;
 using UnityEngine;
@@ -12,7 +8,9 @@ namespace Alternion
     [Mod]
     public class flagHandler : MonoBehaviour
     {
-
+        /// <summary>
+        /// flagHandler Instance
+        /// </summary>
         public static flagHandler Instance;
 
         void Awake()
@@ -27,6 +25,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Harmony patch "allBuildShip" for ShipConstruction
+        /// </summary>
         [HarmonyPatch(typeof(ShipConstruction), "allBuildShip")]
         static class buildShipPatch
         {
@@ -39,6 +40,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies skin to Flag
+        /// </summary>
+        /// <param name="team">Ship team</param>
         private IEnumerator setFlag(int team)
         {
             yield return new WaitForSeconds(3f);
@@ -142,6 +147,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies skin to Flag
+        /// </summary>
+        /// <param name="vessel">Ship</param>
         static void resetFlag(cachedShip vessel)
         {
             if (vessel.hasChangedFlag)

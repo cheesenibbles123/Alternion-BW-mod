@@ -8,10 +8,25 @@ namespace Alternion
     /// </summary>
     public class cachedShip
     {
+        /// <summary>
+        /// Check for if the cannons have been changed, or are default
+        /// </summary>
         public bool hasChangedCannons;
+        /// <summary>
+        /// Check for if the sails have been changed, or are default
+        /// </summary>
         public bool hasChangedSails;
+        /// <summary>
+        /// Check for if the flag has been changed, or is default
+        /// </summary>
         public bool hasChangedFlag;
+        /// <summary>
+        /// Check for if the ship is navy or pirate (navy = true, pirate = false)
+        /// </summary>
         public bool isNavy;
+        /// <summary>
+        /// Ship flag renderer
+        /// </summary>
         public Renderer flag;
         /// <summary>
         /// Stores all Secondary Sails.

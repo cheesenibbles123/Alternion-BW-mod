@@ -8,7 +8,12 @@ namespace Alternion
     [Mod]
     public class CannonHandler : MonoBehaviour
     {
-
+        /// <summary>
+        /// Applies skin to cannon
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="steamID">Captain SteamID</param>
+        /// <param name="renderer">Cannon renderer</param>
         static void applySkins(cachedShip vessel, string steamID, Renderer renderer)
         {
             if (!theGreatCacher.setCannonDefaults)
@@ -66,6 +71,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Resets the cannon skin to default
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="renderer">Cannon renderer</param>
         static void resetCannon(cachedShip vessel, Renderer renderer)
         {
             if (vessel.hasChangedCannons)
@@ -84,7 +94,9 @@ namespace Alternion
             }
         }
 
-        // Borked
+        /// <summary>
+        /// Harmony patch to "OnEnable" for CannonUse
+        /// </summary>
         [HarmonyPatch(typeof(CannonUse), "OnEnable")]
         static class cannonOperationalSkinPatch
         {
@@ -157,7 +169,9 @@ namespace Alternion
                 }
             }
         }
-        // Borked
+        /// <summary>
+        /// Harmony patch to "Start" for CannonDestroy
+        /// </summary>
         [HarmonyPatch(typeof(CannonDestroy), "Start")]
         static class cannonDestroySkinPatch
         {

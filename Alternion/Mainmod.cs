@@ -1741,7 +1741,6 @@ namespace Alternion
             }
         }
 
-        //NEEDS FIXING
         /// <summary>
         /// Sets the new textures for cached ships.
         /// </summary>
@@ -1846,6 +1845,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Harmony patch to setup badges in the scoreboard
+        /// </summary>
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
         static class scoreBoardSlotAdjuster
         {
@@ -1886,6 +1888,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Harmony patch to set badge in endRound scene
+        /// </summary>
         [HarmonyPatch(typeof(AccoladeItem), "ëîéæìêìëéæï")]
         static class accoladeSetInfoPatch
         {
@@ -1913,6 +1918,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Harmony patch to trigger resetting of ships
+        /// </summary>
         [HarmonyPatch(typeof(GameMode), "newRound")]
         static class newRoundPatch
         {
@@ -1923,6 +1931,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Harmony patch to setup ships on captain pass
+        /// </summary>
         [HarmonyPatch(typeof(PlayerOptions), "passCaptain")]
         static class passCaptainPatch
         {

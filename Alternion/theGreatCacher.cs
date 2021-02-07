@@ -11,9 +11,21 @@ namespace Alternion
     public class theGreatCacher : MonoBehaviour
     {
         public static bool isActive = false;
+        /// <summary>
+        /// Check for if the default cannons have been set or not
+        /// </summary>
         public static bool setCannonDefaults = false;
+        /// <summary>
+        /// Check for if the default sails have been set or not
+        /// </summary>
         public static bool setSailDefaults = false;
+        /// <summary>
+        /// Check for if the default navy flag has been set or not
+        /// </summary>
         public static bool setNavyFlag = false;
+        /// <summary>
+        /// Check for if the default pirate flag has been set or not
+        /// </summary>
         public static bool setPirateFlag = false;
         /// <summary>
         /// Default sail texture.
@@ -31,7 +43,13 @@ namespace Alternion
         /// Default cannon met texture.
         /// </summary>
         public static Texture defaultCannonsMet;
+        /// <summary>
+        /// Default navy flag texture
+        /// </summary>
         public static Texture navyFlag;
+        /// <summary>
+        /// Default pirate flag texture
+        /// </summary>
         public static Texture pirateFlag;
         /// <summary>
         /// Stores all cached ships.
