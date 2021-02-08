@@ -3,6 +3,7 @@ using Harmony;
 using UnityEngine;
 using BWModLoader;
 using Steamworks;
+using System.Collections;
 
 namespace Alternion
 {
@@ -14,6 +15,9 @@ namespace Alternion
         /// </summary>
         static Transform menuCharacter;
 
+        /// <summary>
+        /// MainMenuCL Instance.
+        /// </summary>
         public static MainMenuCL Instance;
 
         /// <summary>
@@ -97,7 +101,24 @@ namespace Alternion
 
             LoadingBar.updatePercentage(95, "Applying weapon skin");
             setMainMenuWeaponSkin();
+            setMenuFlag();
 
+        }
+
+        /// <summary>
+        /// Sets the main menu flag.
+        /// </summary>
+        static void setMenuFlag()
+        {
+            string steamID = Steamworks.SteamUser.GetSteamID().ToString();
+            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            {
+                GameObject flag = GameObject.Find("teamflag");
+                if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture newTex))
+                {
+                    flag.GetComponent<Renderer>().material.mainTexture = newTex;
+                }
+            }
         }
 
         /// <summary>
@@ -141,6 +162,15 @@ namespace Alternion
             if (Input.GetKeyUp("`"))
             {
                 Logger.debugLog("v7.0");
+            }
+        }
+
+        [HarmonyPatch(typeof(MainMenu), "leaveCustomization")]
+        static class flagPatch
+        {
+            static void postfix(MainMenu __instance)
+            {
+                setMenuFlag();
             }
         }
 

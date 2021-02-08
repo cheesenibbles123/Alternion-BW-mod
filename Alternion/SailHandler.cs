@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Harmony;
 using BWModLoader;
 using UnityEngine;
@@ -212,7 +208,7 @@ namespace Alternion
                     }
                     break;
                 case "schooner":
-                    if ((__instance.name == "schooner_sails02" && AlternionSettings.useMainSails) || (__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
+                    if ((__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
                     {
                         vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
                         applySkins(vessel, steamID, renderer, true);
@@ -226,7 +222,7 @@ namespace Alternion
                     {
                         resetSail(vessel, renderer);
                     }
-                    break;
+                    break; // (__instance.name == "schooner_sails02" && AlternionSettings.useMainSails)
                 default:
                     break;
             }
@@ -253,15 +249,13 @@ namespace Alternion
 
                             if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
                             {
-                                vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
                                 setupShip(vessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
                             }
                             else
                             {
                                 cachedShip newVessel = new cachedShip();
-                                newVessel.mainSailDict.Add("0", __instance);
                                 theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                setupShip(vessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
+                                setupShip(newVessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
                             }
                         }
                     }

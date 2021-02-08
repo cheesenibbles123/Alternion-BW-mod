@@ -316,7 +316,6 @@ namespace Alternion
                         }
                     }
                 }
-                Logger.debugLog("Sails");
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
                 {
@@ -365,7 +364,6 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
                     }
                 }
-                Logger.debugLog("Cannons");
                 // Flags
                 if (player.Value.flagSkinName != "default")
                 {
@@ -397,7 +395,6 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.flagSkinName);
                     }
                 }
-                Logger.debugLog("Flags");
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
                 {
@@ -608,7 +605,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.debugLog("Primaries");
                 // Secondary Weapons
                 if (player.Value.standardPistolSkinName != "default")
                 {
@@ -1769,6 +1765,17 @@ namespace Alternion
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
+                                else
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedSails)
+                        {
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
+                            {
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                             }
                         }
 
@@ -1781,6 +1788,17 @@ namespace Alternion
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
+                                else
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedSails)
+                        {
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
+                            {
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                             }
                         }
 
@@ -1789,10 +1807,33 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
+                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
                                 if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                                 {
-                                    indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);
+                                    renderer.material.mainTexture = newTex;
                                 }
+                                else
+                                {
+                                    renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                }
+
+                                if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                {
+                                    renderer.material.SetTexture("_Metallic", newTex);
+                                }
+                                else
+                                {
+                                    renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedCannons)
+                        {
+                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                            {
+                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
+                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
                             }
                         }
 
@@ -1801,10 +1842,99 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
                             {
+                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
                                 if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                                 {
-                                    indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", newTex);
+                                    renderer.material.mainTexture = newTex;
                                 }
+                                else
+                                {
+                                    renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                }
+
+                                if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                {
+                                    renderer.material.SetTexture("_Metallic", newTex);
+                                }
+                                else
+                                {
+                                    renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedCannons)
+                        {
+                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                            {
+                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
+                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                            }
+                        }
+
+                        // Only apply new texture if config has flag textures enabled
+                        if (AlternionSettings.showFlags)
+                        {
+                            if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out newTex))
+                            {
+                                mightyVessel.flag.material.mainTexture = newTex;
+                            }
+                            else
+                            {
+                                if (mightyVessel.isNavy)
+                                {
+                                    mightyVessel.flag.material.mainTexture = theGreatCacher.navyFlag;
+                                }
+                                else
+                                {
+                                    mightyVessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedFlag)
+                        {
+                            if (mightyVessel.isNavy)
+                            {
+                                mightyVessel.flag.material.mainTexture = theGreatCacher.navyFlag;
+                            }
+                            else
+                            {
+                                mightyVessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                        {
+                            if (theGreatCacher.setCannonDefaults)
+                            {
+                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
+                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                            }
+                        }
+                        foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                        {
+                            if (theGreatCacher.setCannonDefaults)
+                            {
+                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
+                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                            }
+                        }
+                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
+                        {
+                            if (theGreatCacher.setSailDefaults)
+                            {
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                            }
+                        }
+                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
+                        {
+                            if (theGreatCacher.setSailDefaults)
+                            {
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
                             }
                         }
                     }
@@ -1812,7 +1942,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.debugLog(e.Message);
+                Logger.logLow(e.Message);
                 //Ignore Exception
             }
         }

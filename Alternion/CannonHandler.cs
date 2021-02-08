@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using BWModLoader;
 using Harmony;
@@ -70,6 +71,8 @@ namespace Alternion
                 resetCannon(vessel, renderer);
             }
         }
+
+        // static CannonHandler Instance;
 
         /// <summary>
         /// Resets the cannon skin to default

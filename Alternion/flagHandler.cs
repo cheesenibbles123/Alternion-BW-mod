@@ -35,9 +35,14 @@ namespace Alternion
             {
                 if (AlternionSettings.showFlags)
                 {
-                    Instance.StartCoroutine(Instance.setFlag(team));
+                    setupShipFlags(team);
                 }
             }
+        }
+
+        public static void setupShipFlags(int team)
+        {
+            Instance.StartCoroutine(Instance.setFlag(team));
         }
 
         /// <summary>
