@@ -1,13 +1,48 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Single cached ship object, stores sails and cannons.
+    /// </summary>
     public class cachedShip
     {
-        //Format will be OBJECTNAME / OBJECT
+        /// <summary>
+        /// Check for if the cannons have been changed, or are default
+        /// </summary>
+        public bool hasChangedCannons;
+        /// <summary>
+        /// Check for if the sails have been changed, or are default
+        /// </summary>
+        public bool hasChangedSails;
+        /// <summary>
+        /// Check for if the flag has been changed, or is default
+        /// </summary>
+        public bool hasChangedFlag;
+        /// <summary>
+        /// Check for if the ship is navy or pirate (navy = true, pirate = false)
+        /// </summary>
+        public bool isNavy;
+        /// <summary>
+        /// Ship flag renderer
+        /// </summary>
+        public Renderer flag;
+        /// <summary>
+        /// Stores all Secondary Sails.
+        /// </summary>
         public Dictionary<string, SailHealth> sailDict = new Dictionary<string, SailHealth>();
+        /// <summary>
+        /// Stores all Main Sails.
+        /// </summary>
         public Dictionary<string, SailHealth> mainSailDict = new Dictionary<string, SailHealth>();
+        /// <summary>
+        /// Stores Operational Cannons.
+        /// </summary>
         public Dictionary<string, CannonUse> cannonOperationalDict = new Dictionary<string, CannonUse>();
+        /// <summary>
+        /// Stores Destroyed cannons.
+        /// </summary>
         public Dictionary<string, CannonDestroy> cannonDestroyDict = new Dictionary<string, CannonDestroy>();
     }
 }

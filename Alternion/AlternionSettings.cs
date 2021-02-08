@@ -2,32 +2,82 @@
 using BWModLoader;
 using System.IO;
 using UnityEngine;
+using AlternionGUI;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Stores all settings.
+    /// </summary>
     [Mod]
     public class AlternionSettings : MonoBehaviour
     {
         public static int loggingLevel;
+        /// <summary>
+        /// Use Tournamentwake badges.
+        /// </summary>
         public static bool showTWBadges;
+        /// <summary>
+        /// Display custom badges.
+        /// </summary>
         public static bool useBadges;
+        /// <summary>
+        /// Display Gold mask skins.
+        /// </summary>
         public static bool useMaskSkins;
+        /// <summary>
+        /// Display Main sail skins.
+        /// </summary>
         public static bool useMainSails;
+        /// <summary>
+        /// Display secondary sail skins.
+        /// </summary>
         public static bool useSecondarySails;
+        /// <summary>
+        /// Display weapon skins.
+        /// </summary>
         public static bool useWeaponSkins;
+        /// <summary>
+        /// Display cannon skins.
+        /// </summary>
         public static bool useCannonSkins;
+        /// <summary>
+        /// Download assets on startup.
+        /// </summary>
         public static bool downloadOnStartup;
+        /// <summary>
+        /// Config menu toggle key.
+        /// </summary>
         public static string configKeyInput;
+        /// <summary>
+        /// Current config menu page. 
+        /// </summary>
         public static int configMenuPageNumber = 1;
+        /// <summary>
+        /// Max config menu pages.
+        /// </summary>
         public static int configMenuMaxPages = 3;
+        /// <summary>
+        /// Display watermark.
+        /// </summary>
+        public static bool enableWaterMark = true;
+        /// <summary>
+        /// Update players during runtime.
+        /// </summary>
         public static bool updateDuringRuntime;
+        /// <summary>
+        /// Use Tournamentwake badges.
+        /// </summary>
+        public static bool showFlags;
 
+        /// <summary>
+        /// Config file location.
+        /// </summary>
         static string configFile = "AlternionConfig.cfg";
-
-        static void log(string msg)
-        {
-            Log.logger.Log(msg);
-        }
+        /// <summary>
+        /// Website file name.
+        /// </summary>
+        public static string remoteFile = "playerList2.json";
 
         void Start()
         {
@@ -35,6 +85,9 @@ namespace Alternion
             setTextures();
         }
 
+        /// <summary>
+        /// Checks if the config file exists or not.
+        /// </summary>
         void checkConfig()
         {
             if (!File.Exists(configFile))
@@ -47,6 +100,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Creates the config file, and sets up the default settings.
+        /// </summary>
         void setupDefaults()
         {
             loggingLevel = 0;
@@ -56,9 +112,10 @@ namespace Alternion
             useMainSails = true;
             useSecondarySails = true;
             useWeaponSkins = true;
-            useCannonSkins = false;
+            useCannonSkins = true;
             downloadOnStartup = true;
             updateDuringRuntime = true;
+            showFlags = true;
             configKeyInput = "]";
 
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -75,6 +132,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
             streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
@@ -85,14 +143,17 @@ namespace Alternion
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
 
-            log("No config file found. Created default config file.");
+            Logger.debugLog("No config file found. Created default config file.");
         }
 
+        /// <summary>
+        /// Loads the settings from the config file.
+        /// </summary>
         void loadSettings()
         {
             if (!File.Exists(configFile))
             {
-                log("No config found!");
+                Logger.debugLog("No config found!");
                 return;
             }
             string[] array = File.ReadAllLines(configFile);
@@ -115,8 +176,8 @@ namespace Alternion
                                     loggingLevel = Convert.ToInt32(splitArr[1]);
                                 }catch (Exception e)
                                 {
-                                    log("Error loading loggingLevel config option. Setting default of 0.");
-                                    log(e.Message);
+                                    Logger.debugLog("Error loading loggingLevel config option. Setting default of 0.");
+                                    Logger.debugLog(e.Message);
                                     loggingLevel = 0;
                                 }
                                 break;
@@ -210,6 +271,16 @@ namespace Alternion
                                     updateDuringRuntime = false;
                                 }
                                 break;
+                            case "showFlags":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    showFlags = true;
+                                }
+                                else
+                                {
+                                    showFlags = false;
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -218,6 +289,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Saves the current runtime settings to the config file.
+        /// </summary>
         public static void saveSettings()
         {
             StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
@@ -234,6 +308,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
             streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
@@ -244,9 +319,13 @@ namespace Alternion
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
 
-            log("Saved config to file.");
+            Logger.debugLog("Saved config to file.");
         }
 
+        /// <summary>
+        /// Converts an int (1:true, 0:false) to a bool.
+        /// </summary>
+        /// <param name="checking">Bool to convert</param>
         static int checkBool(bool checking)
         {
             if (checking)
@@ -259,6 +338,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Checks for all textures, and stores the relevant ones into their respective slots.
+        /// </summary>
         void setTextures()
         {
             var mainTex = Resources.FindObjectsOfTypeAll<Texture>();

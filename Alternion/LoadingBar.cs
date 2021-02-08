@@ -5,15 +5,32 @@ using BWModLoader;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Main loading bar displayed in the centre of the screen on boot.
+    /// </summary>
     [Mod]
     public class LoadingBar : MonoBehaviour
     {
+        /// <summary>
+        /// All loaded textures.
+        /// </summary>
         static List<Texture> loadingTextures = new List<Texture>();
+        /// <summary>
+        /// Currently used texture.
+        /// </summary>
         Texture activeTexture;
+        /// <summary>
+        /// True if the mod is still loading.
+        /// </summary>
         static bool isLoading = true;
 
-        //max of 100
+        /// <summary>
+        /// True if the percentage has been changed.
+        /// </summary>
         public static bool hasPercentageChanged = false;
+        /// <summary>
+        /// Text displayed on the loading bar.
+        /// </summary>
         public static string loadingText;
 
         //Display setup
@@ -35,10 +52,6 @@ namespace Alternion
             }
             updatePercentage(0, "Starting bar");
         }
-        static void log(string message)
-        {
-            Log.logger.Log(message);
-        }
 
         void Update()
         {
@@ -48,6 +61,20 @@ namespace Alternion
                 hasPercentageChanged = false;
             }
         }
+
+        void OnGUI()
+        {
+            if (isLoading)
+            {
+                GUI.DrawTexture(new Rect(startPositionMain.x, startPositionMain.y, mainImageSize.x, mainImageSize.y), activeTexture, ScaleMode.ScaleToFit);
+                GUI.Label(new Rect(startPositionText.x, startPositionText.y, loadingTextSize.x, loadingTextSize.y), loadingText);
+            }
+        }
+
+        /// <summary>
+        /// Gets a new texture to display.
+        /// </summary>
+        /// <returns>Texture2D</returns>
         Texture getNewTexture()
         {
             try
@@ -63,15 +90,10 @@ namespace Alternion
                 return Texture2D.whiteTexture;
             }
         }
-        void OnGUI()
-        {
-            if (isLoading)
-            {
-                GUI.DrawTexture(new Rect(startPositionMain.x, startPositionMain.y, mainImageSize.x, mainImageSize.y), activeTexture, ScaleMode.ScaleToFit);
-                GUI.Label(new Rect(startPositionText.x, startPositionText.y, loadingTextSize.x, loadingTextSize.y), loadingText);
-            }
-        }
 
+        /// <summary>
+        /// Updates the percentage displayed on the LoadingBar.
+        /// </summary>
         public static void updatePercentage(float newPercentage, string newText)
         {
             loadingText = newText + "... " + newPercentage.ToString() + "%";
