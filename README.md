@@ -1,7 +1,5 @@
 # Alternion
 
-![Issues](https://img.shields.io/github/issues/cheesenibbles123/Alternion-BW-mod?label=Issues)
-![Issues Closed](https://img.shields.io/github/issues-closed/cheesenibbles123/Alternion-BW-mod?label=Issues)
 ![License](https://img.shields.io/github/license/cheesenibbles123/Alternion-BW-mod)
 ![Stars](https://img.shields.io/github/stars/cheesenibbles123/Alternion-BW-mod)
 ![Code Size](https://img.shields.io/github/languages/code-size/cheesenibbles123/Alternion-BW-mod)
