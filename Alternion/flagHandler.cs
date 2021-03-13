@@ -91,6 +91,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Loops over the renderers
+        /// </summary>
         void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew)
         {
             if (isNew)
