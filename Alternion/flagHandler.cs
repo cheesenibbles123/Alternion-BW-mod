@@ -35,7 +35,7 @@ namespace Alternion
             {
                 if (AlternionSettings.showFlags)
                 {
-                    setupShipFlags(team);
+                    Instance.setupShipFlags(team);
                 }
                 else if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
                 {
@@ -44,7 +44,7 @@ namespace Alternion
             }
         }
 
-        public static void setupShipFlags(int team)
+        void setupShipFlags(int team)
         {
             Instance.StartCoroutine(Instance.setFlag(team));
         }
@@ -56,6 +56,7 @@ namespace Alternion
         private IEnumerator setFlag(int team)
         {
             yield return new WaitForSeconds(3f);
+            bool hasNotUpdated = true;
             Transform shipTransform = GameMode.Instance.teamParents[team];
             Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
 
@@ -65,37 +66,9 @@ namespace Alternion
                 {
                     if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
-                        foreach (Renderer renderer in renderers)
-                        {
-                            if (renderer.name == "teamflag")
-                            {
-                                if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
-                                {
-                                    vessel.isNavy = true;
-                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
-                                }
-                                else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
-                                {
-                                    vessel.isNavy = false;
-                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
-                                }
-                                if (flag.name != "FAILED")
-                                {
-                                    renderer.material.mainTexture = flag;
-                                    vessel.flags.Add(renderer);
-                                    vessel.hasChangedFlag = true;
-                                }
-                            }
-                        }
+                        loopRenderers(renderers, vessel, flag, false);
+                        hasNotUpdated = false;
                     }
-                    else
-                    {
-                        resetFlag(vessel);
-                    }
-                }
-                else
-                {
-                    resetFlag(vessel);
                 }
             }
             else
@@ -106,38 +79,65 @@ namespace Alternion
                 {
                     if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
-                        foreach (Renderer renderer in renderers)
-                        {
-                            if (renderer.name == "teamflag")
-                            {
-                                if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
-                                {
-                                    vessel.isNavy = true;
-                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
-                                }
-                                else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
-                                {
-                                    vessel.isNavy = false;
-                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
-                                }
-                                if (flag.name != "FAILED")
-                                {
-                                    renderer.material.mainTexture = flag;
-                                    newVessel.flags.Add(renderer);
-                                    vessel.hasChangedFlag = true;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        resetFlag(vessel);
+                        loopRenderers(renderers, newVessel, flag, true);
+                        hasNotUpdated = false;
                     }
                 }
-                else
+            }
+
+            if (hasNotUpdated)
+            {
+                resetFlag(vessel);
+            }
+        }
+
+        void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew)
+        {
+            if (isNew)
+            {
+                foreach (Renderer renderer in renderers)
                 {
-                    resetFlag(vessel);
+                    changeRenderer(renderer, vessel, flag, isNew);
                 }
+            }
+            else
+            {
+                foreach (Renderer renderer in vessel.flags)
+                {
+                    changeRenderer(renderer, vessel, flag, isNew);
+                }
+            }
+        }
+
+        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew)
+        {
+            if (renderer.name == "teamflag")
+            {
+                defaultsHandler(vessel, renderer);
+
+                if (flag.name != "FAILED")
+                {
+                    renderer.material.mainTexture = flag;
+                    if (isNew)
+                    {
+                        vessel.flags.Add(renderer);
+                    }
+                    vessel.hasChangedFlag = true;
+                }
+            }
+        }
+
+        void defaultsHandler(cachedShip vessel, Renderer renderer)
+        {
+            if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
+            {
+                vessel.isNavy = true;
+                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
+            }
+            else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
+            {
+                vessel.isNavy = false;
+                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
             }
         }
 
