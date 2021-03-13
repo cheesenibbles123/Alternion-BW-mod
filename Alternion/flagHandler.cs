@@ -69,12 +69,12 @@ namespace Alternion
                         {
                             if (renderer.name == "teamflag")
                             {
-                                if (renderer.material.mainTexture.name == "flag_navy")
+                                if (!theGreatCacher.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
-                                else if (renderer.material.mainTexture.name == "flag_pirate")
+                                else if (!theGreatCacher.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
@@ -110,12 +110,12 @@ namespace Alternion
                         {
                             if (renderer.name == "teamflag")
                             {
-                                if (renderer.material.mainTexture.name == "flag_navy")
+                                if (!theGreatCacher.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
-                                else if (renderer.material.mainTexture.name == "flag_pirate")
+                                else if (!theGreatCacher.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
@@ -151,19 +151,11 @@ namespace Alternion
             {
                 if (vessel.isNavy)
                 {
-                    foreach (Renderer renderer in vessel.flags)
-                    {
-                        renderer.material.mainTexture = theGreatCacher.navyFlag;
-                        Logger.logLow("Reset to navy default flag");
-                    }
+                    setFlagsToSkin(vessel, theGreatCacher.navyFlag);
                 }
                 else
                 {
-                    foreach (Renderer renderer in vessel.flags)
-                    {
-                        renderer.material.mainTexture = theGreatCacher.pirateFlag;
-                        Logger.logLow("Reset to Pirate default flag");
-                    }
+                    setFlagsToSkin(vessel, theGreatCacher.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;
             }
