@@ -261,7 +261,9 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
+                        Logger.debugLog("### Issue setting up sails ###");
                         Logger.debugLog(e.Message);
+                        Logger.debugLog("##############################");
                     }
                 }
             }
