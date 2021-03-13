@@ -106,6 +106,24 @@ namespace Alternion
         }
 
         /// <summary>
+        /// Sets the default flag texture(s).
+        /// </summary>
+        /// <param name="newTexture">Default Flag Texture</param>
+        public static void setDefaultFlags(Texture newTexture, bool isNavy)
+        {
+            if (isNavy && !setNavyFlag)
+            {
+                navyFlag = newTexture;
+                setNavyFlag = true;
+            }
+            else if (!setPirateFlag)
+            {
+                pirateFlag = newTexture;
+                setPirateFlag = true;
+            }
+        }
+
+        /// <summary>
         /// Forces an update of all users
         /// </summary>
         public static void forceUpdate()
