@@ -1891,37 +1891,45 @@ namespace Alternion
                     }
                     else
                     {
-                        foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                        if (mightyVessel.hasChangedCannons)
                         {
-                            if (theGreatCacher.setCannonDefaults)
+                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
-                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                if (theGreatCacher.setCannonDefaults)
+                                {
+                                    Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
+                                    renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                    renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                }
                             }
+                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                            {
+                                if (theGreatCacher.setCannonDefaults)
+                                {
+                                    Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
+                                    renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                                    renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                }
+                            }
+                            mightyVessel.hasChangedCannons = false;
                         }
-                        foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
+                        if (mightyVessel.hasChangedSails)
                         {
-                            if (theGreatCacher.setCannonDefaults)
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                renderer.material.mainTexture = theGreatCacher.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                                if (theGreatCacher.setSailDefaults)
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                }
                             }
-                        }
-                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
-                        {
-                            if (theGreatCacher.setSailDefaults)
+                            foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                if (theGreatCacher.setSailDefaults)
+                                {
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
+                                }
                             }
-                        }
-                        foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
-                        {
-                            if (theGreatCacher.setSailDefaults)
-                            {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.defaultSails;
-                            }
+                            mightyVessel.hasChangedSails = false;
                         }
                     }
                 }
