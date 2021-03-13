@@ -37,6 +37,10 @@ namespace Alternion
                 {
                     setupShipFlags(team);
                 }
+                else if (theGreatCacher.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+                {
+                    Instance.resetFlag(vessel);
+                }
             }
         }
 
@@ -68,24 +72,17 @@ namespace Alternion
                                 if (renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
-                                    if (!theGreatCacher.setNavyFlag)
-                                    {
-                                        theGreatCacher.navyFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setNavyFlag = true;
-                                    }
+                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
                                 else if (renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
-                                    if (!theGreatCacher.setPirateFlag)
-                                    {
-                                        theGreatCacher.pirateFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setPirateFlag = true;
-                                    }
+                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
                                 }
                                 if (flag.name != "FAILED")
                                 {
                                     renderer.material.mainTexture = flag;
+                                    vessel.flags.Add(renderer);
                                     vessel.hasChangedFlag = true;
                                 }
                             }
@@ -101,7 +98,7 @@ namespace Alternion
                     resetFlag(vessel);
                 }
             }
-            else // BROKEN
+            else
             {
                 cachedShip newVessel = new cachedShip();
                 theGreatCacher.ships.Add(team.ToString(), newVessel);
@@ -116,25 +113,17 @@ namespace Alternion
                                 if (renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
-                                    if (!theGreatCacher.setNavyFlag)
-                                    {
-                                        theGreatCacher.navyFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setNavyFlag = true;
-                                    }
+                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
                                 else if (renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
-                                    if (!theGreatCacher.setPirateFlag)
-                                    {
-                                        theGreatCacher.pirateFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setPirateFlag = true;
-                                    }
+                                    theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
                                 }
                                 if (flag.name != "FAILED")
                                 {
                                     renderer.material.mainTexture = flag;
-                                    newVessel.flag = renderer;
+                                    newVessel.flags.Add(renderer);
                                     vessel.hasChangedFlag = true;
                                 }
                             }
@@ -156,19 +145,35 @@ namespace Alternion
         /// Applies skin to Flag
         /// </summary>
         /// <param name="vessel">Ship</param>
-        static void resetFlag(cachedShip vessel)
+        public void resetFlag(cachedShip vessel)
         {
             if (vessel.hasChangedFlag)
             {
                 if (vessel.isNavy)
                 {
-                    vessel.flag.material.mainTexture = theGreatCacher.navyFlag;
+                    foreach (Renderer renderer in vessel.flags)
+                    {
+                        renderer.material.mainTexture = theGreatCacher.navyFlag;
+                        Logger.logLow("Reset to navy default flag");
+                    }
                 }
                 else
                 {
-                    vessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
+                    foreach (Renderer renderer in vessel.flags)
+                    {
+                        renderer.material.mainTexture = theGreatCacher.pirateFlag;
+                        Logger.logLow("Reset to Pirate default flag");
+                    }
                 }
                 vessel.hasChangedFlag = false;
+            }
+        }
+
+        public void setFlagsToSkin(cachedShip vessel, Texture newFlagTex)
+        {
+            foreach (Renderer renderer in vessel.flags)
+            {
+                renderer.material.mainTexture = newFlagTex;
             }
         }
     }
