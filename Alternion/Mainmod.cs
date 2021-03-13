@@ -1884,7 +1884,7 @@ namespace Alternion
                                 flagHandler.Instance.resetFlag(mightyVessel);
                             }
                         }
-                        else
+                        else if (mightyVessel.hasChangedFlag)
                         {
                             flagHandler.Instance.resetFlag(mightyVessel);
                         }
