@@ -25,9 +25,13 @@ namespace Alternion
         /// </summary>
         public bool isNavy;
         /// <summary>
+        /// Check for if the ship is navy or pirate (navy = true, pirate = false)
+        /// </summary>
+        public int teamNum;
+        /// <summary>
         /// Ship flag renderer
         /// </summary>
-        public Renderer flag;
+        public List<Renderer> flags = new List<Renderer>();
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>
