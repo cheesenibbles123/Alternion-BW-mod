@@ -1877,30 +1877,16 @@ namespace Alternion
                         {
                             if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out newTex))
                             {
-                                mightyVessel.flag.material.mainTexture = newTex;
+                                flagHandler.Instance.setFlagsToSkin(mightyVessel, newTex);
                             }
                             else
                             {
-                                if (mightyVessel.isNavy)
-                                {
-                                    mightyVessel.flag.material.mainTexture = theGreatCacher.navyFlag;
-                                }
-                                else
-                                {
-                                    mightyVessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
-                                }
+                                flagHandler.Instance.resetFlag(mightyVessel);
                             }
                         }
-                        else if (mightyVessel.hasChangedFlag)
+                        else
                         {
-                            if (mightyVessel.isNavy)
-                            {
-                                mightyVessel.flag.material.mainTexture = theGreatCacher.navyFlag;
-                            }
-                            else
-                            {
-                                mightyVessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
-                            }
+                            flagHandler.Instance.resetFlag(mightyVessel);
                         }
                     }
                     else
