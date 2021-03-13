@@ -10,19 +10,19 @@ namespace Alternion
     {
         static void applySkins(cachedShip vessel, string steamID, Renderer renderer, bool isMain)
         {
-            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 Texture newTex;
                 if (isMain)
                 {
-                    if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out newTex))
+                    if (theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                     }
                 }
                 else
                 {
-                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out newTex))
+                    if (theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                     }
@@ -38,8 +38,8 @@ namespace Alternion
         {
             if (vessel.hasChangedSails)
             {
-                renderer.material.mainTexture = theGreatCacher.defaultSails;
-                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultSailsMet);
+                renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSailsMet);
             }
         }
 
@@ -247,14 +247,14 @@ namespace Alternion
                             string shipType = GameMode.Instance.shipTypes[teamNum - 1];
                             shipType = shipType.Remove(shipType.Length - 1);
 
-                            if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+                            if (theGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
                             {
                                 setupShip(vessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
                             }
                             else
                             {
                                 cachedShip newVessel = new cachedShip();
-                                theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
+                                theGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
                                 setupShip(newVessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
                             }
                         }

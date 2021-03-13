@@ -30,17 +30,17 @@ namespace Alternion
                 try
                 {
                     string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
                         var musket = GameObject.Find("wpn_standardMusket_LOD1");
                         if (musket != null)
                         {
                             Texture newTex;
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out newTex))
+                            if (theGreatCacher.Instance.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out newTex))
                             {
                                 musket.GetComponent<Renderer>().material.mainTexture = newTex;
                             }
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName + "_met", out newTex))
+                            if (theGreatCacher.Instance.weaponSkins.TryGetValue("musket_" + player.musketSkinName + "_met", out newTex))
                             {
                                 musket.GetComponent<Renderer>().material.SetTexture("_Metallic",newTex);
                             }
@@ -80,12 +80,12 @@ namespace Alternion
             try
             {
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-                if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                 {
                     Logger.debugLog($"Got player {player.steamID} => {player.badgeName}");
                     if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                     {
-                        if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
+                        if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
                         {
                             mm.menuBadge.texture = newTex;
                         }
@@ -111,10 +111,10 @@ namespace Alternion
         static void setMenuFlag()
         {
             string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 GameObject flag = GameObject.Find("teamflag");
-                if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture newTex))
+                if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture newTex))
                 {
                     flag.GetComponent<Renderer>().material.mainTexture = newTex;
                 }

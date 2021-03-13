@@ -24,11 +24,11 @@ namespace Alternion
                 if (weaponSkin != "default")
                 {
                     Texture newTex;
-                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
+                    if (theGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                     }
-                    if (theGreatCacher.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
+                    if (theGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
                     {
                         renderer.material.SetTexture("_Metallic", newTex);
                     }
@@ -164,7 +164,7 @@ namespace Alternion
                     {
                         //PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
                         string steamID = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
                             weaponSkinHandler(__instance, player);
                         }
@@ -187,9 +187,9 @@ namespace Alternion
                     if (AlternionSettings.useMaskSkins)
                     {
                         string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                        if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
-                            if (theGreatCacher.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
+                            if (theGreatCacher.Instance.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
                             {
                                 // Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
                                 __instance.éäéïéðïåææè.transform.GetComponent<Renderer>().material.mainTexture = newTex;
@@ -217,7 +217,7 @@ namespace Alternion
                         {
                             //Grab local steamID
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                             {
                                 weaponSkinHandler(__instance, player);
                             }

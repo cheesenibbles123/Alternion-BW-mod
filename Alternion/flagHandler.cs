@@ -37,7 +37,7 @@ namespace Alternion
                 {
                     setupShipFlags(team);
                 }
-                else if (theGreatCacher.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+                else if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
                 {
                     Instance.resetFlag(vessel);
                 }
@@ -59,22 +59,22 @@ namespace Alternion
             Transform shipTransform = GameMode.Instance.teamParents[team];
             Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
 
-            if (theGreatCacher.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+            if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
             {
-                if (theGreatCacher.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
                         foreach (Renderer renderer in renderers)
                         {
                             if (renderer.name == "teamflag")
                             {
-                                if (!theGreatCacher.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
+                                if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
-                                else if (!theGreatCacher.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
+                                else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
@@ -101,21 +101,21 @@ namespace Alternion
             else
             {
                 cachedShip newVessel = new cachedShip();
-                theGreatCacher.ships.Add(team.ToString(), newVessel);
-                if (theGreatCacher.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
+                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
                         foreach (Renderer renderer in renderers)
                         {
                             if (renderer.name == "teamflag")
                             {
-                                if (!theGreatCacher.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
+                                if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
                                 {
                                     vessel.isNavy = true;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
                                 }
-                                else if (!theGreatCacher.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
+                                else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
                                 {
                                     vessel.isNavy = false;
                                     theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
@@ -151,11 +151,11 @@ namespace Alternion
             {
                 if (vessel.isNavy)
                 {
-                    setFlagsToSkin(vessel, theGreatCacher.navyFlag);
+                    setFlagsToSkin(vessel, theGreatCacher.Instance.navyFlag);
                 }
                 else
                 {
-                    setFlagsToSkin(vessel, theGreatCacher.pirateFlag);
+                    setFlagsToSkin(vessel, theGreatCacher.Instance.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;
             }

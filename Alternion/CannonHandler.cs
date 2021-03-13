@@ -17,20 +17,20 @@ namespace Alternion
         /// <param name="renderer">Cannon renderer</param>
         static void applySkins(cachedShip vessel, string steamID, Renderer renderer)
         {
-            if (!theGreatCacher.setCannonDefaults)
+            if (!theGreatCacher.Instance.setCannonDefaults)
             {
-                theGreatCacher.setCannonDefaults = true;
-                theGreatCacher.defaultCannons = renderer.material.mainTexture;
-                theGreatCacher.defaultCannonsMet = renderer.material.GetTexture("_Metallic");
+                theGreatCacher.Instance.setCannonDefaults = true;
+                theGreatCacher.Instance.defaultCannons = renderer.material.mainTexture;
+                theGreatCacher.Instance.defaultCannonsMet = renderer.material.GetTexture("_Metallic");
             }
 
-            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 if (player.cannonSkinName != "default")
                 {
                     Texture newTex;
                     // ALB
-                    if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                    if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                     {
                         Logger.logLow("Applying skin: " + newTex.name);
                         renderer.material.mainTexture = newTex;
@@ -39,14 +39,14 @@ namespace Alternion
                             vessel.hasChangedCannons = true;
                         }
                     }
-                    else if (theGreatCacher.defaultCannons != null)
+                    else if (theGreatCacher.Instance.defaultCannons != null)
                     {
                         Logger.logLow("Applying default ALB to custom");
-                        renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                        renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                     }
 
                     // MET
-                    if (theGreatCacher.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                    if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                     {
                         Logger.logLow("Applying Met: " + newTex.name);
                         renderer.material.SetTexture("_Metallic", newTex);
@@ -55,10 +55,10 @@ namespace Alternion
                             vessel.hasChangedCannons = true;
                         }
                     }
-                    else if (theGreatCacher.defaultCannonsMet != null)
+                    else if (theGreatCacher.Instance.defaultCannonsMet != null)
                     {
                         Logger.logLow("Applying default MET to custom");
-                        renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                        renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                     }
                 }
                 else
@@ -83,15 +83,15 @@ namespace Alternion
         {
             if (vessel.hasChangedCannons)
             {
-                if (theGreatCacher.defaultCannons != null)
+                if (theGreatCacher.Instance.defaultCannons != null)
                 {
                     Logger.logLow("Applying default as null");
-                    renderer.material.mainTexture = theGreatCacher.defaultCannons;
+                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                 }
-                if (theGreatCacher.defaultCannonsMet != null)
+                if (theGreatCacher.Instance.defaultCannonsMet != null)
                 {
                     Logger.logLow("Applying default as null");
-                    renderer.material.SetTexture("_Metallic", theGreatCacher.defaultCannonsMet);
+                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                 }
                 vessel.hasChangedCannons = false;
             }
@@ -124,7 +124,7 @@ namespace Alternion
                             Logger.logLow($"Team has not got a captain at index: -{index}- (position: {index - 1})");
                         }
 
-                        if (theGreatCacher.ships.TryGetValue((index - 1).ToString(), out cachedShip vessel))
+                        if (theGreatCacher.Instance.ships.TryGetValue((index - 1).ToString(), out cachedShip vessel))
                         {
                             Logger.logLow($"Adding to ship at index: -{index}- (position: {index - 1})");
                             vessel.cannonOperationalDict.Add((vessel.cannonOperationalDict.Count + 1).ToString(), __instance);
@@ -137,7 +137,7 @@ namespace Alternion
                             Logger.logLow("Generated new ship");
                             newVessel.cannonOperationalDict.Add("0", __instance);
                             Logger.logLow($"Added 1st cannon to ship at index: -{index}- (position: {index - 1})");
-                            theGreatCacher.ships.Add(index.ToString(), newVessel);
+                            theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                             Logger.logLow($"Added vessel to ship cache: -{index}-");
                             applySkins(vessel, steamID, child.GetComponent<Renderer>());
                         }
@@ -191,7 +191,7 @@ namespace Alternion
                             steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
                         }
 
-                        if (theGreatCacher.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+                        if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
                         {
                             vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
                             applySkins(vessel, steamID, __instance.îæïíïíäìéêé.GetComponent<Renderer>());
@@ -200,7 +200,7 @@ namespace Alternion
                         {
                             cachedShip newVessel = new cachedShip();
                             newVessel.cannonDestroyDict.Add("0", __instance);
-                            theGreatCacher.ships.Add(index.ToString(), newVessel);
+                            theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                             applySkins(vessel, steamID, __instance.îæïíïíäìéêé.GetComponent<Renderer>());
                         }
                     }
