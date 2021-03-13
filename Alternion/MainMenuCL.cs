@@ -110,7 +110,7 @@ namespace Alternion
         /// </summary>
         static void setMenuFlag()
         {
-            string steamID = Steamworks.SteamUser.GetSteamID().ToString();
+            string steamID = SteamUser.GetSteamID().ToString();
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 GameObject flag = GameObject.Find("teamflag");
