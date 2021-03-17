@@ -24,10 +24,15 @@ namespace Alternion
         /// Check for if the ship is navy or pirate (navy = true, pirate = false)
         /// </summary>
         public bool isNavy;
+        public bool isInitialized = false;
         /// <summary>
         /// Ship flag renderer
         /// </summary>
         public List<Renderer> flags = new List<Renderer>();
+        /// <summary>
+        /// Ship Closed sails renderer
+        /// </summary>
+        public List<Renderer> closedSails = new List<Renderer>();
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>

@@ -49,6 +49,8 @@ namespace AlternionGUI
         // Format X, Y, Width, Height
         Vector4 saveButton = new Vector4(90,300,110,40);
 
+        Vector2 scrollPosition = Vector2.zero;
+
         int buttonOffset = 50;
 
         /// <summary>
@@ -144,6 +146,8 @@ namespace AlternionGUI
 
                 GUI.contentColor = defaultColour;
 
+                scrollPosition = GUI.BeginScrollView(new Rect(20, 60, 250, 350),
+                    scrollPosition, new Rect(30, 70, 230, 100));
 
                 //Badges
                 if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y, buttonWH.x, buttonWH.y), "Badges"))
@@ -167,27 +171,41 @@ namespace AlternionGUI
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 1), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
 
-                //Weapon Skins
-                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 2), buttonWH.x, buttonWH.y), "Weapon Skins"))
+                //Show KS Badges
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 2), buttonWH.x, buttonWH.y), "KS Badges"))
                 {
-                    AlternionSettings.useWeaponSkins = !AlternionSettings.useWeaponSkins;
+                    AlternionSettings.showKSBadges = !AlternionSettings.showKSBadges;
                 }
                 GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
-                if (AlternionSettings.useWeaponSkins)
+                if (AlternionSettings.showKSBadges)
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 2), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
 
-                //Golden Mask Skins
-                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Gold Mask Skins"))
+                //Weapon Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Weapon Skins"))
                 {
-                    AlternionSettings.useMaskSkins = !AlternionSettings.useMaskSkins;
+                    AlternionSettings.useWeaponSkins = !AlternionSettings.useWeaponSkins;
                 }
                 GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
-                if (AlternionSettings.useMaskSkins)
+                if (AlternionSettings.useWeaponSkins)
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
+
+                //Golden Mask Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 4), buttonWH.x, buttonWH.y), "Gold Mask Skins"))
+                {
+                    AlternionSettings.useMaskSkins = !AlternionSettings.useMaskSkins;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.useMaskSkins)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+
+                GUI.EndScrollView();
+
             } // Player
             else if (AlternionSettings.configMenuPageNumber == 2)
             {

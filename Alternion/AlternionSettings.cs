@@ -18,6 +18,10 @@ namespace Alternion
         /// </summary>
         public static bool showTWBadges;
         /// <summary>
+        /// Use Kickstarter badges.
+        /// </summary>
+        public static bool showKSBadges = false;
+        /// <summary>
         /// Display custom badges.
         /// </summary>
         public static bool useBadges;

@@ -1714,12 +1714,15 @@ namespace Alternion
                     {
                         indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
                     }
-                }
-                if (theGreatCacher.Instance.defaultSails)
-                {
+
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
                     {
                         indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                    }
+
+                    foreach (Renderer renderer in individualShip.Value.closedSails)
+                    {
+                        renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
                     }
                 }
 
@@ -1730,9 +1733,6 @@ namespace Alternion
                     {
                         indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
                     }
-                }
-                if (theGreatCacher.Instance.defaultCannons)
-                {
                     foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
                     {
                         indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
