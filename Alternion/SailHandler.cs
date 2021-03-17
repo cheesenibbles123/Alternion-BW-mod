@@ -17,6 +17,9 @@ namespace Alternion
         /// </summary>
         public static SailHandler Instance;
 
+        /// <summary>
+        /// List containing all the mainsails
+        /// </summary>
         List<string> mainSailList = new List<string>()
         {
             "hmsSophie_sails08",
@@ -45,6 +48,13 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies the skins to the sail
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="steamID">Captain steamID</param>
+        /// <param name="renderer">Sail Renderer</param>
+        /// <param name="isMain">Is mainsail or not</param>
         static void applySkins(cachedShip vessel, string steamID, Renderer renderer, bool isMain)
         {
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
@@ -71,6 +81,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies the skins to the sail
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="renderer">Sail Renderer</param>
         static void resetSail(cachedShip vessel, Renderer renderer)
         {
             if (vessel.hasChangedSails)
@@ -80,7 +95,7 @@ namespace Alternion
             }
         }
 
-        static void setupShip(cachedShip vessel, string steamID, string shipType, string sailName, Renderer renderer, SailHealth __instance)
+        static void setupShip(cachedShip vessel, string steamID, string sailName, Renderer renderer, SailHealth __instance)
         {
 
             if (Instance.mainSailList.Contains(sailName) && AlternionSettings.useMainSails)
@@ -129,13 +144,13 @@ namespace Alternion
             {
                 if (theGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
                 {
-                    setupShip(vessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
+                    setupShip(vessel, steamID, shipType, __instance.GetComponent<Renderer>(), __instance);
                 }
                 else
                 {
                     cachedShip newVessel = new cachedShip();
                     theGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
-                    setupShip(newVessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
+                    setupShip(newVessel, steamID, shipType, __instance.GetComponent<Renderer>(), __instance);
                 }
             }
             catch (Exception e)
