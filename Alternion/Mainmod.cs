@@ -1974,6 +1974,27 @@ namespace Alternion
         }
 
         /// <summary>
+        /// Checks if input badge is a Kickstarter or Tournamentwake badge
+        /// </summary>
+        /// <param name="__instance">ScoreboardSlot</param>
+        /// /// <returns>Bool</returns>
+        public static bool checkIfTWOrKS(ScoreboardSlot __instance)
+        {
+            // If TW Badge
+            if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+            {
+                // IF KS Badge
+                if (__instance.éòëèïòëóæèó.texture.name != "KSbadge" ^ (!AlternionSettings.showKSBadges & __instance.éòëèïòëóæèó.texture.name == "KSbadge"))
+                {
+                    // IF KS Badge
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Harmony patch to setup badges in the scoreboard
         /// </summary>
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
@@ -1988,8 +2009,8 @@ namespace Alternion
                         string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
                         if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
-                            // if they have a TW badge, this will dictate if it should or shouldn't override it visually
-                            if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+                            // if they have a TW OR KS badge, this will dictate if it should or shouldn't override it visually
+                            if (checkIfTWOrKS(__instance))
                             {
                                 if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
                                 {
