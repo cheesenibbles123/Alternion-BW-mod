@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Alternion
 {
     /// <summary>
-    /// Single cached ship object, stores sails and cannons.
+    /// Single cached ship object, stores sails, flags and cannons.
     /// </summary>
     public class cachedShip
     {

@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Handles all sail interactions
+    /// </summary>
     [Mod]
     public class SailHandler : MonoBehaviour
     {

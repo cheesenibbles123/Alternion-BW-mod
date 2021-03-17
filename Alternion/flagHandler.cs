@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Handles all flag interactions
+    /// </summary>
     [Mod]
     public class flagHandler : MonoBehaviour
     {
