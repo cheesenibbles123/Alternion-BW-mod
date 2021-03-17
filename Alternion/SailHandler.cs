@@ -95,6 +95,13 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies the skins to the sail
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="steamID">Captain steamID</param>
+        /// <param name="renderer">Sail Renderer</param>
+        /// <param name="sailName">Name of the sail</param>
         static void setupShip(cachedShip vessel, string steamID, string sailName, Renderer renderer, SailHealth __instance)
         {
 
