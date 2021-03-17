@@ -144,10 +144,13 @@ namespace Alternion
                 case "tea_alb":
                     assignWeaponToRenderer(renderer, player.teaWaterSkinName, "teaWater");
                     break;
+                case "wpn_grenade_alb":
+                    assignWeaponToRenderer(renderer, player.grenadeSkinName, "grenade");
+                    break;
                 default:
                     // If not known, output here
-                    //logLow("Type name: -" + renderer.name + "-");
-                    //logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+                    Logger.logLow("Type name: -" + renderer.name + "-");
+                    Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
             }
         }
