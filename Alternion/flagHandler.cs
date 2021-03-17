@@ -119,6 +119,7 @@ namespace Alternion
                 Logger.logLow("Looping over existing");
                 foreach (Renderer renderer in vessel.flags)
                 {
+                    Logger.logLow("Got renderer: " + renderer.name);
                     try
                     {
                         changeRenderer(renderer, vessel, flag, isNew, team);
@@ -133,7 +134,6 @@ namespace Alternion
 
         void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew, int team)
         {
-            //Logger.logLow($"Found renderer => {renderer.name}");
             if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
             {
                 Logger.logLow("found teamflag renderer");
@@ -157,10 +157,6 @@ namespace Alternion
                     vessel.hasChangedFlag = true;
                     Logger.logLow("Updated bool");
                 }
-            }
-            else if (renderer.name.ToLower().Contains("sails_closed"))
-            {
-                SailHandler.Instance.handleClosedSails(vessel, renderer, team);
             }
         }
 
