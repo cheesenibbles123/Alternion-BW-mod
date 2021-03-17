@@ -96,7 +96,7 @@ namespace Alternion
         }
 
         /// <summary>
-        /// Applies the skins to the sail
+        /// Determines if it should be a mainsail or not
         /// </summary>
         /// <param name="vessel">Ship</param>
         /// <param name="steamID">Captain steamID</param>
@@ -123,6 +123,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Waits until the captain has been set
+        /// </summary>
+        /// <param name="teamNum">Team Number</param>
+        /// <param name="__instance">SailHealth</param>
         private IEnumerator wasteTime(int teamNum, SailHealth __instance)
         {
             yield return new WaitForSeconds(0.1f);
@@ -141,6 +146,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Creates/pulls cached ship
+        /// </summary>
+        /// <param name="teamNum">Team Number</param>
+        /// <param name="__instance">SailHealth</param>
         void handleShipSetup(int teamNum, SailHealth __instance)
         {
             string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
@@ -168,6 +178,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Hooks into OnEnable
+        /// </summary>
         [HarmonyPatch(typeof(SailHealth), "OnEnable")]
         static class sailSkinPatch
         {
