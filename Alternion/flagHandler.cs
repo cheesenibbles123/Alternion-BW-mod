@@ -45,6 +45,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Starts Coroutine
+        /// </summary>
+        /// <param name="team">Ship team Number</param>
         void setupShipFlags(int team)
         {
             Instance.StartCoroutine(Instance.setFlag(team));
@@ -98,6 +102,11 @@ namespace Alternion
         /// <summary>
         /// Loops over the renderers
         /// </summary>
+        /// <param name="renderers">Renderer Array</param>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="flag">Flag to apply</param>
+        /// <param name="isNew">Is a newly created ship or not</param>
+        /// <param name="team">Team number</param>
         void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew, int team)
         {
             if (isNew || !vessel.isInitialized)
@@ -107,7 +116,7 @@ namespace Alternion
                 {
                     try
                     {
-                        changeRenderer(renderer, vessel, flag, isNew, team);
+                        changeRenderer(renderer, vessel, flag, isNew);
                     }catch(Exception e)
                     {
                         Logger.logLow(e.Message);
@@ -122,7 +131,7 @@ namespace Alternion
                     Logger.logLow("Got renderer: " + renderer.name);
                     try
                     {
-                        changeRenderer(renderer, vessel, flag, isNew, team);
+                        changeRenderer(renderer, vessel, flag, isNew);
                     }
                     catch (Exception e)
                     {
@@ -132,12 +141,19 @@ namespace Alternion
             }
         }
 
-        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew, int team)
+        /// <summary>
+        /// Sets the flags
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="flag">Flag to apply</param>
+        /// <param name="isNew">Is a newly created ship or not</param>
+        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew)
         {
             if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
             {
                 Logger.logLow("found teamflag renderer");
-                defaultsHandler(vessel, renderer);
+                defaultsHandler(renderer);
 
                 if (!vessel.isInitialized)
                 {
@@ -160,7 +176,11 @@ namespace Alternion
             }
         }
 
-        void defaultsHandler(cachedShip vessel, Renderer renderer)
+        /// <summary>
+        /// Sets up the defaults
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
+        void defaultsHandler(Renderer renderer)
         {
             if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
             {
@@ -206,6 +226,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Update all flags in ship to flag
+        /// </summary>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="newFlagTex">Flag to use</param>
         public void setFlagsToSkin(cachedShip vessel, Texture newFlagTex)
         {
             foreach (Renderer renderer in vessel.flags)
