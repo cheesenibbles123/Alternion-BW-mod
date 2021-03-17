@@ -153,47 +153,14 @@ namespace Alternion
             {
                 if (AlternionSettings.useMainSails || AlternionSettings.useSecondarySails)
                 {
-                    Logger.logLow("Spawned instance for " + __instance.name);
                     Transform shipTransf = __instance.transform.root;
                     if (shipTransf)
                     {
-                        Logger.logLow("Found transform for " + __instance.name);
                         int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
-                        Logger.logLow("Found closed sail:" + __instance.êæïäîæïïíñå.name);
                         Instance.StartCoroutine(Instance.wasteTime(teamNum, __instance));
                     }
                 }
             }
         }
-
-        public void handleClosedSails(cachedShip vessel, Renderer closedSail, int team)
-        {
-            return;
-            if (!vessel.closedSails.Contains(closedSail))
-            {
-                vessel.closedSails.Add(closedSail);
-            }
-            if (Instance.mainSailList.Contains(closedSail.name))
-            {
-                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
-                {
-                    if (theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out Texture newMainSail))
-                    {
-                        closedSail.material.mainTexture = newMainSail;
-                    }
-                }
-            }
-            else
-            {
-                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
-                {
-                    if (theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out Texture newSecondarySail))
-                    {
-                        closedSail.material.mainTexture = newSecondarySail;
-                    }
-                }
-            }
-        }
-
     }
 }
