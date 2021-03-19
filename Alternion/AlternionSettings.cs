@@ -111,6 +111,7 @@ namespace Alternion
         {
             loggingLevel = 0;
             showTWBadges = false;
+            showKSBadges = false;
             useBadges = true;
             useMaskSkins = true;
             useMainSails = true;
@@ -136,6 +137,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
             streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
@@ -193,6 +195,16 @@ namespace Alternion
                                 else
                                 {
                                     showTWBadges = false;
+                                }
+                                break;
+                            case "showKSBadges":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    showKSBadges = true;
+                                }
+                                else
+                                {
+                                    showKSBadges = false;
                                 }
                                 break;
                             case "useBadges":
@@ -312,6 +324,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
             streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
