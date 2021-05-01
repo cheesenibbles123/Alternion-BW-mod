@@ -21,6 +21,10 @@ namespace Alternion
         /// </summary>
         public bool hasChangedFlag;
         /// <summary>
+        /// Check for if the flag has been changed, or is default
+        /// </summary>
+        public bool hasChangedSwivels;
+        /// <summary>
         /// Check for if the ship is navy or pirate (navy = true, pirate = false)
         /// </summary>
         public bool isNavy;
@@ -29,6 +33,10 @@ namespace Alternion
         /// Ship flag renderer
         /// </summary>
         public List<Renderer> flags = new List<Renderer>();
+        /// <summary>
+        /// Ship swivel renderers
+        /// </summary>
+        public List<Renderer> Swivels = new List<Renderer>();
         /// <summary>
         /// Ship Closed sails renderer
         /// </summary>
