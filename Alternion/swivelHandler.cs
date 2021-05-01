@@ -109,7 +109,7 @@ namespace Alternion
         }
 
         [HarmonyPatch(typeof(SwivelUse), "Start")]
-        static class playerInfoPatch
+        static class swivelPatch
         {
             static void Postfix(SwivelUse __instance)
             {
@@ -124,8 +124,9 @@ namespace Alternion
 
                 Logger.debugLog("Ran swiveluse parent"); // swivel_connector
                 Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers2)
+                for (int i = 0; i < renderers2.Length; i++)
                 {
+                    Renderer rend = renderers2[i];
                     if (rend.name == "swiveltop" || rend.name == "swivel_connector" || rend.name == "swivel_base")
                     {
                         Instance.setupDefaultImg(rend);
