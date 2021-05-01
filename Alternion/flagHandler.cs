@@ -74,7 +74,8 @@ namespace Alternion
             {
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (player.flagSkinName != "default" && theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    string flagSkin = vessel.isNavy ? player.flagNavyName : player.flagPirateName;
+                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
                         Logger.logLow("Setup existing ship");
                         loopRenderers(renderers, vessel, flag, false, team);
@@ -92,7 +93,8 @@ namespace Alternion
                 theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (player.flagSkinName != "default" && theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    string flagSkin = vessel.isNavy ? player.flagNavyName : player.flagPirateName;
+                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
                         Logger.logLow("Setup new ship");
                         loopRenderers(renderers, newVessel, flag, true, team);
@@ -199,15 +201,12 @@ namespace Alternion
         {
             if (vessel.hasChangedFlag)
             {
-                Logger.logLow("Has been changed");
                 if (vessel.isNavy)
                 {
-                    Logger.logLow("Set to navy flag");
                     setFlagsToSkin(vessel, theGreatCacher.Instance.navyFlag);
                 }
                 else
                 {
-                    Logger.logLow("Set to pirate flag");
                     setFlagsToSkin(vessel, theGreatCacher.Instance.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;

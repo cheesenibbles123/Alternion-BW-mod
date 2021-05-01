@@ -36,10 +36,15 @@ namespace Alternion
         /// Player swivel Skin
         /// </summary>
         public string swivelSkinName;
+
         /// <summary>
-        /// Player Flag Skin
+        /// Player Pirate Flag Skin
         /// </summary>
-        public string flagSkinName;
+        public string flagPirateName;
+        /// <summary>
+        /// Player Navy Flag Skin
+        /// </summary>
+        public string flagNavyName;
 
         // Primary
         /// <summary>
