@@ -149,8 +149,8 @@ namespace Alternion
                     break;
                 default:
                     // If not known, output here
-                    Logger.logLow("Type name: -" + renderer.name + "-");
-                    Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+                    //Logger.logLow("Type name: -" + renderer.name + "-");
+                    //Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
                     break;
             }
         }
