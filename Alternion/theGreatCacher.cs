@@ -16,6 +16,10 @@ namespace Alternion
         /// </summary>
         public bool setCannonDefaults = false;
         /// <summary>
+        /// Check for if the default cannons have been set or not
+        /// </summary>
+        public bool setSwivelDefaults = false;
+        /// <summary>
         /// Check for if the default sails have been set or not
         /// </summary>
         public bool setSailDefaults = false;
@@ -27,6 +31,14 @@ namespace Alternion
         /// Check for if the default pirate flag has been set or not
         /// </summary>
         public bool setPirateFlag = false;
+        /// <summary>
+        /// Default swivel.
+        /// </summary>
+        public Texture defaultSwivel;
+        /// <summary>
+        /// Default swivel met.
+        /// </summary>
+        public Texture defaultSwivelMet;
         /// <summary>
         /// Default sail texture.
         /// </summary>
@@ -87,6 +99,10 @@ namespace Alternion
         /// Stores all cached player loadouts.
         /// </summary>
         public Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
+        /// <summary>
+        /// Stores all swivel textures.
+        /// </summary>
+        public Dictionary<string, Texture> swivels = new Dictionary<string, Texture>();
 
         void Awake()
         {
