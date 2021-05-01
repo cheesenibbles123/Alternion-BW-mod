@@ -113,10 +113,11 @@ namespace Alternion
             string steamID = SteamUser.GetSteamID().ToString();
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
-                GameObject flag = GameObject.Find("teamflag");
-                if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture newTex))
+                SkinnedMeshRenderer menuFlag = CharacterCustomizationUI.îêêæëçäëèñî.çóîóëðåïåóñ;
+                string flagName = CharacterCustomizationUI.îêêæëçäëèñî.òïîîóðçèèæì.enabled ? player.flagNavyName : player.flagPirateName ;
+                if (theGreatCacher.Instance.flags.TryGetValue(flagName, out Texture newTex))
                 {
-                    flag.GetComponent<Renderer>().material.mainTexture = newTex;
+                    menuFlag.material.mainTexture = newTex;
                 }
             }
         }
@@ -197,6 +198,15 @@ namespace Alternion
                 // Call these so that they set correctly again on returning to the main menu
                 setMainMenuBadge();
                 Instance.setMenuCharacter();
+                Instance.setMenuFlag();
+            }
+        }
+
+        [HarmonyPatch(typeof(CharacterCustomizationUI), "setFaction")]
+        static class characterCustomizationPatch
+        {
+            static void Postfix(CharacterCustomizationUI __instance, int faction)
+            {
                 Instance.setMenuFlag();
             }
         }
