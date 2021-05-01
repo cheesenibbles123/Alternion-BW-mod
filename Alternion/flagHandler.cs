@@ -17,6 +17,8 @@ namespace Alternion
         /// </summary>
         public static flagHandler Instance;
 
+        float assignDelay = 4f;
+
         void Awake()
         {
             if (!Instance)
@@ -63,7 +65,7 @@ namespace Alternion
         /// <param name="team">Ship team</param>
         private IEnumerator setFlag(int team)
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(assignDelay);
             bool hasNotUpdated = true;
             Transform shipTransform = GameMode.Instance.teamParents[team];
             Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
@@ -72,11 +74,15 @@ namespace Alternion
             {
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    if (player.flagSkinName != "default" && theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
                         Logger.logLow("Setup existing ship");
                         loopRenderers(renderers, vessel, flag, false, team);
                         hasNotUpdated = false;
+                    }
+                    else
+                    {
+                        Instance.resetFlag(vessel);
                     }
                 }
             }
@@ -86,11 +92,15 @@ namespace Alternion
                 theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    if (player.flagSkinName != "default" && theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out Texture flag))
                     {
                         Logger.logLow("Setup new ship");
                         loopRenderers(renderers, newVessel, flag, true, team);
                         hasNotUpdated = false;
+                    }
+                    else
+                    {
+                        Instance.resetFlag(newVessel);
                     }
                 }
             }
@@ -112,34 +122,15 @@ namespace Alternion
         /// <param name="team">Team number</param>
         void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew, int team)
         {
-            if (isNew || !vessel.isInitialized)
+            foreach (Renderer renderer in renderers)
             {
-                Logger.logLow("Looping over new");
-                foreach (Renderer renderer in renderers)
+                try
                 {
-                    try
-                    {
-                        changeRenderer(renderer, vessel, flag, isNew);
-                    }catch(Exception e)
-                    {
-                        Logger.logLow(e.Message);
-                    }
+                    changeRenderer(renderer, vessel, flag, isNew);
                 }
-            }
-            else
-            {
-                Logger.logLow("Looping over existing");
-                foreach (Renderer renderer in vessel.flags)
+                catch (Exception e)
                 {
-                    Logger.logLow("Got renderer: " + renderer.name);
-                    try
-                    {
-                        changeRenderer(renderer, vessel, flag, isNew);
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.logLow(e.Message);
-                    }
+                    Logger.logLow(e.Message);
                 }
             }
         }
@@ -163,7 +154,6 @@ namespace Alternion
                     vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy");
                     vessel.isInitialized = true;
                 }
-
                 if (flag.name != "FAILED")
                 {
                     renderer.material.mainTexture = flag;
