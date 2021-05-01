@@ -1879,7 +1879,7 @@ namespace Alternion
                         // Only apply new texture if config has flag textures enabled
                         if (AlternionSettings.showFlags)
                         {
-                            if (theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out newTex))
+                            if (player.flagSkinName != "default" && theGreatCacher.Instance.flags.TryGetValue(player.flagSkinName, out newTex))
                             {
                                 flagHandler.Instance.setFlagsToSkin(mightyVessel, newTex);
                             }
@@ -1976,7 +1976,7 @@ namespace Alternion
         /// <summary>
         /// Checks if input badge is a Kickstarter or Tournamentwake badge
         /// </summary>
-        /// <param name="__instance">ScoreboardSlot</param>
+        /// <param name="__instance">ScoreboardSlot</param> 
         /// /// <returns>Bool</returns>
         public static bool checkIfTWOrKS(ScoreboardSlot __instance)
         {
