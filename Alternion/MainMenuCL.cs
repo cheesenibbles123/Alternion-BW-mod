@@ -101,14 +101,14 @@ namespace Alternion
 
             LoadingBar.updatePercentage(95, "Applying weapon skin");
             setMainMenuWeaponSkin();
-            setMenuFlag();
+            Instance.setMenuFlag();
 
         }
 
         /// <summary>
         /// Sets the main menu flag.
         /// </summary>
-        static void setMenuFlag()
+        void setMenuFlag()
         {
             string steamID = SteamUser.GetSteamID().ToString();
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
@@ -124,7 +124,7 @@ namespace Alternion
         /// <summary>
         /// Sets the main menu character transform.
         /// </summary>
-        static void setMenuCharacter()
+        void setMenuCharacter()
         {
             // Find the musket object
             var musket = GameObject.Find("wpn_standardMusket_LOD1");
@@ -170,7 +170,7 @@ namespace Alternion
         {
             static void postfix(MainMenu __instance)
             {
-                setMenuFlag();
+                Instance.setMenuFlag();
             }
         }
 
@@ -196,7 +196,8 @@ namespace Alternion
             {
                 // Call these so that they set correctly again on returning to the main menu
                 setMainMenuBadge();
-                setMenuCharacter();
+                Instance.setMenuCharacter();
+                Instance.setMenuFlag();
             }
         }
     }
