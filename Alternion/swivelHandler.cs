@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using BWModLoader;
 using UnityEngine;
 using Harmony;
 
 namespace Alternion
 {
-    class swivelHandler : MonoBehaviour
+    [Mod]
+    public class swivelHandler : MonoBehaviour
     {
         public static swivelHandler Instance;
 
@@ -26,30 +27,35 @@ namespace Alternion
 
         void setupShip(SwivelUse __instance, Renderer rend)
         {
+            Logger.debugLog("Entered ship setup");
             int index = GameMode.getParentIndex(__instance.transform.root);
 
             string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
             if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
             {
+                Logger.debugLog("Old");
                 vessel.Swivels.Add(rend);
                 applySkin(rend, steamID);
             }
             else
             {
+                Logger.debugLog("New");
                 cachedShip newVessel = new cachedShip();
-                theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                 newVessel.Swivels.Add(rend);
+                theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                 applySkin(rend, steamID);
             }
         }
 
         void applySkin(Renderer renderer, string steamID)
         {
+            Logger.debugLog("Trying to apply skin");
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player)) {
                 Texture newTex;
                 if (theGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName, out newTex))
                 {
+                    Logger.debugLog("Setting skin: " + player.swivelSkinName);
                     renderer.material.mainTexture = newTex;
                 }
                 if (theGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
@@ -103,8 +109,12 @@ namespace Alternion
         {
             if (!theGreatCacher.Instance.setSwivelDefaults)
             {
+                Logger.debugLog("Setup defaults");
                 theGreatCacher.Instance.defaultSwivel = rend.material.mainTexture;
+                Logger.debugLog("Setup alb");
                 theGreatCacher.Instance.defaultSwivelMet = rend.material.GetTexture("_Metallic");
+                Logger.debugLog("Setup met");
+                theGreatCacher.Instance.setSwivelDefaults = true;
             }
         }
 
@@ -113,7 +123,9 @@ namespace Alternion
         {
             static void Postfix(SwivelUse __instance)
             {
-                return;
+                //return;
+
+                /*
                 Logger.debugLog("Ran swiveluse base");
                 Renderer[] renderers = __instance.transform.GetComponentsInChildren<Renderer>();
                 foreach (Renderer rend in renderers)
@@ -121,16 +133,28 @@ namespace Alternion
 
                     Logger.debugLog(rend.name);
                 }
+                */
 
                 Logger.debugLog("Ran swiveluse parent"); // swivel_connector
                 Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
+
                 for (int i = 0; i < renderers2.Length; i++)
                 {
                     Renderer rend = renderers2[i];
+                    Logger.debugLog("Looping over: " + rend.name);
                     if (rend.name == "swiveltop" || rend.name == "swivel_connector" || rend.name == "swivel_base")
                     {
-                        Instance.setupDefaultImg(rend);
-                        Instance.setupShip(__instance, rend);
+                        try
+                        {
+                            Logger.debugLog("Found swivel part");
+                            Instance.setupDefaultImg(rend);
+                            Logger.debugLog("Managed defaults");
+                            Instance.setupShip(__instance, rend);
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.debugLog(e.Message);
+                        }
                     }
                     Logger.debugLog(rend.name);
                 }

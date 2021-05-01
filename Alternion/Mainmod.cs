@@ -52,8 +52,15 @@ namespace Alternion
             try
             {
                 //Setup harmony patching
-                HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
-                harmony.PatchAll();
+                try
+                {
+
+                    HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
+                    harmony.PatchAll();
+                }catch(Exception e)
+                {
+                    Logger.debugLog(e.Message);
+                }
 
                 //Starts asset fetching cycle
                 createDirectories();
@@ -363,6 +370,53 @@ namespace Alternion
                             theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
                         }
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
+                    }
+                }
+                if (player.Value.swivelSkinName != "default")
+                {
+                    flag = alreadyDownloaded.Contains(player.Value.swivelSkinName);
+                    if (!flag)
+                    {
+                        if (AlternionSettings.downloadOnStartup)
+                        {
+                            www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + ".png");
+                            yield return www;
+
+                            try
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + ".png", bytes);
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.debugLog(e.Message);
+                            }
+
+                            // MET maps
+                            www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png");
+                            yield return www;
+
+                            if (string.IsNullOrEmpty(www.error))
+                            {
+                                byte[] bytes = www.texture.EncodeToPNG();
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png", bytes);
+                            }
+                            else
+                            {
+                                Logger.logLow("No met found for " + player.Value.swivelSkinName);
+                            }
+                        }
+                        newTex = loadTexture(player.Value.swivelSkinName, texturesFilePath + "SwivelSkins/", 2048, 2048);
+                        if (newTex.name != "FAILED")
+                        {
+                            theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
+                        }
+                        newTex = loadTexture(player.Value.swivelSkinName + "_met", texturesFilePath + "SwivelSkins/", 2048, 2048);
+                        if (newTex.name != "FAILED")
+                        {
+                            theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
+                        }
+                        alreadyDownloaded.Add(player.Value.swivelSkinName);
                     }
                 }
 
@@ -1702,7 +1756,8 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "WeaponSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SailSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/"); 
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SwivelSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MaskSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "Flags/");
             }
