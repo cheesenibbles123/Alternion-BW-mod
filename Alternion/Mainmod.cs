@@ -1994,6 +1994,22 @@ namespace Alternion
             return false;
         }
 
+        public static bool checkIfTWOrKS(string name)
+        {
+            PlayerInfo plrInf = GameMode.getPlayerInfo(name);
+            // If TW Badge
+            if (!plrInf.isTournyWinner ^ (!AlternionSettings.showTWBadges & plrInf.isTournyWinner))
+            {
+                // IF KS Badge
+                if (!plrInf.backer ^ (!AlternionSettings.showKSBadges & plrInf.backer))
+                {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Harmony patch to setup badges in the scoreboard
         /// </summary>
@@ -2010,12 +2026,9 @@ namespace Alternion
                         if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
                             // if they have a TW OR KS badge, this will dictate if it should or shouldn't override it visually
-                            if (checkIfTWOrKS(__instance))
+                            if (checkIfTWOrKS(__instance) && theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
                             {
-                                if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
-                                {
-                                    __instance.éòëèïòëóæèó.texture = newTexture;
-                                }
+                                __instance.éòëèïòëóæèó.texture = newTexture;
                             }
                         }
 
@@ -2048,20 +2061,13 @@ namespace Alternion
                 // Sets win screen badges
                 if (AlternionSettings.useBadges)
                 {
-                    try
+                    string steamID = ìçíêääéïíòç.m_SteamID.ToString();
+                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
-                        string steamID = ìçíêääéïíòç.m_SteamID.ToString();
-                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                        if (checkIfTWOrKS(óéíïñîèëëêð) && theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
                         {
-                            if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
-                            {
-                                __instance.äæåéåîèòéîñ.texture = newTex;
-                            }
+                            __instance.äæåéåîèòéîñ.texture = newTex;
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.debugLog(e.Message);
                     }
                 }
             }
