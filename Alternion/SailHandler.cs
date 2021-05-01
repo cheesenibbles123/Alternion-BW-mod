@@ -65,16 +65,26 @@ namespace Alternion
                 Texture newTex;
                 if (isMain)
                 {
-                    if (theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
+                    if (player.mainSailName != "default" && theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
+                        vessel.hasChangedSails = true;
+                    }
+                    else
+                    {
+                        resetSail(vessel, renderer);
                     }
                 }
                 else
                 {
-                    if (theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
+                    if (player.mainSailName != "default" && theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
+                        vessel.hasChangedSails = true;
+                    }
+                    else
+                    {
+                        resetSail(vessel, renderer);
                     }
                 }
             }
@@ -158,26 +168,20 @@ namespace Alternion
         {
             string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
 
-            string shipType = GameMode.Instance.shipTypes[teamNum - 1];
-            shipType = shipType.Remove(shipType.Length - 1);
-            try
+            if (!theGreatCacher.Instance.setSailDefaults)
             {
-                if (theGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                {
-                    setupShip(vessel, steamID, __instance.GetComponent<Renderer>(), __instance);
-                }
-                else
-                {
-                    cachedShip newVessel = new cachedShip();
-                    theGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
-                    setupShip(newVessel, steamID, __instance.GetComponent<Renderer>(), __instance);
-                }
+                theGreatCacher.Instance.defaultSails = __instance.GetComponent<Renderer>().material.mainTexture;
+                theGreatCacher.Instance.setSailDefaults = true;
             }
-            catch (Exception e)
+            if (theGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
             {
-                Logger.debugLog("### Issue setting up sails ###");
-                Logger.debugLog(e.Message);
-                Logger.debugLog("##############################");
+                setupShip(vessel, steamID, __instance.GetComponent<Renderer>(), __instance);
+            }
+            else
+            {
+                cachedShip newVessel = new cachedShip();
+                theGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
+                setupShip(newVessel, steamID, __instance.GetComponent<Renderer>(), __instance);
             }
         }
 
