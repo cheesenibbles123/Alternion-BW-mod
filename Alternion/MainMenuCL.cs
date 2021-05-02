@@ -110,21 +110,14 @@ namespace Alternion
         /// </summary>
         void setMenuFlag()
         {
-            Logger.debugLog("Entered function");
             string steamID = SteamUser.GetSteamID().ToString();
-            Logger.debugLog("Got steamid");
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
-                Logger.debugLog("got player");
                 SkinnedMeshRenderer menuFlag = CharacterCustomizationUI.îêêæëçäëèñî.çóîóëðåïåóñ;
-                Logger.debugLog("Got flag");
                 string flagName = CharacterCustomizationUI.îêêæëçäëèñî.òïîîóðçèèæì.enabled ? player.flagNavyName : player.flagPirateName;
-                Logger.debugLog("Got flag: "+flagName);
                 if (theGreatCacher.Instance.flags.TryGetValue(flagName, out Texture newTex))
                 {
-                    Logger.debugLog("Got tex");
                     menuFlag.material.mainTexture = newTex;
-                    Logger.debugLog("Set tex");
                 }
             }
         }
