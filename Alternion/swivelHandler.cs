@@ -18,6 +18,7 @@ namespace Alternion
             if (!Instance)
             {
                 Instance = this;
+                DontDestroyOnLoad(Instance);
             }
             else
             {
@@ -60,7 +61,7 @@ namespace Alternion
                 }
                 if (theGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
                 {
-                    renderer.material.mainTexture = newTex;
+                    renderer.material.SetTexture("_Metallic", newTex);
                 }
             }
         }
@@ -137,7 +138,6 @@ namespace Alternion
 
                 Logger.debugLog("Ran swiveluse parent"); // swivel_connector
                 Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
-
                 for (int i = 0; i < renderers2.Length; i++)
                 {
                     Renderer rend = renderers2[i];
@@ -147,6 +147,7 @@ namespace Alternion
                         try
                         {
                             Logger.debugLog("Found swivel part");
+                            Logger.debugLog(Instance.isActiveAndEnabled.ToString());
                             Instance.setupDefaultImg(rend);
                             Logger.debugLog("Managed defaults");
                             Instance.setupShip(__instance, rend);

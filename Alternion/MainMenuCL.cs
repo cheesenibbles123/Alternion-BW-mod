@@ -104,7 +104,7 @@ namespace Alternion
             Instance.setMenuFlag();
 
         }
-
+        
         /// <summary>
         /// Sets the main menu flag.
         /// </summary>
@@ -152,11 +152,25 @@ namespace Alternion
             }
         }
 
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+                DontDestroyOnLoad(Instance);
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
+        }
+
         void Start()
         {
             //Rotate Character
             setMenuCharacter();
         }
+
         void Update()
         {
             if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
@@ -214,9 +228,7 @@ namespace Alternion
         {
             static void Postfix(CharacterCustomizationUI __instance, int íïïìîóðíçëæ)
             {
-                Logger.debugLog("Entered patch");
                 Instance.setMenuFlag();
-                Logger.debugLog("Finished patch");
             }
         }
     }
