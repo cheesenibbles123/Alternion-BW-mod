@@ -26,6 +26,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Sets up caching of vessel
+        /// </summary>
+        /// <param name="__instance">Cached ship</param>
+        /// <param name="rend">Swivel Renderer</param>
         void setupShip(SwivelUse __instance, Renderer rend)
         {
             int index = GameMode.getParentIndex(__instance.transform.root);
@@ -46,6 +51,11 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Apply skin to swivel
+        /// </summary>
+        /// <param name="renderer">Swivel Renderer</param>
+        /// <param name="steamID">Captain steamID</param>
         void applySkin(Renderer renderer, string steamID)
         {
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player)) {
@@ -61,6 +71,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Update swivel textures
+        /// </summary>
+        /// <param name="index">Ship Index</param>
         void updateSwivel(int index)
         {
             if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
@@ -89,6 +103,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Resets the swivels to default textures
+        /// </summary>
+        /// /// <param name="vessel">Cached Ship</param>
         void resetSwivels(cachedShip vessel)
         {
             if (vessel.hasChangedSwivels)
@@ -101,6 +119,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Setups up caching of default alb and met textures
+        /// </summary>
+        /// /// <param name="rend">Swivel Renderer</param>
         void setupDefaultImg(Renderer rend)
         {
             if (!theGreatCacher.Instance.setSwivelDefaults)
@@ -111,6 +133,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Patches into SwivelUse.Start()
+        /// </summary>
         [HarmonyPatch(typeof(SwivelUse), "Start")]
         static class swivelPatch
         {
