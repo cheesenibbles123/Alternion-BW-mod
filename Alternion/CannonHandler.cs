@@ -139,6 +139,28 @@ namespace Alternion
         }
 
         /// <summary>
+        /// Checks if the ship is cacned
+        /// </summary>
+        /// <param name="__instance">Cannon</param>
+        /// <param name="index">Team Num</param>
+        /// <param name="steamID">Captain SteamID</param>
+        void checkCached(Renderer rend, int index, string steamID)
+        {
+            if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+            {
+                vessel.cannonLOD = rend;
+                Instance.applySkins(vessel, steamID, rend);
+            }
+            else
+            {
+                cachedShip newVessel = new cachedShip();
+                newVessel.cannonLOD = rend;
+                theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
+                Instance.applySkins(vessel, steamID, rend);
+            }
+        }
+
+        /// <summary>
         /// Wastes time until the captain is found
         /// </summary>
         /// <param name="__instance">Cannon</param>
@@ -163,6 +185,30 @@ namespace Alternion
         }
 
         /// <summary>
+        /// Wastes time until the captain is found
+        /// </summary>
+        /// <param name="__instance">Cannon Renderer</param>
+        private IEnumerator wasteTime(Renderer __instance)
+        {
+            yield return new WaitForSeconds(0.1f);
+            bool doesntExist = true;
+            while (doesntExist)
+            {
+                int index = GameMode.getParentIndex(__instance.gameObject.transform.root);
+
+                if (GameMode.Instance.teamCaptains[index])
+                {
+                    checkCached(__instance, index, GameMode.Instance.teamCaptains[index].steamID.ToString());
+                    doesntExist = false;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(1f);
+                }
+            }
+        }
+
+        /// <summary>
         /// Harmony patch to "Start" for CannonDestroy
         /// </summary>
         [HarmonyPatch(typeof(CannonDestroy), "Start")]
@@ -170,20 +216,35 @@ namespace Alternion
         {
             static void Postfix(CannonDestroy __instance)
             {
-                Instance.StartCoroutine(Instance.wasteTime(__instance));
+                if (AlternionSettings.useCannonSkins)
+                {
+                    Instance.StartCoroutine(Instance.wasteTime(__instance));
+                }
             }
         }
 
-
-        [HarmonyPatch(typeof(ShipWizard), "ðæðóóåóìäñî")]
-        static class ShipWizardPatch
+        /// <summary>
+        /// Hook into cannonLOD start
+        /// </summary>
+        [HarmonyPatch(typeof(OnlyEnableOnMyShip), "Start")]
+        static class OnlyEnableOnMyShipPatch
         {
-            static void Postfix(ShipWizard __instance)
+            static void Postfix(OnlyEnableOnMyShip __instance)
             {
-                Logger.logLow("Entered Patch");
-                Logger.logLow(__instance.ðóçèçíêçèèå.name);
-                Logger.logLow(__instance.ðóçèçíêçèèå.ïïæèêðóçåêé.name);
-                Logger.logLow(__instance.ðóçèçíêçèèå.óîèóéçèèåèì.name);
+                if (AlternionSettings.useCannonSkins)
+                {
+                    if (__instance.name != "Only Enemy Ship") return;
+
+                    Renderer[] components = __instance.gameObject.GetComponentsInChildren<Renderer>(true);
+                    foreach (Renderer rend in components)
+                    {
+                        if (rend.name == "Cannonsfull")
+                        {
+                            Instance.StartCoroutine(Instance.wasteTime(rend));
+                            break;
+                        }
+                    }
+                }
             }
         }
 
