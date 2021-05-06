@@ -28,6 +28,9 @@ namespace Alternion
         /// Check for if the ship is navy or pirate (navy = true, pirate = false)
         /// </summary>
         public bool isNavy;
+        /// <summary>
+        /// If initialized
+        /// </summary>
         public bool isInitialized = false;
         /// <summary>
         /// Renderer for the ship's cannons LOD

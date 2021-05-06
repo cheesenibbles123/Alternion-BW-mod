@@ -2166,6 +2166,11 @@ namespace Alternion
             return false;
         }
 
+        /// <summary>
+        /// Checks if input badge is a Kickstarter or Tournamentwake badge
+        /// </summary>
+        /// <param name="name">Player Name</param> 
+        /// /// <returns>Bool</returns>
         public static bool checkIfTWOrKS(string name)
         {
             PlayerInfo plrInf = GameMode.getPlayerInfo(name);
