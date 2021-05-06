@@ -1809,6 +1809,7 @@ namespace Alternion
                     {
                         renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
                     }
+                    individualShip.Value.hasChangedSails = false;
                 }
 
                 // Only reset if cannon texture has been set
@@ -1822,7 +1823,22 @@ namespace Alternion
                     {
                         indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
                     }
+
+                    individualShip.Value.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                    individualShip.Value.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                    individualShip.Value.hasChangedCannons = false;
                 }
+
+                // Only reset if swivel texture has been set
+                if (theGreatCacher.Instance.setSwivelDefaults)
+                {
+                    foreach (Renderer swivel in individualShip.Value.Swivels)
+                    {
+                        swivel.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultSwivel);
+                        swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                    }
+                }
+
             }
         }
 
@@ -1889,6 +1905,7 @@ namespace Alternion
                             {
                                 indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
                             }
+                            mightyVessel.hasChangedSails = false;
                         }
 
                         // Only apply new texture if config has cannon textures enabled
@@ -1915,6 +1932,24 @@ namespace Alternion
                                     renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
+
+                            if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                            {
+                                mightyVessel.cannonLOD.material.mainTexture = newTex;
+                            }
+                            else
+                            {
+                                mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                            }
+
+                            if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                            {
+                                mightyVessel.cannonLOD.material.SetTexture("_Metallic", newTex);
+                            }
+                            else
+                            {
+                                mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                            }
                         }
                         else if (mightyVessel.hasChangedCannons)
                         {
@@ -1924,6 +1959,10 @@ namespace Alternion
                                 renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                                 renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                             }
+
+                            mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                            mightyVessel.hasChangedCannons = false;
                         }
 
                         // Only apply new texture if config has cannon textures enabled
@@ -1978,6 +2017,40 @@ namespace Alternion
                         {
                             flagHandler.Instance.resetFlag(mightyVessel);
                         }
+
+                        // Only apply new texture if config has swivel textures enabled
+                        if (AlternionSettings.useSwivelSkins)
+                        {
+                            foreach (Renderer swivel in mightyVessel.Swivels)
+                            {
+                                if (theGreatCacher.Instance.swivelSkins.TryGetValue(player.swivelSkinName, out newTex))
+                                {
+                                    swivel.material.mainTexture = newTex;
+                                }
+                                else
+                                {
+                                    swivel.material.mainTexture = theGreatCacher.Instance.defaultSwivel;
+                                }
+
+                                if (theGreatCacher.Instance.swivelSkins.TryGetValue(player.swivelSkinName + "_met", out newTex))
+                                {
+                                    swivel.material.SetTexture("_Metallic", newTex);
+                                }
+                                else
+                                {
+                                    swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedSwivels)
+                        {
+                            foreach (Renderer swivel in mightyVessel.Swivels)
+                            {
+                                swivel.material.mainTexture = theGreatCacher.Instance.defaultSwivel;
+                                swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                            }
+                            mightyVessel.hasChangedSwivels = false;
+                        }
                     }
                     else
                     {
@@ -2001,6 +2074,10 @@ namespace Alternion
                                     renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
+                            
+                            mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                            
                             mightyVessel.hasChangedCannons = false;
                         }
                         if (mightyVessel.hasChangedSails)
@@ -2021,12 +2098,21 @@ namespace Alternion
                             }
                             mightyVessel.hasChangedSails = false;
                         }
+                        if (mightyVessel.hasChangedSwivels)
+                        {
+                            foreach (Renderer swivel in mightyVessel.Swivels)
+                            {
+                                swivel.material.mainTexture = theGreatCacher.Instance.defaultSwivel;
+                                swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                            }
+                            mightyVessel.hasChangedSwivels = false;
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                Logger.logLow(e.Message);
+                //Logger.logLow(e.Message);
                 //Ignore Exception
             }
         }
@@ -2197,6 +2283,32 @@ namespace Alternion
                     Logger.debugLog(e.Message);
                     Logger.debugLog("##########################################################");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Harmony patch to disable bird in first person
+        /// </summary>
+        [HarmonyPatch(typeof(PlayerInfo), "setWinner")]
+        static class isWinnerPatch
+        {
+            static bool Prefix(PlayerInfo __instance, ïçîìäîóäìïæ.åéðñðçîîïêç info)
+            {
+                if (info.åéñëîíèðòçé)
+                {
+                    __instance.isTournyWinner = true;
+                    __instance.character.óððêäóäîçñè.SetActive(__instance.isTournyWinner);
+                    if (__instance.character.æïðèñìæêêñç)
+                    {
+                        __instance.character.óððêäóäîçñè.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+                    }
+                    if (__instance.lobbyPlayer != null)
+                    {
+                        __instance.lobbyPlayer.ñéçåäçëñåæê = true;
+                    }
+                }
+
+                return false;
             }
         }
 
