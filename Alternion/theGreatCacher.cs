@@ -92,6 +92,10 @@ namespace Alternion
         /// </summary>
         public Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
         /// <summary>
+        /// Stores all cached swivel skins.
+        /// </summary>
+        public Dictionary<string, Texture> swivelSkins = new Dictionary<string, Texture>();
+        /// <summary>
         /// Stores all cached flags
         /// </summary>
         public Dictionary<string, Texture> flags = new Dictionary<string, Texture>();
