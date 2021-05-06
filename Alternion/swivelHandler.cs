@@ -11,6 +11,9 @@ namespace Alternion
     [Mod]
     public class swivelHandler : MonoBehaviour
     {
+        /// <summary>
+        /// Swivel Handler
+        /// </summary>
         public static swivelHandler Instance;
 
         void Awake()
