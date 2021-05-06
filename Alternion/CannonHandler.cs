@@ -10,6 +10,11 @@ namespace Alternion
     {
 
         /// <summary>
+        /// Cannon Skin Handler
+        /// </summary>
+        public static CannonHandler Instance;
+
+        /// <summary>
         /// Applies skin to cannon
         /// </summary>
         /// <param name="vessel">Ship</param>
@@ -71,11 +76,6 @@ namespace Alternion
                 Instance.resetCannon(vessel, renderer);
             }
         }
-
-        /// <summary>
-        /// Cannon Skin Handler
-        /// </summary>
-        public static CannonHandler Instance;
 
         void Awake()
         {
