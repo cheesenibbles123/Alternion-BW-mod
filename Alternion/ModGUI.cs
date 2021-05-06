@@ -25,7 +25,7 @@ namespace AlternionGUI
         //MAIN BOX
         //Centre Horiztonal = 115
         //Centre Vertical = 120
-        static Vector4 boxSettings = new Vector4(20, 60, 250, 300);
+        static Vector4 boxSettings = new Vector4(20, 60, 250, 360);
         //BUTTONS
         //Start X, Y
         //Width, Height
@@ -43,11 +43,11 @@ namespace AlternionGUI
         Vector2 labelWH = new Vector2(boxSettings.z - boxSettings.x - 20, boxSettings.w - boxSettings.y -210);
         
         // Start X1, Y1, X2, Y2
-        static Vector4 switchPageForwardsBackwardsStartPositions = new Vector4(220, 300, 30, 300);
+        static Vector4 switchPageForwardsBackwardsStartPositions = new Vector4(220, boxSettings.w, 30, boxSettings.w);
         static Vector2 switchPageButtonWH = new Vector2(40, 40);
 
         // Format X, Y, Width, Height
-        Vector4 saveButton = new Vector4(90,300,110,40);
+        Vector4 saveButton = new Vector4(90, boxSettings.w, 110,40);
 
         int buttonOffset = 50;
 
@@ -249,6 +249,17 @@ namespace AlternionGUI
                 }
                 GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
                 if (AlternionSettings.useCannonSkins)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+
+                //Swivel Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Swivel Skins"))
+                {
+                    AlternionSettings.useSwivelSkins = !AlternionSettings.useSwivelSkins;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.useSwivelSkins)
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
