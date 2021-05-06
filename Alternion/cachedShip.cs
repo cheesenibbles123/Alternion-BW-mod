@@ -30,6 +30,10 @@ namespace Alternion
         public bool isNavy;
         public bool isInitialized = false;
         /// <summary>
+        /// Renderer for the ship's cannons LOD
+        /// </summary>
+        public Renderer cannonLOD;
+        /// <summary>
         /// Ship flag renderer
         /// </summary>
         public List<Renderer> flags = new List<Renderer>();
