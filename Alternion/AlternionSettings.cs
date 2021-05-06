@@ -46,6 +46,10 @@ namespace Alternion
         /// </summary>
         public static bool useCannonSkins;
         /// <summary>
+        /// Display swivel skins.
+        /// </summary>
+        public static bool useSwivelSkins;
+        /// <summary>
         /// Download assets on startup.
         /// </summary>
         public static bool downloadOnStartup;
@@ -145,6 +149,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
@@ -267,6 +272,16 @@ namespace Alternion
                                     useCannonSkins = false;
                                 }
                                 break;
+                            case "useSwivelSkins":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    useSwivelSkins = true;
+                                }
+                                else
+                                {
+                                    useSwivelSkins = false;
+                                }
+                                break;
                             case "downloadOnStartup":
                                 if (Convert.ToInt32(splitArr[1]) == 1)
                                 {
@@ -332,6 +347,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
