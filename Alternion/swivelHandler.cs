@@ -116,33 +116,23 @@ namespace Alternion
         {
             static void Postfix(SwivelUse __instance)
             {
-                //return;
-
-                /*
-                Logger.debugLog("Ran swiveluse base");
-                Renderer[] renderers = __instance.transform.GetComponentsInChildren<Renderer>();
-                foreach (Renderer rend in renderers)
+                if (AlternionSettings.useSwivelSkins)
                 {
-
-                    Logger.debugLog(rend.name);
-                }
-                */
-
-                Logger.debugLog("Ran swiveluse parent"); // swivel_connector
-                Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
-                for (int i = 0; i < renderers2.Length; i++)
-                {
-                    Renderer rend = renderers2[i];
-                    if (rend.name == "swiveltop" || rend.name == "swivel_connector" || rend.name == "swivel_base")
+                    Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
+                    for (int i = 0; i < renderers2.Length; i++)
                     {
-                        try
+                        Renderer rend = renderers2[i];
+                        if (rend.name == "swiveltop" || rend.name == "swivel_connector" || rend.name == "swivel_base")
                         {
-                            Instance.setupDefaultImg(rend);
-                            Instance.setupShip(__instance, rend);
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.debugLog(e.Message);
+                            try
+                            {
+                                Instance.setupDefaultImg(rend);
+                                Instance.setupShip(__instance, rend);
+                            }
+                            catch (Exception e)
+                            {
+                                //Logger.debugLog(e.Message);
+                            }
                         }
                     }
                 }
