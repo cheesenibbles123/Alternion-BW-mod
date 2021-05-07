@@ -156,7 +156,7 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                //Logger.debugLog(e.Message);
+                                Logger.debugLog(e.Message);
                             }
                         }
                     }
