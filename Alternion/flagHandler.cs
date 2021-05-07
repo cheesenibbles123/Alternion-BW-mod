@@ -74,7 +74,7 @@ namespace Alternion
             {
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    string flagSkin = vessel.isNavy ? player.flagNavyName : player.flagPirateName;
+                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                     if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
                         Logger.logLow("Setup existing ship");
@@ -93,7 +93,7 @@ namespace Alternion
                 theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
                 if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    string flagSkin = vessel.isNavy ? player.flagNavyName : player.flagPirateName;
+                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                     if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
                         Logger.logLow("Setup new ship");

@@ -40,11 +40,11 @@ namespace Alternion
         /// <summary>
         /// Player Pirate Flag Skin
         /// </summary>
-        public string flagPirateName;
+        public string flagPirateSkinName;
         /// <summary>
         /// Player Navy Flag Skin
         /// </summary>
-        public string flagNavyName;
+        public string flagNavySkinName;
 
         // Primary
         /// <summary>

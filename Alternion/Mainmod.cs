@@ -421,64 +421,64 @@ namespace Alternion
                 }
 
                 // Flags
-                if (player.Value.flagNavyName != "default")
+                if (player.Value.flagNavySkinName != "default")
                 {
-                    flag = alreadyDownloaded.Contains(player.Value.flagNavyName);
+                    flag = alreadyDownloaded.Contains(player.Value.flagNavySkinName);
                     if (!flag)
                     {
                         if (AlternionSettings.downloadOnStartup)
                         {
-                            www = new WWW(mainUrl + "Flags/" + player.Value.flagNavyName + ".png");
+                            www = new WWW(mainUrl + "Flags/" + player.Value.flagNavySkinName + ".png");
                             yield return www;
 
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagNavyName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagNavySkinName + ".png", bytes);
                             }
                             else
                             {
-                                Logger.logLow("No alb found for " + player.Value.flagNavyName);
+                                Logger.logLow("No alb found for " + player.Value.flagNavySkinName);
                             }
 
                         }
-                        newTex = loadTexture(player.Value.flagNavyName, texturesFilePath + "Flags/", 1024, 512);
+                        newTex = loadTexture(player.Value.flagNavySkinName, texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.flags.Add(player.Value.flagNavyName, newTex);
-                            Logger.logLow($"Added -{player.Value.flagNavyName}-");
+                            theGreatCacher.Instance.flags.Add(player.Value.flagNavySkinName, newTex);
+                            Logger.logLow($"Added -{player.Value.flagNavySkinName}-");
                         }
-                        alreadyDownloaded.Add(player.Value.flagNavyName);
+                        alreadyDownloaded.Add(player.Value.flagNavySkinName);
                     }
                 }
-                if (player.Value.flagPirateName != "default")
+                if (player.Value.flagPirateSkinName != "default")
                 {
-                    flag = alreadyDownloaded.Contains(player.Value.flagPirateName);
+                    flag = alreadyDownloaded.Contains(player.Value.flagPirateSkinName);
                     if (!flag)
                     {
                         if (AlternionSettings.downloadOnStartup)
                         {
-                            www = new WWW(mainUrl + "Flags/" + player.Value.flagPirateName + ".png");
+                            www = new WWW(mainUrl + "Flags/" + player.Value.flagPirateSkinName + ".png");
                             yield return www;
 
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagPirateName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagPirateSkinName + ".png", bytes);
                             }
                             else
                             {
-                                Logger.logLow("No alb found for " + player.Value.flagPirateName);
+                                Logger.logLow("No alb found for " + player.Value.flagPirateSkinName);
                             }
 
                         }
-                        newTex = loadTexture(player.Value.flagPirateName, texturesFilePath + "Flags/", 1024, 512);
+                        newTex = loadTexture(player.Value.flagPirateSkinName, texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.flags.Add(player.Value.flagPirateName, newTex);
-                            Logger.logLow($"Added -{player.Value.flagPirateName}-");
+                            theGreatCacher.Instance.flags.Add(player.Value.flagPirateSkinName, newTex);
+                            Logger.logLow($"Added -{player.Value.flagPirateSkinName}-");
                         }
-                        alreadyDownloaded.Add(player.Value.flagPirateName);
+                        alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
                 }
 
@@ -2003,7 +2003,7 @@ namespace Alternion
                         // Only apply new texture if config has flag textures enabled
                         if (AlternionSettings.showFlags)
                         {
-                            string flagSkin = mightyVessel.isNavy ? player.flagNavyName : player.flagPirateName;
+                            string flagSkin = mightyVessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                             if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out newTex))
                             {
                                 flagHandler.Instance.setFlagsToSkin(mightyVessel, newTex);
@@ -2112,7 +2112,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                //Logger.logLow(e.Message);
+                Logger.logLow(e.Message);
                 //Ignore Exception
             }
         }
