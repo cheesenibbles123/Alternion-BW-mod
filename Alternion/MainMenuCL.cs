@@ -114,7 +114,7 @@ namespace Alternion
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 SkinnedMeshRenderer menuFlag = CharacterCustomizationUI.îêêæëçäëèñî.çóîóëðåïåóñ;
-                string flagName = CharacterCustomizationUI.îêêæëçäëèñî.òïîîóðçèèæì.enabled ? player.flagNavyName : player.flagPirateName;
+                string flagName = CharacterCustomizationUI.îêêæëçäëèñî.òïîîóðçèèæì.enabled ? player.flagNavySkinName : player.flagPirateSkinName;
                 if (theGreatCacher.Instance.flags.TryGetValue(flagName, out Texture newTex))
                 {
                     menuFlag.material.mainTexture = newTex;
