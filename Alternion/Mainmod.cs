@@ -109,6 +109,7 @@ namespace Alternion
                     Logger.debugLog("Loading from JSON error");
                     Logger.debugLog("Attempted User: " + player.steamID);
                     Logger.debugLog(e.Message);
+                    Logger.debugLog(json[i]);
                     Logger.debugLog("------------------");
                 }
                 LoadingBar.updatePercentage(0 + (20 * ((float)i / (float)json.Length)), "Downloading players...");
