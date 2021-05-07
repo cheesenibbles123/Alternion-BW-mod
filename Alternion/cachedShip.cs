@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Alternion
 {
     /// <summary>
-    /// Single cached ship object, stores sails and cannons.
+    /// Single cached ship object, stores sails, flags and cannons.
     /// </summary>
     public class cachedShip
     {
@@ -21,13 +21,33 @@ namespace Alternion
         /// </summary>
         public bool hasChangedFlag;
         /// <summary>
+        /// Check for if the flag has been changed, or is default
+        /// </summary>
+        public bool hasChangedSwivels;
+        /// <summary>
         /// Check for if the ship is navy or pirate (navy = true, pirate = false)
         /// </summary>
         public bool isNavy;
         /// <summary>
+        /// If initialized
+        /// </summary>
+        public bool isInitialized = false;
+        /// <summary>
+        /// Renderer for the ship's cannons LOD
+        /// </summary>
+        public Renderer cannonLOD;
+        /// <summary>
         /// Ship flag renderer
         /// </summary>
-        public Renderer flag;
+        public List<Renderer> flags = new List<Renderer>();
+        /// <summary>
+        /// Ship swivel renderers
+        /// </summary>
+        public List<Renderer> Swivels = new List<Renderer>();
+        /// <summary>
+        /// Ship Closed sails renderer
+        /// </summary>
+        public List<Renderer> closedSails = new List<Renderer>();
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>

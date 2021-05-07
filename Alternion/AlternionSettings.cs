@@ -18,6 +18,10 @@ namespace Alternion
         /// </summary>
         public static bool showTWBadges;
         /// <summary>
+        /// Use Kickstarter badges.
+        /// </summary>
+        public static bool showKSBadges = false;
+        /// <summary>
         /// Display custom badges.
         /// </summary>
         public static bool useBadges;
@@ -41,6 +45,10 @@ namespace Alternion
         /// Display cannon skins.
         /// </summary>
         public static bool useCannonSkins;
+        /// <summary>
+        /// Display swivel skins.
+        /// </summary>
+        public static bool useSwivelSkins;
         /// <summary>
         /// Download assets on startup.
         /// </summary>
@@ -77,7 +85,7 @@ namespace Alternion
         /// <summary>
         /// Website file name.
         /// </summary>
-        public static string remoteFile = "playerList2.json";
+        public static string remoteFile = "playerList.json";
 
         void Start()
         {
@@ -107,6 +115,7 @@ namespace Alternion
         {
             loggingLevel = 0;
             showTWBadges = false;
+            showKSBadges = false;
             useBadges = true;
             useMaskSkins = true;
             useMainSails = true;
@@ -132,6 +141,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
             streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
@@ -139,6 +149,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
@@ -189,6 +200,16 @@ namespace Alternion
                                 else
                                 {
                                     showTWBadges = false;
+                                }
+                                break;
+                            case "showKSBadges":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    showKSBadges = true;
+                                }
+                                else
+                                {
+                                    showKSBadges = false;
                                 }
                                 break;
                             case "useBadges":
@@ -251,6 +272,16 @@ namespace Alternion
                                     useCannonSkins = false;
                                 }
                                 break;
+                            case "useSwivelSkins":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    useSwivelSkins = true;
+                                }
+                                else
+                                {
+                                    useSwivelSkins = false;
+                                }
+                                break;
                             case "downloadOnStartup":
                                 if (Convert.ToInt32(splitArr[1]) == 1)
                                 {
@@ -308,6 +339,7 @@ namespace Alternion
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
             streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
+            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
             streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
             streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
@@ -315,6 +347,7 @@ namespace Alternion
             streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
+            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();

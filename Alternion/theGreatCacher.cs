@@ -10,82 +10,115 @@ namespace Alternion
     [Mod]
     public class theGreatCacher : MonoBehaviour
     {
+        public static theGreatCacher Instance;
         /// <summary>
         /// Check for if the default cannons have been set or not
         /// </summary>
-        public static bool setCannonDefaults = false;
+        public bool setCannonDefaults = false;
+        /// <summary>
+        /// Check for if the default cannons have been set or not
+        /// </summary>
+        public bool setSwivelDefaults = false;
         /// <summary>
         /// Check for if the default sails have been set or not
         /// </summary>
-        public static bool setSailDefaults = false;
+        public bool setSailDefaults = false;
         /// <summary>
         /// Check for if the default navy flag has been set or not
         /// </summary>
-        public static bool setNavyFlag = false;
+        public bool setNavyFlag = false;
         /// <summary>
         /// Check for if the default pirate flag has been set or not
         /// </summary>
-        public static bool setPirateFlag = false;
+        public bool setPirateFlag = false;
+        /// <summary>
+        /// Default swivel.
+        /// </summary>
+        public Texture defaultSwivel;
+        /// <summary>
+        /// Default swivel met.
+        /// </summary>
+        public Texture defaultSwivelMet;
         /// <summary>
         /// Default sail texture.
         /// </summary>
-        public static Texture defaultSails;
+        public Texture defaultSails;
         /// <summary>
         /// Default sail met texture.
         /// </summary>
-        public static Texture defaultSailsMet;
+        public Texture defaultSailsMet;
         /// <summary>
         /// Default cannon texture.
         /// </summary>
-        public static Texture defaultCannons;
+        public Texture defaultCannons;
         /// <summary>
         /// Default cannon met texture.
         /// </summary>
-        public static Texture defaultCannonsMet;
+        public Texture defaultCannonsMet;
         /// <summary>
         /// Default navy flag texture
         /// </summary>
-        public static Texture navyFlag;
+        public Texture navyFlag;
         /// <summary>
         /// Default pirate flag texture
         /// </summary>
-        public static Texture pirateFlag;
+        public Texture pirateFlag;
         /// <summary>
         /// Stores all cached ships.
         /// </summary>
-        public static Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
+        public Dictionary<string, cachedShip> ships = new Dictionary<string, cachedShip>();
         /// <summary>
         /// Stores all cached weapon skins.
         /// </summary>
-        public static Dictionary<string, Texture> weaponSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> weaponSkins = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached badges.
         /// </summary>
-        public static Dictionary<string, Texture> badges = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> badges = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached gold mask skins.
         /// </summary>
-        public static Dictionary<string, Texture> maskSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> maskSkins = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached main sails.
         /// </summary>
-        public static Dictionary<string, Texture> mainSails = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> mainSails = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached secondary sails.
         /// </summary>
-        public static Dictionary<string, Texture> secondarySails = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> secondarySails = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached cannon skins.
         /// </summary>
-        public static Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached swivel skins.
+        /// </summary>
+        public Dictionary<string, Texture> swivelSkins = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached flags
         /// </summary>
-        public static Dictionary<string, Texture> flags = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> flags = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached player loadouts.
         /// </summary>
-        public static Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
+        public Dictionary<string, playerObject> players = new Dictionary<string, playerObject>();
+        /// <summary>
+        /// Stores all swivel textures.
+        /// </summary>
+        public Dictionary<string, Texture> swivels = new Dictionary<string, Texture>();
+
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
+        }
 
         /// <summary>
         /// Sets the default sail texture.
@@ -93,7 +126,7 @@ namespace Alternion
         /// <param name="newTexture">Default Sail Texture</param>
         public static void setDefaultSails(Texture newTexture)
         {
-            defaultSails = newTexture;
+            Instance.defaultSails = newTexture;
         }
 
         /// <summary>
@@ -102,7 +135,27 @@ namespace Alternion
         /// <param name="newTexture">Default Cannon Texture</param>
         public static void setDefaultCannons(Texture newTexture)
         {
-            defaultCannons = newTexture;
+            Instance.defaultCannons = newTexture;
+        }
+
+        /// <summary>
+        /// Sets the default flag texture(s).
+        /// </summary>
+        /// <param name="newTexture">Default Flag Texture</param>
+        public static void setDefaultFlags(Texture newTexture, bool isNavy)
+        {
+            if (isNavy && !Instance.setNavyFlag)
+            {
+                Instance.navyFlag = newTexture;
+                Instance.setNavyFlag = true;
+                Logger.logLow("Set navy default flag");
+            }
+            else if (!Instance.setPirateFlag)
+            {
+                Instance.pirateFlag = newTexture;
+                Instance.setPirateFlag = true;
+                Logger.logLow("Set pirate default flag");
+            }
         }
 
         /// <summary>
@@ -110,13 +163,13 @@ namespace Alternion
         /// </summary>
         public static void forceUpdate()
         {
-            weaponSkins.Clear();
-            badges.Clear();
-            maskSkins.Clear();
-            mainSails.Clear();
-            secondarySails.Clear();
-            cannonSkins.Clear();
-            players.Clear();
+            Instance.weaponSkins.Clear();
+            Instance.badges.Clear();
+            Instance.maskSkins.Clear();
+            Instance.mainSails.Clear();
+            Instance.secondarySails.Clear();
+            Instance.cannonSkins.Clear();
+            Instance.players.Clear();
             Mainmod.Instance.createDirectories();
         }
     }

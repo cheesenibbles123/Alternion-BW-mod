@@ -1,30 +1,90 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Harmony;
 using BWModLoader;
 using UnityEngine;
 
+
 namespace Alternion
 {
+    /// <summary>
+    /// Handles all sail interactions
+    /// </summary>
     [Mod]
     public class SailHandler : MonoBehaviour
     {
+
+        /// <summary>
+        /// SailHandler Instance
+        /// </summary>
+        public static SailHandler Instance;
+
+        /// <summary>
+        /// List containing all the mainsails
+        /// </summary>
+        List<string> mainSailList = new List<string>()
+        {
+            "hmsSophie_sails08",
+            "galleon_sails_01",
+            "hmsSpeedy_sails04",
+            "xebec_sail03",
+            "bombVessel_sails07",
+            "gunboat_sails02",
+            "hmsAlert_sails02",
+            "bombKetch_sails06",
+            "carrack_sail03",
+            "junk_sails_01",
+            "schooner_sails00",
+            "hoy_sails_00"
+        };
+
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
+        }
+
+        /// <summary>
+        /// Applies the skins to the sail
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="steamID">Captain steamID</param>
+        /// <param name="renderer">Sail Renderer</param>
+        /// <param name="isMain">Is mainsail or not</param>
         static void applySkins(cachedShip vessel, string steamID, Renderer renderer, bool isMain)
         {
-            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 Texture newTex;
                 if (isMain)
                 {
-                    if (theGreatCacher.mainSails.TryGetValue(player.mainSailName, out newTex))
+                    if (player.mainSailName != "default" && theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
+                        vessel.hasChangedSails = true;
+                    }
+                    else
+                    {
+                        resetSail(vessel, renderer);
                     }
                 }
                 else
                 {
-                    if (theGreatCacher.secondarySails.TryGetValue(player.sailSkinName, out newTex))
+                    if (player.mainSailName != "default" && theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
+                        vessel.hasChangedSails = true;
+                    }
+                    else
+                    {
+                        resetSail(vessel, renderer);
                     }
                 }
             }
@@ -34,200 +94,100 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Applies the skins to the sail
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="renderer">Sail Renderer</param>
         static void resetSail(cachedShip vessel, Renderer renderer)
         {
             if (vessel.hasChangedSails)
             {
-                renderer.material.mainTexture = theGreatCacher.defaultSails;
-                renderer.material.SetTexture("_Metallic", theGreatCacher.defaultSailsMet);
+                renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSailsMet);
             }
         }
 
-        static void setupShip(cachedShip vessel, string steamID, string shipType, string sailName, Renderer renderer, SailHealth __instance)
+        /// <summary>
+        /// Determines if it should be a mainsail or not
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="steamID">Captain steamID</param>
+        /// <param name="renderer">Sail Renderer</param>
+        /// <param name="__instance">SailHealth</param>
+        static void setupShip(cachedShip vessel, string steamID, Renderer renderer, SailHealth __instance)
         {
-            switch (shipType)
+
+            if (Instance.mainSailList.Contains(__instance.name) && AlternionSettings.useMainSails)
             {
-                case "cruiser":
-                    if (sailName == "hmsSophie_sails08" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "galleon":
-                    if (__instance.name == "galleon_sails_01" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "brig":
-                    if (__instance.name == "hmsSpeedy_sails04" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "xebec":
-                    if (__instance.name == "xebec_sail03" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "bombvessel":
-                    if (__instance.name == "bombVessel_sails07" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "gunboat":
-                    if (__instance.name == "gunboat_sails02" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "cutter":
-                    if (__instance.name == "hmsAlert_sails02" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "bombketch":
-                    if (__instance.name == "bombKetch_sails06" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "carrack":
-                    if (__instance.name == "carrack_sail03" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "junk":
-                    if (__instance.name == "junk_sails_01" && AlternionSettings.useMainSails)
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break;
-                case "schooner":
-                    if ((__instance.name == "schooner_sails00" && AlternionSettings.useMainSails))
-                    {
-                        vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, true);
-                    }
-                    else if (AlternionSettings.useSecondarySails)
-                    {
-                        vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
-                        applySkins(vessel, steamID, renderer, false);
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
-                    }
-                    break; // (__instance.name == "schooner_sails02" && AlternionSettings.useMainSails)
-                default:
-                    break;
+                vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
+                applySkins(vessel, steamID, renderer, true);
+                applySkins(vessel, steamID, __instance.êæïäîæïïíñå.GetComponent<Renderer>(), true);
+            }
+            else if (AlternionSettings.useSecondarySails)
+            {
+                vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
+                applySkins(vessel, steamID, renderer, false);
+                applySkins(vessel, steamID, __instance.êæïäîæïïíñå.GetComponent<Renderer>(), false);
+            }
+            else
+            {
+                resetSail(vessel, renderer);
             }
         }
 
+        /// <summary>
+        /// Waits until the captain has been set
+        /// </summary>
+        /// <param name="teamNum">Team Number</param>
+        /// <param name="__instance">SailHealth</param>
+        private IEnumerator wasteTime(int teamNum, SailHealth __instance)
+        {
+            yield return new WaitForSeconds(0.1f);
+            bool captainAwol = true;
+            while (captainAwol)
+            {
+                if (GameMode.Instance.teamCaptains[teamNum - 1])
+                {
+                    captainAwol = false;
+                    handleShipSetup(teamNum, __instance);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(1f);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates/pulls cached ship
+        /// </summary>
+        /// <param name="teamNum">Team Number</param>
+        /// <param name="__instance">SailHealth</param>
+        void handleShipSetup(int teamNum, SailHealth __instance)
+        {
+            string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
+
+            if (!theGreatCacher.Instance.setSailDefaults)
+            {
+                theGreatCacher.Instance.defaultSails = __instance.GetComponent<Renderer>().material.mainTexture;
+                theGreatCacher.Instance.setSailDefaults = true;
+            }
+            if (theGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
+            {
+                setupShip(vessel, steamID, __instance.GetComponent<Renderer>(), __instance);
+            }
+            else
+            {
+                cachedShip newVessel = new cachedShip();
+                theGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
+                setupShip(newVessel, steamID, __instance.GetComponent<Renderer>(), __instance);
+            }
+        }
+
+        /// <summary>
+        /// Hooks into OnEnable
+        /// </summary>
         [HarmonyPatch(typeof(SailHealth), "OnEnable")]
         static class sailSkinPatch
         {
@@ -235,37 +195,14 @@ namespace Alternion
             {
                 if (AlternionSettings.useMainSails || AlternionSettings.useSecondarySails)
                 {
-                    try
+                    Transform shipTransf = __instance.transform.root;
+                    if (shipTransf)
                     {
-                        Transform shipTransf = __instance.transform.root;
-                        if (shipTransf)
-                        {
-                            int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
-
-                            string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
-
-                            string shipType = GameMode.Instance.shipTypes[teamNum - 1];
-                            shipType = shipType.Remove(shipType.Length - 1);
-
-                            if (theGreatCacher.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-                            {
-                                setupShip(vessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
-                            }
-                            else
-                            {
-                                cachedShip newVessel = new cachedShip();
-                                theGreatCacher.ships.Add(teamNum.ToString(), newVessel);
-                                setupShip(newVessel, steamID, shipType, __instance.name, __instance.GetComponent<Renderer>(), __instance);
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.debugLog(e.Message);
+                        int teamNum = int.Parse(shipTransf.name.Split('m')[1]);
+                        Instance.StartCoroutine(Instance.wasteTime(teamNum, __instance));
                     }
                 }
             }
         }
-
     }
 }

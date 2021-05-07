@@ -30,17 +30,17 @@ namespace Alternion
                 try
                 {
                     string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                    if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
                         var musket = GameObject.Find("wpn_standardMusket_LOD1");
                         if (musket != null)
                         {
                             Texture newTex;
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out newTex))
+                            if (theGreatCacher.Instance.weaponSkins.TryGetValue("musket_" + player.musketSkinName, out newTex))
                             {
                                 musket.GetComponent<Renderer>().material.mainTexture = newTex;
                             }
-                            if (theGreatCacher.weaponSkins.TryGetValue("musket_" + player.musketSkinName + "_met", out newTex))
+                            if (theGreatCacher.Instance.weaponSkins.TryGetValue("musket_" + player.musketSkinName + "_met", out newTex))
                             {
                                 musket.GetComponent<Renderer>().material.SetTexture("_Metallic",newTex);
                             }
@@ -80,12 +80,12 @@ namespace Alternion
             try
             {
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-                if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+                if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                 {
                     Logger.debugLog($"Got player {player.steamID} => {player.badgeName}");
                     if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                     {
-                        if (theGreatCacher.badges.TryGetValue(player.badgeName, out Texture newTex))
+                        if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
                         {
                             mm.menuBadge.texture = newTex;
                         }
@@ -101,22 +101,23 @@ namespace Alternion
 
             LoadingBar.updatePercentage(95, "Applying weapon skin");
             setMainMenuWeaponSkin();
-            setMenuFlag();
+            Instance.setMenuFlag();
 
         }
-
+        
         /// <summary>
         /// Sets the main menu flag.
         /// </summary>
-        static void setMenuFlag()
+        void setMenuFlag()
         {
-            string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-            if (theGreatCacher.players.TryGetValue(steamID, out playerObject player))
+            string steamID = SteamUser.GetSteamID().ToString();
+            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
-                GameObject flag = GameObject.Find("teamflag");
-                if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture newTex))
+                SkinnedMeshRenderer menuFlag = CharacterCustomizationUI.îêêæëçäëèñî.çóîóëðåïåóñ;
+                string flagName = CharacterCustomizationUI.îêêæëçäëèñî.òïîîóðçèèæì.enabled ? player.flagNavySkinName : player.flagPirateSkinName;
+                if (theGreatCacher.Instance.flags.TryGetValue(flagName, out Texture newTex))
                 {
-                    flag.GetComponent<Renderer>().material.mainTexture = newTex;
+                    menuFlag.material.mainTexture = newTex;
                 }
             }
         }
@@ -124,7 +125,7 @@ namespace Alternion
         /// <summary>
         /// Sets the main menu character transform.
         /// </summary>
-        static void setMenuCharacter()
+        void setMenuCharacter()
         {
             // Find the musket object
             var musket = GameObject.Find("wpn_standardMusket_LOD1");
@@ -144,11 +145,25 @@ namespace Alternion
             }
         }
 
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+                DontDestroyOnLoad(Instance);
+            }
+            else
+            {
+                DestroyImmediate(this);
+            }
+        }
+
         void Start()
         {
             //Rotate Character
             setMenuCharacter();
         }
+
         void Update()
         {
             if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
@@ -170,7 +185,7 @@ namespace Alternion
         {
             static void postfix(MainMenu __instance)
             {
-                setMenuFlag();
+                Instance.setMenuFlag();
             }
         }
 
@@ -196,7 +211,17 @@ namespace Alternion
             {
                 // Call these so that they set correctly again on returning to the main menu
                 setMainMenuBadge();
-                setMenuCharacter();
+                Instance.setMenuCharacter();
+                Instance.setMenuFlag();
+            }
+        }
+
+        [HarmonyPatch(typeof(CharacterCustomizationUI), "setFaction")]
+        static class characterCustomizationPatch
+        {
+            static void Postfix(CharacterCustomizationUI __instance, int íïïìîóðíçëæ)
+            {
+                Instance.setMenuFlag();
             }
         }
     }

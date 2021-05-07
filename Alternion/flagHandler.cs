@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using BWModLoader;
 using Harmony;
 using UnityEngine;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Handles all flag interactions
+    /// </summary>
     [Mod]
     public class flagHandler : MonoBehaviour
     {
@@ -12,6 +16,8 @@ namespace Alternion
         /// flagHandler Instance
         /// </summary>
         public static flagHandler Instance;
+
+        float assignDelay = 4f;
 
         void Awake()
         {
@@ -35,12 +41,20 @@ namespace Alternion
             {
                 if (AlternionSettings.showFlags)
                 {
-                    setupShipFlags(team);
+                    Instance.setupShipFlags(team);
+                }
+                else if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+                {
+                    Instance.resetFlag(vessel);
                 }
             }
         }
 
-        public static void setupShipFlags(int team)
+        /// <summary>
+        /// Starts Coroutine
+        /// </summary>
+        /// <param name="team">Ship team Number</param>
+        void setupShipFlags(int team)
         {
             Instance.StartCoroutine(Instance.setFlag(team));
         }
@@ -51,104 +65,131 @@ namespace Alternion
         /// <param name="team">Ship team</param>
         private IEnumerator setFlag(int team)
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(assignDelay);
+            bool hasNotUpdated = true;
             Transform shipTransform = GameMode.Instance.teamParents[team];
             Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
 
-            if (theGreatCacher.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+            if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
             {
-                if (theGreatCacher.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
+                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
-                        foreach (Renderer renderer in renderers)
-                        {
-                            if (renderer.name == "teamflag")
-                            {
-                                if (renderer.material.mainTexture.name == "flag_navy")
-                                {
-                                    vessel.isNavy = true;
-                                    if (!theGreatCacher.setNavyFlag)
-                                    {
-                                        theGreatCacher.navyFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setNavyFlag = true;
-                                    }
-                                }
-                                else if (renderer.material.mainTexture.name == "flag_pirate")
-                                {
-                                    vessel.isNavy = false;
-                                    if (!theGreatCacher.setPirateFlag)
-                                    {
-                                        theGreatCacher.pirateFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setPirateFlag = true;
-                                    }
-                                }
-                                if (flag.name != "FAILED")
-                                {
-                                    renderer.material.mainTexture = flag;
-                                    vessel.hasChangedFlag = true;
-                                }
-                            }
-                        }
+                        Logger.logLow("Setup existing ship");
+                        loopRenderers(renderers, vessel, flag, false, team);
+                        hasNotUpdated = false;
                     }
                     else
                     {
-                        resetFlag(vessel);
+                        Instance.resetFlag(vessel);
                     }
-                }
-                else
-                {
-                    resetFlag(vessel);
                 }
             }
-            else // BROKEN
+            else
             {
                 cachedShip newVessel = new cachedShip();
-                theGreatCacher.ships.Add(team.ToString(), newVessel);
-                if (theGreatCacher.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
+                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
-                    if (theGreatCacher.flags.TryGetValue(player.flagSkinName, out Texture flag))
+                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
+                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
-                        foreach (Renderer renderer in renderers)
-                        {
-                            if (renderer.name == "teamflag")
-                            {
-                                if (renderer.material.mainTexture.name == "flag_navy")
-                                {
-                                    vessel.isNavy = true;
-                                    if (!theGreatCacher.setNavyFlag)
-                                    {
-                                        theGreatCacher.navyFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setNavyFlag = true;
-                                    }
-                                }
-                                else if (renderer.material.mainTexture.name == "flag_pirate")
-                                {
-                                    vessel.isNavy = false;
-                                    if (!theGreatCacher.setPirateFlag)
-                                    {
-                                        theGreatCacher.pirateFlag = renderer.material.mainTexture;
-                                        theGreatCacher.setPirateFlag = true;
-                                    }
-                                }
-                                if (flag.name != "FAILED")
-                                {
-                                    renderer.material.mainTexture = flag;
-                                    newVessel.flag = renderer;
-                                    vessel.hasChangedFlag = true;
-                                }
-                            }
-                        }
+                        Logger.logLow("Setup new ship");
+                        loopRenderers(renderers, newVessel, flag, true, team);
+                        hasNotUpdated = false;
                     }
                     else
                     {
-                        resetFlag(vessel);
+                        Instance.resetFlag(newVessel);
                     }
                 }
-                else
+            }
+
+            if (hasNotUpdated)
+            {
+                Logger.logLow("Resetting flag");
+                resetFlag(vessel);
+            }
+        }
+
+        /// <summary>
+        /// Loops over the renderers
+        /// </summary>
+        /// <param name="renderers">Renderer Array</param>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="flag">Flag to apply</param>
+        /// <param name="isNew">Is a newly created ship or not</param>
+        /// <param name="team">Team number</param>
+        void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew, int team)
+        {
+            foreach (Renderer renderer in renderers)
+            {
+                try
                 {
-                    resetFlag(vessel);
+                    changeRenderer(renderer, vessel, flag, isNew);
                 }
+                catch (Exception e)
+                {
+                    Logger.logLow(e.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the flags
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="flag">Flag to apply</param>
+        /// <param name="isNew">Is a newly created ship or not</param>
+        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew)
+        {
+            if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
+            {
+                Logger.logLow("found teamflag renderer");
+                defaultsHandler(renderer);
+
+                if (!vessel.isInitialized)
+                {
+                    vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy");
+                    vessel.isInitialized = true;
+                }
+                if (flag.name != "FAILED")
+                {
+                    renderer.material.mainTexture = flag;
+                    Logger.logLow("Set new flag " + flag.name);
+                    if (isNew)
+                    {
+                        vessel.flags.Add(renderer);
+                        Logger.logLow("Added new flag");
+                    }
+                    vessel.hasChangedFlag = true;
+                    Logger.logLow("Updated bool");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets up the defaults
+        /// </summary>
+        /// <param name="renderer">Renderer</param>
+        void defaultsHandler(Renderer renderer)
+        {
+            if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
+            {
+                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
+                Logger.logLow("Setup default navy flag");
+            }
+            else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
+            {
+                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
+                Logger.logLow("Setup default pirate flag");
+            }
+            else
+            {
+                Logger.logLow("found flag " + renderer.material.mainTexture.name);
             }
         }
 
@@ -156,19 +197,37 @@ namespace Alternion
         /// Applies skin to Flag
         /// </summary>
         /// <param name="vessel">Ship</param>
-        static void resetFlag(cachedShip vessel)
+        public void resetFlag(cachedShip vessel)
         {
             if (vessel.hasChangedFlag)
             {
                 if (vessel.isNavy)
                 {
-                    vessel.flag.material.mainTexture = theGreatCacher.navyFlag;
+                    setFlagsToSkin(vessel, theGreatCacher.Instance.navyFlag);
                 }
                 else
                 {
-                    vessel.flag.material.mainTexture = theGreatCacher.pirateFlag;
+                    setFlagsToSkin(vessel, theGreatCacher.Instance.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;
+                Logger.logLow("reset hasChangedFlag bool");
+            }
+            else
+            {
+                Logger.logLow("Is default");
+            }
+        }
+
+        /// <summary>
+        /// Update all flags in ship to flag
+        /// </summary>
+        /// <param name="vessel">Cached Ship</param>
+        /// <param name="newFlagTex">Flag to use</param>
+        public void setFlagsToSkin(cachedShip vessel, Texture newFlagTex)
+        {
+            foreach (Renderer renderer in vessel.flags)
+            {
+                renderer.material.mainTexture = newFlagTex;
             }
         }
     }
