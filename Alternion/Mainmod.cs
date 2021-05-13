@@ -57,7 +57,8 @@ namespace Alternion
 
                     HarmonyInstance harmony = HarmonyInstance.Create("com.github.archie");
                     harmony.PatchAll();
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.debugLog(e.Message);
                 }
@@ -2075,10 +2076,10 @@ namespace Alternion
                                     renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
-                            
+
                             mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                             mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
-                            
+
                             mightyVessel.hasChangedCannons = false;
                         }
                         if (mightyVessel.hasChangedSails)
@@ -2171,7 +2172,7 @@ namespace Alternion
         /// Checks if input badge is a Kickstarter or Tournamentwake badge
         /// </summary>
         /// <param name="name">Player Name</param> 
-        /// /// <returns>Bool</returns>
+        /// <returns>Bool</returns>
         public static bool checkIfTWOrKS(string name)
         {
             PlayerInfo plrInf = GameMode.getPlayerInfo(name);
@@ -2282,7 +2283,8 @@ namespace Alternion
                         string teamNum = player.team.ToString();
                         assignNewTexturesToShips(steamNewCaptainID, teamNum);
                     }
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Logger.debugLog("##########################################################");
                     Logger.debugLog("Pass captain patch.");
@@ -2291,7 +2293,12 @@ namespace Alternion
                 }
             }
         }
+
 #if DEBUG
+        /// <summary>
+        /// Handles disabling/enabling bird on winners
+        /// </summary>
+        /// <param name="__instance">Current Player's PlayerInfo</param> 
         private IEnumerator handleBird(PlayerInfo __instance)
         {
             yield return new WaitForSeconds(.5f);
@@ -2309,6 +2316,7 @@ namespace Alternion
                 __instance.lobbyPlayer.ñéçåäçëñåæê = true;
             }
         }
+
         /// <summary>
         /// Harmony patch to disable bird in first person
         /// </summary>
