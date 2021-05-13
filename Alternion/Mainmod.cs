@@ -1780,6 +1780,7 @@ namespace Alternion
                 return;
             }
             MainMenuCL.setMainMenuBadge();
+            MainMenuCL.Instance.setMenuFlag();
         }
 
         /// <summary>
