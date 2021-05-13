@@ -142,7 +142,7 @@ namespace Alternion
         /// <param name="renderer">Renderer</param>
         void defaultsHandler(Renderer renderer)
         {
-            if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
+            if (!theGreatCacher.Instance.setNavyFlag && (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british"))
             {
                 theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
             }
