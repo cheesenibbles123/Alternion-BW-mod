@@ -9,6 +9,10 @@ namespace Alternion
     [Mod]
     public class WeaponSkinHandler : MonoBehaviour
     {
+        /// <summary>
+        /// WeaponSkinHandler instance
+        /// </summary>
+        public static WeaponSkinHandler Instance;
 
         /// <summary>
         /// Assigns the weapon skin to the weapon.
@@ -153,6 +157,18 @@ namespace Alternion
                     //Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
 #endif
                     break;
+            }
+        }
+
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                DestroyImmediate(this);
             }
         }
 
