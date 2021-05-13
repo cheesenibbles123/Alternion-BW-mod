@@ -57,49 +57,20 @@ namespace Alternion
         private IEnumerator setFlag(int team)
         {
             yield return new WaitForSeconds(assignDelay);
-            bool hasNotUpdated = true;
             Transform shipTransform = GameMode.Instance.teamParents[team];
-            Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true);
+            Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true); // Get all renderers
 
-            if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+            if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel)) // Fetch existing ship
             {
-                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
-                {
-                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
-                    {
-                        loopRenderers(renderers, vessel, flag, false, team);
-                        hasNotUpdated = false;
-                    }
-                    else
-                    {
-                        Instance.resetFlag(vessel);
-                    }
-                }
+                loopRenderers(renderers, vessel, false, team);
             }
             else
             {
-                cachedShip newVessel = new cachedShip();
-                theGreatCacher.Instance.ships.Add(team.ToString(), newVessel);
-                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
-                {
-                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                    if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
-                    {
-                        loopRenderers(renderers, newVessel, flag, true, team);
-                        hasNotUpdated = false;
-                    }
-                    else
-                    {
-                        Instance.resetFlag(newVessel);
-                    }
-                }
-            }
+                cachedShip newVessel = new cachedShip(); // Create new ship
+                theGreatCacher.Instance.ships.Add(team.ToString(), newVessel); // Add ship to cache
 
-            if (hasNotUpdated)
-            {
-                Logger.logLow("Resetting flag");
-                resetFlag(vessel);
+                loopRenderers(renderers, newVessel, true, team);
+
             }
         }
 
@@ -108,16 +79,15 @@ namespace Alternion
         /// </summary>
         /// <param name="renderers">Renderer Array</param>
         /// <param name="vessel">Cached Ship</param>
-        /// <param name="flag">Flag to apply</param>
         /// <param name="isNew">Is a newly created ship or not</param>
         /// <param name="team">Team number</param>
-        void loopRenderers(Renderer[] renderers, cachedShip vessel, Texture flag, bool isNew, int team)
+        void loopRenderers(Renderer[] renderers, cachedShip vessel, bool isNew, int team)
         {
             foreach (Renderer renderer in renderers)
             {
                 try
                 {
-                    changeRenderer(renderer, vessel, flag, isNew, team);
+                    changeRenderer(renderer, vessel, isNew, team);
                 }
                 catch (Exception e)
                 {
@@ -131,9 +101,8 @@ namespace Alternion
         /// </summary>
         /// <param name="renderer">Renderer</param>
         /// <param name="vessel">Cached Ship</param>
-        /// <param name="flag">Flag to apply</param>
         /// <param name="isNew">Is a newly created ship or not</param>
-        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew, int team)
+        void changeRenderer(Renderer renderer, cachedShip vessel, bool isNew, int team)
         {
             if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
             {
@@ -144,26 +113,26 @@ namespace Alternion
                     vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british");
                     vessel.isInitialized = true;
                 }
-                if (flag.name != "FAILED")
-                {                    
-                    if (isNew)
+
+                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                {
+                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
+                    if (theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
-                        if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                        if (flag.name != "FAILED")
                         {
-                            string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                            if (theGreatCacher.Instance.flags.TryGetValue(flagSkin, out flag))
-                            {
-                                renderer.material.mainTexture = flag;
-                            }
+                            renderer.material.mainTexture = flag;
+                            vessel.hasChangedFlag = true;
                         }
-                        vessel.flags.Add(renderer);
                     }
-                    else
-                    {
-                        renderer.material.mainTexture = flag;
-                    }
-                    vessel.hasChangedFlag = true;
                 }
+
+                if (isNew)
+                {
+                    vessel.flags.Add(renderer);
+                }
+
+
             }
         }
 
