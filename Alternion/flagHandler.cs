@@ -77,7 +77,6 @@ namespace Alternion
                     string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                     if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
-                        Logger.logLow("Setup existing ship");
                         loopRenderers(renderers, vessel, flag, false, team);
                         hasNotUpdated = false;
                     }
@@ -96,7 +95,6 @@ namespace Alternion
                     string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                     if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
-                        Logger.logLow("Setup new ship");
                         loopRenderers(renderers, newVessel, flag, true, team);
                         hasNotUpdated = false;
                     }
@@ -148,25 +146,22 @@ namespace Alternion
         {
             if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
             {
-                Logger.logLow("found teamflag renderer");
                 defaultsHandler(renderer);
 
                 if (!vessel.isInitialized)
                 {
-                    vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy");
+                    vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british");
                     vessel.isInitialized = true;
                 }
                 if (flag.name != "FAILED")
                 {
                     renderer.material.mainTexture = flag;
-                    Logger.logLow("Set new flag " + flag.name);
+                    
                     if (isNew)
                     {
                         vessel.flags.Add(renderer);
-                        Logger.logLow("Added new flag");
                     }
                     vessel.hasChangedFlag = true;
-                    Logger.logLow("Updated bool");
                 }
             }
         }
@@ -180,16 +175,10 @@ namespace Alternion
             if (!theGreatCacher.Instance.setNavyFlag && renderer.material.mainTexture.name == "flag_navy")
             {
                 theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
-                Logger.logLow("Setup default navy flag");
             }
             else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
             {
                 theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
-                Logger.logLow("Setup default pirate flag");
-            }
-            else
-            {
-                Logger.logLow("found flag " + renderer.material.mainTexture.name);
             }
         }
 
@@ -210,11 +199,6 @@ namespace Alternion
                     setFlagsToSkin(vessel, theGreatCacher.Instance.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;
-                Logger.logLow("reset hasChangedFlag bool");
-            }
-            else
-            {
-                Logger.logLow("Is default");
             }
         }
 
