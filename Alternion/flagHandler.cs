@@ -41,22 +41,13 @@ namespace Alternion
             {
                 if (AlternionSettings.showFlags)
                 {
-                    Instance.setupShipFlags(team);
+                    Instance.StartCoroutine(Instance.setFlag(team));
                 }
                 else if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
                 {
                     Instance.resetFlag(vessel);
                 }
             }
-        }
-
-        /// <summary>
-        /// Starts Coroutine
-        /// </summary>
-        /// <param name="team">Ship team Number</param>
-        void setupShipFlags(int team)
-        {
-            Instance.StartCoroutine(Instance.setFlag(team));
         }
 
         /// <summary>
