@@ -161,7 +161,7 @@ namespace Alternion
         {
             yield return new WaitForSeconds(0.1f);
             bool doesntExist = true;
-            while (doesntExist)
+            while (doesntExist) // Good ol while loops :)
             {
                 int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
 
@@ -228,10 +228,11 @@ namespace Alternion
                 {
                     if (__instance.name != "Only Enemy Ship") return;
 
+                    // If only there was an easier way that i was smart enough to figure out
                     Renderer[] components = __instance.gameObject.GetComponentsInChildren<Renderer>(true);
                     foreach (Renderer rend in components)
                     {
-                        if (rend.name == "Cannonsfull")
+                        if (rend.name == "Cannonsfull") // Single mesh + material
                         {
                             Instance.StartCoroutine(Instance.wasteTime(rend));
                             break;

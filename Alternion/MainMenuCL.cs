@@ -174,11 +174,13 @@ namespace Alternion
 
             }
 
-            if (Input.GetKeyUp("`"))
+            if (Input.GetKeyUp("-"))
             {
-                Logger.debugLog("v7.0");
+                // Useful response that i totally always remember to keep up-to-date
+                Logger.debugLog("v8.0");
             }
         }
+
         /// <summary>
         /// Sets flag when leaving customization menu to prevent something being overwritten
         /// </summary>
