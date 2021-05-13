@@ -15,6 +15,7 @@ namespace AlternionGUI
         static Texture checkMark;
         static Texture checkBox;
         bool isEnabled = false;
+        public static ModGUI Instance;
 
         //Placeholder Declarations for displayButtons()
         Color tempHolder;
@@ -84,9 +85,24 @@ namespace AlternionGUI
             checkBox = newTexture;
         }
 
+        void Awake()
+        {
+            if (!Instance)
+            {
+                Instance = this;
+            }
+            else
+            {
+                UnityEngine.Object.DestroyImmediate(this);
+            }
+        }
+
         void Start()
         {
             horizontalCheckBox = new Vector2(horizontalButton.x + buttonWH.x + 40, horizontalButton.y + 10);
+            GameObject uiGameobject = new GameObject();
+            uiGameobject.AddComponent<ModGUI>();
+            UnityEngine.Object.DontDestroyOnLoad(uiGameobject);
         }
 
         void OnGUI()
@@ -254,14 +270,14 @@ namespace AlternionGUI
                 }
 
                 //Swivel Skins
-                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 3), buttonWH.x, buttonWH.y), "Swivel Skins"))
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 4), buttonWH.x, buttonWH.y), "Swivel Skins"))
                 {
                     AlternionSettings.useSwivelSkins = !AlternionSettings.useSwivelSkins;
                 }
-                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
                 if (AlternionSettings.useSwivelSkins)
                 {
-                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 3), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
             } // Ship
             else if (AlternionSettings.configMenuPageNumber == 3)
