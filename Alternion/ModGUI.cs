@@ -10,46 +10,100 @@ namespace AlternionGUI
     [Mod]
     public class ModGUI : MonoBehaviour
     {
+        /// <summary>
+        /// Main options menu background texture
+        /// </summary>
         static Texture mainBoxBackground;
+        /// <summary>
+        /// Button background texture
+        /// </summary>
         static Texture mainButtonBackground;
+        /// <summary>
+        /// Check mark texture
+        /// </summary>
         static Texture checkMark;
+        /// <summary>
+        /// Check box texture
+        /// </summary>
         static Texture checkBox;
+        /// <summary>
+        /// Is options menu visible?
+        /// </summary>
         bool isEnabled = false;
+        /// <summary>
+        /// ModGUI Instance
+        /// </summary>
         public static ModGUI Instance;
 
         //Placeholder Declarations for displayButtons()
+        /// <summary>
+        /// Stores the background colour of the GUI layout
+        /// </summary>
         Color tempHolder;
+        /// <summary>
+        /// Stores the Text colour of the GUI layout
+        /// </summary>
         Color defaultColour;
+        /// <summary>
+        /// Stores the default background texture of the GUI layout
+        /// </summary>
         Texture2D defaultGUIBackground;
 
         //UI SETUP (Not yet implemented scaling)
-        //MAIN BOX
         //Centre Horiztonal = 115
         //Centre Vertical = 120
+
+        /// <summary>
+        /// Main UI box X,Y Width,Height parameters
+        /// </summary>
         static Vector4 boxSettings = new Vector4(20, 60, 250, 360);
-        //BUTTONS
-        //Start X, Y
-        //Width, Height
+
+        /// <summary>
+        /// Start X,Y of Toggle Buttons
+        /// </summary>
         Vector2 horizontalButton = new Vector2(30, 90);
+        /// <summary>
+        /// Width + Height of Toggle Buttons
+        /// </summary>
         Vector2 buttonWH = new Vector2(120, 40);
 
-        //Start X, Y (assigned on startup)
-        //Width, Height
+
+        /// <summary>
+        /// Start X,Y  for checkboxes (Set on Start())
+        /// </summary>
         Vector2 horizontalCheckBox;
+        /// <summary>
+        /// Width + Height of checkboxes
+        /// </summary>
         Vector2 checkWH = new Vector2(20, 20);
 
-        //Start X, Y
-        //Width, Height
+        /// <summary>
+        /// Start X,Y coords of the page label
+        /// </summary>
         static Vector2 labelBox = new Vector2(30, 70);
+        /// <summary>
+        /// Width + Height of the page label
+        /// </summary>
         Vector2 labelWH = new Vector2(boxSettings.z - boxSettings.x - 20, boxSettings.w - boxSettings.y -210);
         
         // Start X1, Y1, X2, Y2
+        /// <summary>
+        /// Page switch button coords (Left(X,Y), Right(X,Y))
+        /// </summary>
         static Vector4 switchPageForwardsBackwardsStartPositions = new Vector4(220, boxSettings.w, 30, boxSettings.w);
+        /// <summary>
+        /// Switch page button width + high parameters
+        /// </summary>
         static Vector2 switchPageButtonWH = new Vector2(40, 40);
 
-        // Format X, Y, Width, Height
+        /// <summary>
+        /// Save button X,Y width,height parameters
+        /// </summary>
         Vector4 saveButton = new Vector4(90, boxSettings.w, 110,40);
 
+        /// <summary>
+        /// Gap between the buttons (px)
+        /// </summary>
         int buttonOffset = 50;
 
         /// <summary>

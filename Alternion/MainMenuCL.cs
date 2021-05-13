@@ -179,7 +179,9 @@ namespace Alternion
                 Logger.debugLog("v7.0");
             }
         }
-
+        /// <summary>
+        /// Sets flag when leaving customization menu to prevent something being overwritten
+        /// </summary>
         [HarmonyPatch(typeof(MainMenu), "leaveCustomization")]
         static class flagPatch
         {
@@ -189,6 +191,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Toggles custom/KS on KS toggle
+        /// </summary>
         [HarmonyPatch(typeof(MainMenu), "toggleKSBadge")]
         static class toggleKSPatch
         {
@@ -204,6 +209,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Sets up initial calls for returning to the mainmenu
+        /// </summary>
         [HarmonyPatch(typeof(MainMenu), "Start")]
         static class mainMenuStuffPatch
         {
@@ -216,6 +224,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Updates flag in main menu based off current viewing faction
+        /// </summary>
         [HarmonyPatch(typeof(CharacterCustomizationUI), "setFaction")]
         static class characterCustomizationPatch
         {
