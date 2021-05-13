@@ -1,14 +1,10 @@
 # Alternion
 
 ![License](https://img.shields.io/github/license/cheesenibbles123/Alternion-BW-mod)
-![Stars](https://img.shields.io/github/stars/cheesenibbles123/Alternion-BW-mod)
-![Code Size](https://img.shields.io/github/languages/code-size/cheesenibbles123/Alternion-BW-mod)
-![Repo Size](https://img.shields.io/github/repo-size/cheesenibbles123/Alternion-BW-mod)
 ![Downloads](https://img.shields.io/github/downloads/cheesenibbles123/Alternion-BW-mod/total)
 ![Latest Release](https://img.shields.io/github/v/release/cheesenibbles123/Alternion-BW-mod)
 ![Latest Release Date](https://img.shields.io/github/release-date/cheesenibbles123/Alternion-BW-mod)
 ![Top Language](https://img.shields.io/github/languages/top/cheesenibbles123/Alternion-BW-mod)
-![Commit frequency](https://img.shields.io/github/commit-activity/m/cheesenibbles123/Alternion-BW-Mod)
 
 ![custom Image](https://github.com/cheesenibbles123/Alternion-BW-mod/blob/master/Images/bwCsharp.jpg)
 
