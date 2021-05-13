@@ -37,7 +37,6 @@ namespace Alternion
                     // ALB
                     if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                     {
-                        Logger.logLow("Applying skin: " + newTex.name);
                         renderer.material.mainTexture = newTex;
                         if (!vessel.hasChangedCannons)
                         {
@@ -46,14 +45,12 @@ namespace Alternion
                     }
                     else if (theGreatCacher.Instance.defaultCannons != null)
                     {
-                        Logger.logLow("Applying default ALB to custom");
                         renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                     }
 
                     // MET
                     if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                     {
-                        Logger.logLow("Applying Met: " + newTex.name);
                         renderer.material.SetTexture("_Metallic", newTex);
                         if (!vessel.hasChangedCannons)
                         {
@@ -62,7 +59,6 @@ namespace Alternion
                     }
                     else if (theGreatCacher.Instance.defaultCannonsMet != null)
                     {
-                        Logger.logLow("Applying default MET to custom");
                         renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                     }
                 }
@@ -100,12 +96,10 @@ namespace Alternion
             {
                 if (theGreatCacher.Instance.defaultCannons != null)
                 {
-                    Logger.logLow("Applying default as null");
                     renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
                 }
                 if (theGreatCacher.Instance.defaultCannonsMet != null)
                 {
-                    Logger.logLow("Applying default as null");
                     renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
                 }
             }
