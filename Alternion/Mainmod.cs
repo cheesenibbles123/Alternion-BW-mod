@@ -2137,8 +2137,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.logLow(string.Format("Error loading texture {0}", texName));
-                Logger.logLow(e.Message);
+                Logger.debugLog("Error loading texture {0}" + texName);
+                Logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 Texture2D tex = Texture2D.whiteTexture;
                 tex.name = "FAILED";
@@ -2154,10 +2154,10 @@ namespace Alternion
         public static bool checkIfTWOrKS(ScoreboardSlot __instance)
         {
             // If TW Badge
-            if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
+            if (__instance.éòëèïòëóæèó.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges && __instance.éòëèïòëóæèó.texture.name == "tournamentWake1Badge"))
             {
                 // IF KS Badge
-                if (__instance.éòëèïòëóæèó.texture.name != "KSbadge" ^ (!AlternionSettings.showKSBadges & __instance.éòëèïòëóæèó.texture.name == "KSbadge"))
+                if (__instance.éòëèïòëóæèó.texture.name != "KSbadge" ^ (!AlternionSettings.showKSBadges && __instance.éòëèïòëóæèó.texture.name == "KSbadge"))
                 {
                     // IF KS Badge
                     return true;
@@ -2291,7 +2291,24 @@ namespace Alternion
                 }
             }
         }
-
+#if DEBUG
+        private IEnumerator handleBird(PlayerInfo __instance)
+        {
+            yield return new WaitForSeconds(.5f);
+            __instance.isTournyWinner = true;
+            Logger.logLow($"{!__instance.character.æïðèñìæêêñç}");
+            __instance.character.óððêäóäîçñè.SetActive(!__instance.character.æïðèñìæêêñç); // Only enable if not owner
+            Logger.logLow("IsBird");
+            if (__instance.character.æïðèñìæêêñç)
+            {
+                __instance.character.óððêäóäîçñè.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly; // Sets to only use shadows, so it still shows in FP
+                Logger.logLow("Removed from FP");
+            }
+            if (__instance.lobbyPlayer != null)
+            {
+                __instance.lobbyPlayer.ñéçåäçëñåæê = true;
+            }
+        }
         /// <summary>
         /// Harmony patch to disable bird in first person
         /// </summary>
@@ -2302,21 +2319,13 @@ namespace Alternion
             {
                 if (info.åéñëîíèðòçé)
                 {
-                    __instance.isTournyWinner = true;
-                    __instance.character.óððêäóäîçñè.SetActive(__instance.isTournyWinner);
-                    if (__instance.character.æïðèñìæêêñç)
-                    {
-                        __instance.character.óððêäóäîçñè.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
-                    }
-                    if (__instance.lobbyPlayer != null)
-                    {
-                        __instance.lobbyPlayer.ñéçåäçëñåæê = true;
-                    }
+                    Instance.StartCoroutine(Instance.handleBird(__instance));
                 }
 
                 return false;
             }
         }
+#endif
 
     }
 }
