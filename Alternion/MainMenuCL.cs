@@ -108,7 +108,7 @@ namespace Alternion
         /// <summary>
         /// Sets the main menu flag.
         /// </summary>
-        void setMenuFlag()
+        public void setMenuFlag()
         {
             string steamID = SteamUser.GetSteamID().ToString();
             if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
