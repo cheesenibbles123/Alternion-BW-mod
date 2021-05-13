@@ -49,6 +49,7 @@ namespace Alternion
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
+#if DEBUG
             //foreach (Transform transf in __instance.transform.parent)
             //{
             //logLow(transf.name);
@@ -58,10 +59,8 @@ namespace Alternion
             //{
             //    logLow(transf.name);
             //}
+#endif
 
-            // Needs a rework as the following share the same texture, and so return the same texture name:
-            // Axe + Rapier
-            // Dagger + Cutlass
             switch (renderer.material.mainTexture.name)
             {
                 case "wpn_standardMusket_stock_alb":
@@ -148,14 +147,18 @@ namespace Alternion
                     assignWeaponToRenderer(renderer, player.grenadeSkinName, "grenade");
                     break;
                 default:
+#if DEBUG
                     // If not known, output here
                     //Logger.logLow("Type name: -" + renderer.name + "-");
                     //Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+#endif
                     break;
             }
         }
 
-        //applyGold()
+        /// <summary>
+        /// Weapon skin patch (Third person)
+        /// </summary>
         [HarmonyPatch(typeof(WeaponRender), "ìæóòèðêççæî")]
         static class goldApplyPatch
         {
@@ -165,7 +168,6 @@ namespace Alternion
                 {
                     try
                     {
-                        //PlayerInfo plyrInf = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>();
                         string steamID = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString();
                         if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
@@ -180,6 +182,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Mask skin patch
+        /// </summary>
         [HarmonyPatch(typeof(Character), "setGoldMask")]
         static class goldMaskPatch
         {
@@ -207,6 +212,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Weapon skin patch (First person)
+        /// </summary>
         [HarmonyPatch(typeof(WeaponRender), "Start")]
         static class weaponSkinpatch1stPerson
         {
