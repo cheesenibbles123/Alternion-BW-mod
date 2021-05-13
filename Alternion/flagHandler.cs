@@ -117,7 +117,7 @@ namespace Alternion
             {
                 try
                 {
-                    changeRenderer(renderer, vessel, flag, isNew);
+                    changeRenderer(renderer, vessel, flag, isNew, team);
                 }
                 catch (Exception e)
                 {
@@ -133,7 +133,7 @@ namespace Alternion
         /// <param name="vessel">Cached Ship</param>
         /// <param name="flag">Flag to apply</param>
         /// <param name="isNew">Is a newly created ship or not</param>
-        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew)
+        void changeRenderer(Renderer renderer, cachedShip vessel, Texture flag, bool isNew, int team)
         {
             if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
             {
@@ -145,12 +145,22 @@ namespace Alternion
                     vessel.isInitialized = true;
                 }
                 if (flag.name != "FAILED")
-                {
-                    renderer.material.mainTexture = flag;
-                    
+                {                    
                     if (isNew)
                     {
+                        if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                        {
+                            string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
+                            if (theGreatCacher.Instance.flags.TryGetValue(flagSkin, out flag))
+                            {
+                                renderer.material.mainTexture = flag;
+                            }
+                        }
                         vessel.flags.Add(renderer);
+                    }
+                    else
+                    {
+                        renderer.material.mainTexture = flag;
                     }
                     vessel.hasChangedFlag = true;
                 }
