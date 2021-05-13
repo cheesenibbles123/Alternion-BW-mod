@@ -82,7 +82,6 @@ namespace Alternion
                 string steamID = Steamworks.SteamUser.GetSteamID().ToString();
                 if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                 {
-                    Logger.debugLog($"Got player {player.steamID} => {player.badgeName}");
                     if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                     {
                         if (theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
