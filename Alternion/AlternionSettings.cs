@@ -164,7 +164,9 @@ namespace Alternion
         {
             if (!File.Exists(configFile))
             {
-                Logger.debugLog("No config found!");
+                Logger.debugLog("No config found! Generating new config file.");
+                setupDefaults();
+                loadSettings();
                 return;
             }
             string[] array = File.ReadAllLines(configFile);
