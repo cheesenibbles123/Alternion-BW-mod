@@ -124,7 +124,19 @@ namespace Alternion
                             renderer.material.mainTexture = flag;
                             vessel.hasChangedFlag = true;
                         }
+                        else
+                        {
+                            resetFlag(vessel);
+                        }
                     }
+                    else
+                    {
+                        resetFlag(vessel);
+                    }
+                }
+                else
+                {
+                    resetFlag(vessel);
                 }
 
                 if (isNew)
