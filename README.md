@@ -14,13 +14,19 @@ This is a split off from my first mod which was initially created for custom bad
 
 The original goal was simply to modify and allow for custom badges, and well... it kind of spiralled from there onto what it is now. If you come across any issues/feature requests make sure to mention/report them, either here or to me on discord **Archie the inventor#4744**
 
-## Features:
- - Custom Badges based on steamID's
- - Custom Sail skins based on captain's steamID
- - Custom Cannon skins based on captain's steamID
- - Custom Weapon skins based on player's steamID
- 
+## Features
+
+ - Ship customization based on Captain
+    - Custom mainsails
+    - Custom secondary sails
+    - Custom cannons
+ - Player customization
+    - Custom badge
+    - Custom weapon skins
+    - Custom mask skin
+
 ## Installation
+
  - Copy **0Harmony.dll**, **Assembly-CSharp.dll** and **BWModLoader.dll** into your **Blackwake_Data/Managed/** folder.
    (These files are added on the latest release version, starting at **v 4.0**, for those trying to run an older version see ***Required files*** below)
  - Run the game, it should generate a mods folder in **Blackwake_Data/Managed/Mods**
@@ -29,16 +35,17 @@ The original goal was simply to modify and allow for custom badges, and well... 
  - Play!
 
 ***Required files:***
+
  - **0Harmonydll** - version 1
  - **Assembly-CSharp.dll** - Modified assembly-csharp file
  - **BWModLoader.dll** - modloader created by da_google
  
-## Additional notes:
- - All required files will be downloaded automatically by the mod when it runs
- - I suck at this
- - Enjoy my crappy code
+## Additional note(s)
 
-## Known issues
+ - All required files and assets will be downloaded automatically by the mod when it runs
+
+### Known issues
+
  - Flags may not update properly
  - Closed sails may not update properly
  - Swivels may not update correctly
