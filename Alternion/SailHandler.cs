@@ -101,11 +101,11 @@ namespace Alternion
         /// <param name="renderer">Sail Renderer</param>
         static void resetSail(cachedShip vessel, Renderer renderer)
         {
-            if (vessel.hasChangedSails)
-            {
+            //if (vessel.hasChangedSails)
+            //{
                 renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
                 renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSailsMet);
-            }
+            //}
         }
 
         /// <summary>
@@ -156,6 +156,62 @@ namespace Alternion
                 {
                     yield return new WaitForSeconds(1f);
                 }
+            }
+        }
+
+        public void handleClosedSails(cachedShip vessel, playerObject player)
+        {
+            if (player != null)
+            {
+                Texture newTex;
+                foreach (Renderer renderer in vessel.closedSails)
+                {
+                    Logger.debugLog("#############");
+                    Logger.debugLog(renderer.name);
+                    Logger.debugLog(renderer.transform.parent.name);
+                    Logger.debugLog("#############");
+                    if (mainSailList.Contains("text") && AlternionSettings.useMainSails)
+                    {
+                        // Handle Main Sail
+                        if (theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
+                        {
+                            renderer.material.mainTexture = newTex;
+                        }
+                        else
+                        {
+                            renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        }
+                    }
+                    else if (AlternionSettings.useSecondarySails)
+                    {
+                        // Handle secondary
+                        if (theGreatCacher.Instance.secondarySails.TryGetValue(player.mainSailName, out newTex))
+                        {
+                            renderer.material.mainTexture = newTex;
+                        }
+                        else
+                        {
+                            renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        }
+                    }
+                    else
+                    {
+                        resetClosedSails(vessel);
+                    }
+                }
+            }
+            else
+            {
+                resetClosedSails(vessel);
+            }
+        }
+
+        public void resetClosedSails(cachedShip vessel)
+        {
+            foreach (Renderer renderer in vessel.closedSails)
+            {
+                renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSailsMet);
             }
         }
 
