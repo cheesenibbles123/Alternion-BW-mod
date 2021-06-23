@@ -94,7 +94,7 @@ namespace Alternion
         /// <summary>
         /// Stores all cached swivel skins.
         /// </summary>
-        public Dictionary<string, Texture> swivelSkins = new Dictionary<string, Texture>();
+        // public Dictionary<string, Texture> swivelSkins = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached flags
         /// </summary>
@@ -107,6 +107,8 @@ namespace Alternion
         /// Stores all swivel textures.
         /// </summary>
         public Dictionary<string, Texture> swivels = new Dictionary<string, Texture>();
+
+        public Dictionary<string, skinAttributes> skinAttributes = new Dictionary<string, skinAttributes>();
 
         void Awake()
         {
