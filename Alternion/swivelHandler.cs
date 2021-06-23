@@ -74,32 +74,37 @@ namespace Alternion
         /// <summary>
         /// Update swivel textures
         /// </summary>
-        /// <param name="index">Ship Index</param>
-        void updateSwivel(int index)
+        /// <param name="vessel">Ship</param>
+        /// <param name="player">Captain</param>
+        public void updateSwivels(cachedShip vessel, playerObject player)
         {
-            if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+            if (player != null)
             {
-                string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-                if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                Texture newTex;
+                foreach (Renderer renderer in vessel.Swivels)
                 {
-                    Texture newTex;
-                    foreach (Renderer ren in vessel.Swivels)
+                    if (theGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName,out newTex))
                     {
-                        if (theGreatCacher.Instance.swivels.TryGetValue(steamID, out newTex))
-                        {
-                            ren.material.mainTexture = newTex;
-                        }
-                        if (theGreatCacher.Instance.swivels.TryGetValue(steamID, out newTex))
-                        {
-                            ren.material.SetTexture("_Metallic", newTex);
-                        }
+                        renderer.material.mainTexture = newTex;
+                    }
+                    else
+                    {
+                        renderer.material.mainTexture = theGreatCacher.Instance.defaultSwivel;
+                    }
+
+                    if (theGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
+                    {
+                        renderer.material.SetTexture("_Metallic", newTex);
+                    }
+                    else
+                    {
+                        renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
                     }
                 }
-                else
-                {
-                    resetSwivels(vessel);
-                }
-                
+            }
+            else
+            {
+                resetSwivels(vessel);
             }
         }
 
@@ -107,7 +112,7 @@ namespace Alternion
         /// Resets the swivels to default textures
         /// </summary>
         /// /// <param name="vessel">Cached Ship</param>
-        void resetSwivels(cachedShip vessel)
+        public void resetSwivels(cachedShip vessel)
         {
             if (vessel.hasChangedSwivels)
             {
@@ -116,6 +121,7 @@ namespace Alternion
                     ren.material.mainTexture = theGreatCacher.Instance.defaultSwivel;
                     ren.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
                 }
+                vessel.hasChangedSwivels = false;
             }
         }
 
