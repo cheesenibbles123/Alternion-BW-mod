@@ -85,8 +85,8 @@ namespace Alternion
                 return loadingTextures[imgToUse];
             }catch (Exception e)
             {
-                Log.logger.Log("ERROR GETTING LOADING GUI TEXTURE");
-                Log.logger.Log(e.Message);
+                Logger.debugLog("ERROR GETTING LOADING GUI TEXTURE");
+                Logger.debugLog(e.Message);
                 return Texture2D.whiteTexture;
             }
         }
