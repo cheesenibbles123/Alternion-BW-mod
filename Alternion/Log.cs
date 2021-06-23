@@ -5,12 +5,14 @@ namespace Alternion
     /// <summary>
     /// Logs stuff.
     /// </summary>
-    internal static class Log
-    {
-        static readonly public ModLogger logger = new ModLogger("[Alternion]", ModLoader.LogPath + "\\Alternion.txt");
-    }
+    
     public class Logger
     {
+        internal static class Log
+        {
+            static readonly public ModLogger logger = new ModLogger("[Alternion]", ModLoader.LogPath + "\\Alternion.txt");
+        }
+
         /// <summary>
         /// Always logs, no matter the logging level.
         /// </summary>
