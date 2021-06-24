@@ -108,7 +108,7 @@ namespace Alternion
         /// </summary>
         public Dictionary<string, Texture> swivels = new Dictionary<string, Texture>();
 
-        public Dictionary<string, skinAttributes> skinAttributes = new Dictionary<string, skinAttributes>();
+        public Dictionary<string, weaponSkinAttributes> skinAttributes = new Dictionary<string, weaponSkinAttributes>();
 
         void Awake()
         {

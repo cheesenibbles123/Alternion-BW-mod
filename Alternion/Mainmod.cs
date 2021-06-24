@@ -237,7 +237,7 @@ namespace Alternion
                     if (!flag)
                     {
                         string fullString = "mask_" + player.Value.maskSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("mask_" + player.Value.maskSkinName, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue("mask_" + player.Value.maskSkinName, out weaponSkinAttributes skinInfo);
                         if (AlternionSettings.downloadOnStartup)
                         {
                             if (skinInfo.hasAlb)
@@ -396,7 +396,7 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                     if (!flag)
                     {
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo);
                         if (AlternionSettings.downloadOnStartup)
                         {
                             if (skinInfo.hasAlb)
@@ -479,7 +479,7 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.swivelSkinName);
                     if (!flag)
                     {
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.cannonSkinName, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo);
                         if (AlternionSettings.downloadOnStartup)
                         {
                             if (skinInfo.hasAlb)
@@ -613,7 +613,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "musket_" + player.Value.musketSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -700,7 +700,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -786,7 +786,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -872,7 +872,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -960,7 +960,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1045,7 +1045,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1131,7 +1131,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1216,7 +1216,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1301,7 +1301,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
                         if (AlternionSettings.downloadOnStartup)
                         {
                             if (skinInfo.hasAlb)
@@ -1387,7 +1387,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "axe_" + player.Value.axeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1470,7 +1470,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "rapier_" + player.Value.rapierSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1553,7 +1553,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "dagger_" + player.Value.daggerSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1636,7 +1636,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "bottle_" + player.Value.bottleSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1719,7 +1719,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1802,7 +1802,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "pike_" + player.Value.pikeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1887,7 +1887,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "tomahawk_" + player.Value.tomahawkSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -1970,7 +1970,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2053,7 +2053,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2136,7 +2136,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "healItem_" + player.Value.healItemSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2219,7 +2219,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaCup_" + player.Value.teaCupSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2302,7 +2302,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaWater_" + player.Value.teaWaterSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2385,7 +2385,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "bucket_" + player.Value.bucketSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2458,7 +2458,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "hammer_" + player.Value.hammerSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out skinAttributes skinInfo);
+                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
