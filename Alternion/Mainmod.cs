@@ -187,7 +187,7 @@ namespace Alternion
             foreach (KeyValuePair<string, playerObject> player in theGreatCacher.Instance.players)
             {
                 // I don't think I have ever typed the word "default" as much as I did the last few days
-                Logger.logLow("Player: " + player.Value.steamID);
+
                 // Badges
                 if (player.Value.badgeName != "default")
                 {
@@ -226,7 +226,7 @@ namespace Alternion
 
                     }
                 }
-                Logger.logLow("Badge");
+
                 // Masks
                 if (player.Value.maskSkinName != "default")
                 {
@@ -307,7 +307,6 @@ namespace Alternion
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
                     }
                 }
-                Logger.logLow("Mask");
                 // Sails
                 if (player.Value.sailSkinName != "default")
                 {
@@ -385,7 +384,6 @@ namespace Alternion
                         }
                     }
                 }
-                Logger.logLow("Sails");
 
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
@@ -473,7 +471,6 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
                     }
                 }
-                Logger.debugLog("Cannon");
                 if (player.Value.swivelSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains(player.Value.swivelSkinName);
@@ -545,7 +542,6 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.swivelSkinName);
                     }
                 }
-                Logger.logLow("Swivel");
 
                 // Flags
                 if (player.Value.flagNavySkinName != "default")
@@ -608,7 +604,6 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
                 }
-                Logger.logLow("Flags");
 
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
@@ -962,7 +957,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Primaries");
 
                 // Secondary Weapons
                 if (player.Value.standardPistolSkinName != "default")
@@ -1400,7 +1394,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Secondaries");
 
                 // Melee weapons
                 if (player.Value.axeSkinName != "default")
@@ -1913,7 +1906,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Melee");
 
                 // Specials
                 if (player.Value.tomahawkSkinName != "default")
@@ -2497,7 +2489,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Special");
 
                 // Hammer
                 if (player.Value.hammerSkinName != "default")
@@ -2585,7 +2576,6 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Hammer");
 
                 if (player.Value.atlas01SkinName != "default")
                 {
@@ -2638,7 +2628,7 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-                Logger.logLow("Atlas");
+
                 count++;
                 float newPercentage = 20.0f + (60.0f * ((float)count / theGreatCacher.Instance.players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
