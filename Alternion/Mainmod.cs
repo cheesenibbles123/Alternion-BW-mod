@@ -122,7 +122,7 @@ namespace Alternion
         private IEnumerator loadSkinChecks()
         {
             yield return new WaitForSeconds(0.1f);
-            WWW www = new WWW(mainUrl + "weaponSkins.json");
+            WWW www = new WWW(mainUrl + "skinAttributes.json");
             yield return www;
 
             string[] json = www.text.Split('&');
