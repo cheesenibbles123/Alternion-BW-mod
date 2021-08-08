@@ -122,20 +122,17 @@ namespace Alternion
         private IEnumerator loadSkinChecks()
         {
             yield return new WaitForSeconds(0.1f);
-#if DEBUG
-            WWW www = new WWW(mainUrl + "attributes.json");
+            WWW www = new WWW(mainUrl + "weaponSkins.json");
             yield return www;
 
             string[] json = www.text.Split('&');
-
             for (int i = 0; i < json.Length; i++)
             {
                 // I didn't want to do this, but unity has forced my hand
-                skinAttributes skin = JsonUtility.FromJson<skinAttributes>(json[i]);
+                weaponSkinAttributes skin = JsonUtility.FromJson<weaponSkinAttributes>(json[i]);
                 theGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
                 LoadingBar.updatePercentage(10 + (10 * ((float)i / (float)json.Length)), "Downloading skinInfo...");
             }
-#endif
             StartCoroutine(downloadTextures());
         }
 
@@ -190,7 +187,7 @@ namespace Alternion
             foreach (KeyValuePair<string, playerObject> player in theGreatCacher.Instance.players)
             {
                 // I don't think I have ever typed the word "default" as much as I did the last few days
-
+                Logger.logLow("Player: " + player.Value.steamID);
                 // Badges
                 if (player.Value.badgeName != "default")
                 {
@@ -229,7 +226,7 @@ namespace Alternion
 
                     }
                 }
-
+                Logger.logLow("Badge");
                 // Masks
                 if (player.Value.maskSkinName != "default")
                 {
@@ -283,35 +280,34 @@ namespace Alternion
                                 }
                             }
                         }
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullString, texturesFilePath + "MaskSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
+                            if (skinInfo.hasAlb)
                             {
-                                theGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
+                                newTex = loadTexture(fullString, texturesFilePath + "MaskSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    theGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
+                                }
                             }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullString + "_met", texturesFilePath + "MaskSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
+                            if (skinInfo.hasMet)
                             {
-                                theGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
+                                newTex = loadTexture(fullString + "_met", texturesFilePath + "MaskSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    theGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
+                                }
                             }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullString + "_nrm", texturesFilePath + "MaskSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
+                            if (skinInfo.hasNrm)
                             {
-                                theGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
+                                newTex = loadTexture(fullString + "_nrm", texturesFilePath + "MaskSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    theGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
+                                }
                             }
-                        }
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
                     }
                 }
-
+                Logger.logLow("Mask");
                 // Sails
                 if (player.Value.sailSkinName != "default")
                 {
@@ -389,6 +385,7 @@ namespace Alternion
                         }
                     }
                 }
+                Logger.logLow("Sails");
 
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
@@ -396,153 +393,159 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                     if (!flag)
                     {
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo);
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo))
                         {
-                            if (skinInfo.hasAlb)
+                            if (AlternionSettings.downloadOnStartup)
                             {
-                                www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
-                                yield return www;
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + ".png");
+                                    yield return www;
 
-                                try
-                                {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
+                                    try
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Logger.debugLog(e.Message);
+                                    }
                                 }
-                                catch (Exception e)
+
+                                if (skinInfo.hasMet)
                                 {
-                                    Logger.debugLog(e.Message);
+                                    www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + player.Value.cannonSkinName);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + player.Value.cannonSkinName);
+                                    }
                                 }
                             }
-
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + player.Value.cannonSkinName);
+                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName, newTex);
                                 }
                             }
-
+                            if (skinInfo.hasMet)
+                            {
+                                newTex = loadTexture(player.Value.cannonSkinName + "_met", texturesFilePath + "CannonSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
+                                }
+                            }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(player.Value.cannonSkinName + "_nrm", texturesFilePath + "CannonSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + player.Value.cannonSkinName);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(player.Value.cannonSkinName + "_met", texturesFilePath + "CannonSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(player.Value.cannonSkinName + "_nrm", texturesFilePath + "CannonSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(player.Value.cannonSkinName);
                     }
                 }
+                Logger.debugLog("Cannon");
                 if (player.Value.swivelSkinName != "default")
                 {
                     flag = alreadyDownloaded.Contains(player.Value.swivelSkinName);
                     if (!flag)
                     {
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo);
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.swivelSkinName, out weaponSkinAttributes skinInfo))
                         {
-                            if (skinInfo.hasAlb)
+                            if (AlternionSettings.downloadOnStartup)
                             {
-                                www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + ".png");
-                                yield return www;
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + ".png");
+                                    yield return www;
 
-                                try
-                                {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + ".png", bytes);
+                                    try
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + ".png", bytes);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Logger.debugLog(e.Message);
+                                    }
                                 }
-                                catch (Exception e)
+
+                                if (skinInfo.hasMet)
                                 {
-                                    Logger.debugLog(e.Message);
+                                    www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + player.Value.swivelSkinName);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + player.Value.swivelSkinName);
+                                    }
                                 }
                             }
-
-                            if (skinInfo.hasMet)
+                            newTex = loadTexture(player.Value.swivelSkinName, texturesFilePath + "SwivelSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
                             {
-                                www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
-                                {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + player.Value.swivelSkinName);
-                                }
+                                theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
                             }
-
-                            if (skinInfo.hasNrm)
+                            newTex = loadTexture(player.Value.swivelSkinName + "_met", texturesFilePath + "SwivelSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
                             {
-                                www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
-                                {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + player.Value.swivelSkinName);
-                                }
+                                theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
                             }
-                        }
-                        newTex = loadTexture(player.Value.swivelSkinName, texturesFilePath + "SwivelSkins/", 2048, 2048);
-                        if (newTex.name != "FAILED")
-                        {
-                            theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
-                        }
-                        newTex = loadTexture(player.Value.swivelSkinName + "_met", texturesFilePath + "SwivelSkins/", 2048, 2048);
-                        if (newTex.name != "FAILED")
-                        {
-                            theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
                         }
                         alreadyDownloaded.Add(player.Value.swivelSkinName);
                     }
                 }
+                Logger.logLow("Swivel");
 
                 // Flags
                 if (player.Value.flagNavySkinName != "default")
@@ -605,6 +608,7 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
                 }
+                Logger.logLow("Flags");
 
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
@@ -613,82 +617,82 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "musket_" + player.Value.musketSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
+
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -700,81 +704,83 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
+
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -786,81 +792,83 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
+
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -872,86 +880,89 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
+
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
+                Logger.logLow("Primaries");
 
                 // Secondary Weapons
                 if (player.Value.standardPistolSkinName != "default")
@@ -960,80 +971,82 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1045,81 +1058,83 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
+
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1131,80 +1146,82 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1216,80 +1233,82 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1301,84 +1320,87 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
-
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
-
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
+                Logger.logLow("Secondaries");
 
                 // Melee weapons
                 if (player.Value.axeSkinName != "default")
@@ -1387,78 +1409,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "axe_" + player.Value.axeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1470,78 +1494,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "rapier_" + player.Value.rapierSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1553,78 +1579,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "dagger_" + player.Value.daggerSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1636,78 +1664,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "bottle_" + player.Value.bottleSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1719,78 +1749,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1802,83 +1834,86 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "pike_" + player.Value.pikeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
+                Logger.logLow("Melee");
 
                 // Specials
                 if (player.Value.tomahawkSkinName != "default")
@@ -1887,78 +1922,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "tomahawk_" + player.Value.tomahawkSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -1970,78 +2007,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -2053,78 +2092,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -2136,78 +2177,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "healItem_" + player.Value.healItemSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -2219,78 +2262,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaCup_" + player.Value.teaCupSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -2302,78 +2347,80 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaWater_" + player.Value.teaWaterSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -2450,6 +2497,7 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
+                Logger.logLow("Special");
 
                 // Hammer
                 if (player.Value.hammerSkinName != "default")
@@ -2458,83 +2506,86 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "hammer_" + player.Value.hammerSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
-
-                        if (AlternionSettings.downloadOnStartup)
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
+
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                            }
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + ".png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
-                                }
-                                else
-                                {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
-                                yield return www;
-
-                                if (string.IsNullOrEmpty(www.error))
+                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
-                                else
-                                {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
-                                }
-                            }
-                        }
-                        if (skinInfo.hasAlb)
-                        {
-                            newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
-                            }
-                        }
-                        if (skinInfo.hasMet)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
-                            }
-                        }
-                        if (skinInfo.hasNrm)
-                        {
-                            newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
-                            {
-                                theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
+                Logger.logLow("Hammer");
 
                 if (player.Value.atlas01SkinName != "default")
                 {
@@ -2587,11 +2638,12 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
+                Logger.logLow("Atlas");
                 count++;
                 float newPercentage = 20.0f + (60.0f * ((float)count / theGreatCacher.Instance.players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
+
             // outputPlayerDict();
             Logger.logLow("Complete download!");
             setupMainMenu();
