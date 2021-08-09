@@ -63,15 +63,13 @@ namespace Alternion.SkinHandlers
                                 int index = GameMode.getParentIndex(__instance.transform.root);
                                 string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
-                                if (steamID != null && theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                                cachedShip vessel = theGreatCacher.getCachedShip(index.ToString());
+                                vessel.mortars.Add(renderers[i]);
+                                Instance.handleDefaults(renderers[i]);
+
+                                if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                                 {
-                                    cachedShip vessel = theGreatCacher.getCachedShip(index.ToString());
-                                    if (vessel != null)
-                                    {
-                                        vessel.mortars.Add(renderers[i]);
-                                        Instance.handleDefaults(renderers[i]);
-                                        Instance.applySkin(renderers[i], player.mortarSkinName);
-                                    }
+                                    Instance.applySkin(renderers[i], player.mortarSkinName);
                                 }
                                 
                             }
