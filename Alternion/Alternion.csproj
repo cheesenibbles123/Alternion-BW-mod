@@ -62,17 +62,19 @@
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
     <Compile Include="birbHandler.cs" />
+    <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="SkinHandlers\CannonHandler.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
     <Compile Include="MainMenuCL.cs" />
+    <Compile Include="SkinHandlers\mortarHandler.cs" />
     <Compile Include="SkinHandlers\SailHandler.cs" />
-    <Compile Include="SkinAttributes.cs" />
+    <Compile Include="Structs\SkinAttributes.cs" />
     <Compile Include="SkinHandlers\swivelHandler.cs" />
     <Compile Include="theGreatCacher.cs" />
-    <Compile Include="cachedShip.cs" />
+    <Compile Include="Structs\cachedShip.cs" />
     <Compile Include="LoadingBar.cs" />
     <Compile Include="RuntimeUpdater.cs" />
-    <Compile Include="playerObject.cs" />
+    <Compile Include="Structs\playerObject.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Mainmod.cs" />
     <Compile Include="ModGUI.cs" />
