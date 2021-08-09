@@ -11,19 +11,23 @@ namespace Alternion
         /// <summary>
         /// Check for if the cannons have been changed, or are default
         /// </summary>
-        public bool hasChangedCannons;
+        public bool hasChangedCannons = false;
         /// <summary>
         /// Check for if the sails have been changed, or are default
         /// </summary>
-        public bool hasChangedSails;
+        public bool hasChangedSails = false;
         /// <summary>
         /// Check for if the flag has been changed, or is default
         /// </summary>
-        public bool hasChangedFlag;
+        public bool hasChangedFlag = false;
         /// <summary>
         /// Check for if the flag has been changed, or is default
         /// </summary>
-        public bool hasChangedSwivels;
+        public bool hasChangedSwivels = false;
+        /// <summary>
+        /// Check for if the flag has been changed, or is default
+        /// </summary>
+        public bool hasChangedMortars = false;
         /// <summary>
         /// Check for if the ship is navy or pirate (navy = true, pirate = false)
         /// </summary>
@@ -48,6 +52,10 @@ namespace Alternion
         /// Ship Closed sails renderer
         /// </summary>
         public List<Renderer> closedSails = new List<Renderer>();
+        /// <summary>
+        /// Mortar renderers
+        /// </summary>
+        public List<Renderer> mortars = new List<Renderer>();
         /// <summary>
         /// Stores all Secondary Sails.
         /// </summary>
