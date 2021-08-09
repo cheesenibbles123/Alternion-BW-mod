@@ -547,7 +547,7 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.mortarSkinName);
                     if (!flag)
                     {
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -602,12 +602,12 @@ namespace Alternion
                             newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.swivels.Add(player.Value.mortarSkinName, newTex);
+                                theGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
                             }
                             newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.swivels.Add(player.Value.mortarSkinName + "_met", newTex);
+                                theGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
                             }
                         }
                         alreadyDownloaded.Add(player.Value.mortarSkinName);
