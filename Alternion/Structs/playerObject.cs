@@ -28,6 +28,7 @@ namespace Alternion
         /// Player Main sail skin.
         /// </summary>
         public string mainSailName;
+
         /// <summary>
         /// Player Cannon skin.
         /// </summary>
@@ -36,6 +37,10 @@ namespace Alternion
         /// Player swivel Skin
         /// </summary>
         public string swivelSkinName;
+        /// <summary>
+        /// Player mortar Skin
+        /// </summary>
+        public string mortarSkinName;
 
         /// <summary>
         /// Player Pirate Flag Skin
