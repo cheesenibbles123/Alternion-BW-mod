@@ -89,7 +89,7 @@ namespace Alternion
         /// <summary>
         /// Website file name.
         /// </summary>
-        public static string remoteFile = "playerList.json";
+        public static string remoteFile = "playerList2.json";
 
         void Start()
         {
@@ -126,6 +126,7 @@ namespace Alternion
             useSecondarySails = true;
             useWeaponSkins = true;
             useCannonSkins = true;
+            useMortarSkins = true;
             downloadOnStartup = true;
             updateDuringRuntime = true;
             showFlags = true;
@@ -154,6 +155,7 @@ namespace Alternion
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
             streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
+            streamWriter.WriteLine("useMortarSkins=" + checkBool(useMortarSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
@@ -286,6 +288,16 @@ namespace Alternion
                                 else
                                 {
                                     useSwivelSkins = false;
+                                }
+                                break;
+                            case "useMortarSkins":
+                                if (Convert.ToInt32(splitArr[1]) == 1)
+                                {
+                                    useMortarSkins = true;
+                                }
+                                else
+                                {
+                                    useMortarSkins = false;
                                 }
                                 break;
                             case "downloadOnStartup":
