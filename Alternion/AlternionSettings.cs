@@ -50,6 +50,10 @@ namespace Alternion
         /// </summary>
         public static bool useSwivelSkins;
         /// <summary>
+        /// Display mortar skins.
+        /// </summary>
+        public static bool useMortarSkins;
+        /// <summary>
         /// Download assets on startup.
         /// </summary>
         public static bool downloadOnStartup;
