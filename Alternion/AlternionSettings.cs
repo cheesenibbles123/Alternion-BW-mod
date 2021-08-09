@@ -366,6 +366,7 @@ namespace Alternion
             streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
             streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
             streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
+            streamWriter.WriteLine("useMortarSkins=" + checkBool(useMortarSkins));
             streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
