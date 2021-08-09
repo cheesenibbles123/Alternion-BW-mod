@@ -165,7 +165,7 @@ namespace Alternion
 
         void Update()
         {
-            if (!óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
+            if (óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1) && menuCharacter)
             {
                 // If it has been found
                 // Rotation code copied from CharacterCustomizationUI
