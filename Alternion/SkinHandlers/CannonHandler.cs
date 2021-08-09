@@ -165,7 +165,7 @@ namespace Alternion
             {
                 int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
 
-                if (__instance.æïìçñðåììêç && GameMode.Instance.teamCaptains[index])
+                if (GameMode.Instance.teamCaptains[index] && __instance.æïìçñðåììêç)
                 {
                     checkCached(__instance, index, GameMode.Instance.teamCaptains[index].steamID.ToString());
                     doesntExist = false;
