@@ -12,11 +12,11 @@ namespace Alternion
     [Mod]
     public class AlternionSettings : MonoBehaviour
     {
-        public static int loggingLevel;
+        public static int loggingLevel = 0;
         /// <summary>
         /// Use Tournamentwake badges.
         /// </summary>
-        public static bool showTWBadges;
+        public static bool showTWBadges = false;
         /// <summary>
         /// Use Kickstarter badges.
         /// </summary>
@@ -24,43 +24,43 @@ namespace Alternion
         /// <summary>
         /// Display custom badges.
         /// </summary>
-        public static bool useBadges;
+        public static bool useBadges = true;
         /// <summary>
         /// Display Gold mask skins.
         /// </summary>
-        public static bool useMaskSkins;
+        public static bool useMaskSkins = true;
         /// <summary>
         /// Display Main sail skins.
         /// </summary>
-        public static bool useMainSails;
+        public static bool useMainSails = true;
         /// <summary>
         /// Display secondary sail skins.
         /// </summary>
-        public static bool useSecondarySails;
+        public static bool useSecondarySails = true;
         /// <summary>
         /// Display weapon skins.
         /// </summary>
-        public static bool useWeaponSkins;
+        public static bool useWeaponSkins = true;
         /// <summary>
         /// Display cannon skins.
         /// </summary>
-        public static bool useCannonSkins;
+        public static bool useCannonSkins = true;
         /// <summary>
         /// Display swivel skins.
         /// </summary>
-        public static bool useSwivelSkins;
+        public static bool useSwivelSkins = true;
         /// <summary>
         /// Display mortar skins.
         /// </summary>
-        public static bool useMortarSkins;
+        public static bool useMortarSkins = true;
         /// <summary>
         /// Download assets on startup.
         /// </summary>
-        public static bool downloadOnStartup;
+        public static bool downloadOnStartup = false;
         /// <summary>
         /// Config menu toggle key.
         /// </summary>
-        public static string configKeyInput;
+        public static string configKeyInput = "]";
         /// <summary>
         /// Current config menu page. 
         /// </summary>
@@ -76,11 +76,11 @@ namespace Alternion
         /// <summary>
         /// Update players during runtime.
         /// </summary>
-        public static bool updateDuringRuntime;
+        public static bool updateDuringRuntime = false;
         /// <summary>
-        /// Use Tournamentwake badges.
+        /// Use Flags.
         /// </summary>
-        public static bool showFlags;
+        public static bool showFlags = true;
 
         /// <summary>
         /// Config file location.
