@@ -2756,6 +2756,8 @@ namespace Alternion
             // Main Sails
             // Functioning cannons
             // Destroyed cannons
+            // Swivels
+            // Mortars
             foreach (KeyValuePair<string, cachedShip> individualShip in theGreatCacher.Instance.ships)
             {
                 // Only reset if sail texture has been set
@@ -2802,6 +2804,16 @@ namespace Alternion
                     {
                         swivel.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultSwivel);
                         swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                    }
+                }
+
+                // Only reset if mortar texture has been set
+                if (theGreatCacher.Instance.setMortarDefaults)
+                {
+                    foreach (Renderer mortar in individualShip.Value.mortars)
+                    {
+                        mortar.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultMortar);
+                        mortar.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
                     }
                 }
 
