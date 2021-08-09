@@ -3011,6 +3011,41 @@ namespace Alternion
                         {
                             swivelHandler.Instance.resetSwivels(mightyVessel);
                         }
+
+                        // Only apply new texture if config has mortar textures enabled
+                        if (AlternionSettings.useMortarSkins)
+                        {
+                            for (int i = 0; i < mightyVessel.mortars.Count; i++)
+                            {
+                                if (theGreatCacher.Instance.mortarSkins.TryGetValue(player.mortarSkinName, out newTex))
+                                {
+                                    mightyVessel.mortars[i].material.mainTexture = newTex;
+                                }
+                                else
+                                {
+                                    mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
+                                }
+
+                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                {
+                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", newTex);
+                                }
+                                else
+                                {
+                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedMortars )
+                        {
+                            for (int i = 0; i < mightyVessel.mortars.Count; i++)
+                            {
+                                mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortar);
+                            }
+
+                            mightyVessel.hasChangedMortars = false;
+                        }
                     }
                     else
                     {
@@ -3062,6 +3097,16 @@ namespace Alternion
                             mightyVessel.hasChangedSails = false;
                         }
                         swivelHandler.Instance.resetSwivels(mightyVessel);
+                        if (mightyVessel.hasChangedMortars)
+                        {
+                            for (int i=0; i < mightyVessel.mortars.Count; i++)
+                            {
+                                mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortar);
+                            }
+
+                            mightyVessel.hasChangedMortars = false;
+                        }
                     }
                 }
             }
