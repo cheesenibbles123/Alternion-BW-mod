@@ -78,7 +78,7 @@ namespace Alternion.SkinHandlers
             {
                 if (AlternionSettings.useMortarSkins)
                 {
-                    Renderer[] renderers = __instance.transform.parent.GetComponentsInChildren<Renderer>(); //.transform.parent.parent.GetComponentsInChildren<Renderer>();
+                    Renderer[] renderers = __instance.transform.parent.GetComponentsInChildren<Renderer>();
                     for (int i = 0; i < renderers.Length; i++)
                     {
                         try
