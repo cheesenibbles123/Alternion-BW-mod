@@ -20,6 +20,10 @@ namespace Alternion
         /// </summary>
         public bool setSwivelDefaults = false;
         /// <summary>
+        /// Check for if the default mortars have been set or not
+        /// </summary>
+        public bool setMortarDefaults = false;
+        /// <summary>
         /// Check for if the default sails have been set or not
         /// </summary>
         public bool setSailDefaults = false;
@@ -39,6 +43,14 @@ namespace Alternion
         /// Default swivel met.
         /// </summary>
         public Texture defaultSwivelMet;
+        /// <summary>
+        /// Default swivel.
+        /// </summary>
+        public Texture defaultMortar;
+        /// <summary>
+        /// Default swivel met.
+        /// </summary>
+        public Texture defaultMortarMet;
         /// <summary>
         /// Default sail texture.
         /// </summary>
@@ -92,9 +104,9 @@ namespace Alternion
         /// </summary>
         public Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
         /// <summary>
-        /// Stores all cached swivel skins.
+        /// Stores all cached mortar skins.
         /// </summary>
-        // public Dictionary<string, Texture> swivelSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Texture> mortarSkins = new Dictionary<string, Texture>();
         /// <summary>
         /// Stores all cached flags
         /// </summary>
@@ -169,6 +181,7 @@ namespace Alternion
             Instance.mainSails.Clear();
             Instance.secondarySails.Clear();
             Instance.cannonSkins.Clear();
+            Instance.mortarSkins.Clear();
             Instance.players.Clear();
             Mainmod.Instance.createDirectories();
         }
