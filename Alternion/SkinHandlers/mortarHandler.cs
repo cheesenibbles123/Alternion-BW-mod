@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Harmony;
+using BWModLoader;
 
 namespace Alternion.SkinHandlers
 {
+    [Mod]
     public class mortarHandler : MonoBehaviour
     {
         public static mortarHandler Instance;
@@ -36,6 +38,29 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        private IEnumerator wasteTime(Renderer renderer, int index, cachedShip vessel)
+        {
+            yield return new WaitForSeconds(.1f);
+            bool notFoundCaptain = true;
+            while (notFoundCaptain)
+            {
+                if (GameMode.Instance.teamCaptains[index] != null)
+                {
+                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+
+                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                    {
+                        applySkin(renderer, player.mortarSkinName);
+                    }
+                    break;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(1f);
+                }
+            }
+        }
+
         void handleDefaults(Renderer renderer)
         {
             if (!theGreatCacher.Instance.setMortarDefaults)
@@ -60,25 +85,19 @@ namespace Alternion.SkinHandlers
                         {
                             if (renderers[i].name == "prp_mortar")
                             {
-                                int index = GameMode.getParentIndex(__instance.transform.root);
-                                string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-
-                                cachedShip vessel = theGreatCacher.getCachedShip(index.ToString());
-                                vessel.mortars.Add(renderers[i]);
                                 Instance.handleDefaults(renderers[i]);
 
-                                if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
-                                {
-                                    Instance.applySkin(renderers[i], player.mortarSkinName);
-                                }
-                                
+                                int index = GameMode.getParentIndex(__instance.transform.root);
+                                cachedShip vessel = theGreatCacher.getCachedShip(index.ToString());
+                                vessel.mortars.Add(renderers[i]);
+
+                                Instance.StartCoroutine(Instance.wasteTime(renderers[i], index, vessel));                                
                             }
                         }catch(Exception e)
                         {
                             // Cause for some reason a bunch of these renderers give the "object-reference-not-set-to-an-instance-of-an-object" error
                         }
                     }
-
                 }
             }
         }
