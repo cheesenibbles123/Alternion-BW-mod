@@ -185,5 +185,19 @@ namespace Alternion
             Instance.players.Clear();
             Mainmod.Instance.createDirectories();
         }
+
+        public static cachedShip getCachedShip(string team)
+        {
+            if (Instance.ships.TryGetValue(team, out cachedShip ship))
+            {
+                return ship;
+            }
+            else
+            {
+                cachedShip vessel = new cachedShip();
+                Instance.ships.Add(team, vessel);
+                return vessel;
+            }
+        }
     }
 }
