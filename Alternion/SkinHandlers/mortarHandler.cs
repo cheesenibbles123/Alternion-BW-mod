@@ -12,6 +12,9 @@ namespace Alternion.SkinHandlers
     [Mod]
     public class mortarHandler : MonoBehaviour
     {
+        /// <summary>
+        /// Mortar Handler instance
+        /// </summary>
         public static mortarHandler Instance;
         void Awake()
         {
@@ -25,6 +28,11 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        /// <summary>
+        /// Applies skin to mortar
+        /// </summary>
+        /// <param name="renderer">Mortar renderer</param>
+        /// <param name="skinName">Player skin name</param>
         void applySkin(Renderer renderer, string skinName)
         {
             Texture img;
@@ -38,6 +46,13 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        /// <summary>
+        /// Waits for captain to be set before applying skin
+        /// </summary>
+        /// <param name="renderer">Mortar renderer</param>
+        /// <param name="index">Team index</param>
+        /// <param name="vessel">Cached ship</param>
+        /// <returns></returns>
         private IEnumerator wasteTime(Renderer renderer, int index, cachedShip vessel)
         {
             yield return new WaitForSeconds(.1f);
@@ -61,6 +76,10 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        /// <summary>
+        /// Sets up default skins to be cached
+        /// </summary>
+        /// <param name="renderer">Mortar renderer</param>
         void handleDefaults(Renderer renderer)
         {
             if (!theGreatCacher.Instance.setMortarDefaults)
@@ -71,9 +90,16 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        /// <summary>
+        /// Mortar Use patch class
+        /// </summary>
         [HarmonyPatch(typeof(MortarUse), "Start")]
         static class mortarUsePatch
         {
+            /// <summary>
+            /// Mortar patch class postfix
+            /// </summary>
+            /// <param name="__instance">MortarUse instance</param>
             static void Postfix(MortarUse __instance)
             {
                 if (AlternionSettings.useMortarSkins)
