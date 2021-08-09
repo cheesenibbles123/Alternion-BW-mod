@@ -569,7 +569,6 @@ namespace Alternion
                         if (newTex.name != "FAILED")
                         {
                             theGreatCacher.Instance.flags.Add(player.Value.flagNavySkinName, newTex);
-                            Logger.logLow($"Added -{player.Value.flagNavySkinName}-");
                         }
                         alreadyDownloaded.Add(player.Value.flagNavySkinName);
                     }
@@ -599,7 +598,6 @@ namespace Alternion
                         if (newTex.name != "FAILED")
                         {
                             theGreatCacher.Instance.flags.Add(player.Value.flagPirateSkinName, newTex);
-                            Logger.logLow($"Added -{player.Value.flagPirateSkinName}-");
                         }
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
