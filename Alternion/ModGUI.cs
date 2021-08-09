@@ -56,7 +56,7 @@ namespace AlternionGUI
         /// <summary>
         /// Main UI box X,Y Width,Height parameters
         /// </summary>
-        static Vector4 boxSettings = new Vector4(20, 60, 250, 360);
+        static Vector4 boxSettings = new Vector4(20, 60, 250, 400);
 
         /// <summary>
         /// Start X,Y of Toggle Buttons
@@ -332,6 +332,17 @@ namespace AlternionGUI
                 if (AlternionSettings.useSwivelSkins)
                 {
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+
+                //Mortar Skins
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 5), buttonWH.x, buttonWH.y), "Mortar Skins"))
+                {
+                    AlternionSettings.useMortarSkins = !AlternionSettings.useMortarSkins;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 5), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.useMortarSkins)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 5), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
             } // Ship
             else if (AlternionSettings.configMenuPageNumber == 3)
