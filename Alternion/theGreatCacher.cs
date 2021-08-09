@@ -150,13 +150,11 @@ namespace Alternion
             {
                 Instance.navyFlag = newTexture;
                 Instance.setNavyFlag = true;
-                Logger.logLow("Set navy default flag");
             }
             else if (!Instance.setPirateFlag)
             {
                 Instance.pirateFlag = newTexture;
                 Instance.setPirateFlag = true;
-                Logger.logLow("Set pirate default flag");
             }
         }
 
