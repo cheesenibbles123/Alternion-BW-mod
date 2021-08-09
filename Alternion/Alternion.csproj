@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
-    <Compile Include="birbHandler.cs" />
+    <Compile Include="Fixes\birbHandler.cs" />
     <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="SkinHandlers\CannonHandler.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
