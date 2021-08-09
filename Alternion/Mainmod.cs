@@ -542,7 +542,77 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.swivelSkinName);
                     }
                 }
+                if (player.Value.mortarSkinName != "default")
+                {
+                    flag = alreadyDownloaded.Contains(player.Value.mortarSkinName);
+                    if (!flag)
+                    {
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
+                        {
+                            if (AlternionSettings.downloadOnStartup)
+                            {
+                                if (skinInfo.hasAlb)
+                                {
+                                    www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + ".png");
+                                    yield return www;
 
+                                    try
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + ".png", bytes);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Logger.debugLog(e.Message);
+                                    }
+                                }
+
+                                if (skinInfo.hasMet)
+                                {
+                                    www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_met.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_met.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No met found for " + player.Value.mortarSkinName);
+                                    }
+                                }
+
+                                if (skinInfo.hasNrm)
+                                {
+                                    www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No nrm found for " + player.Value.mortarSkinName);
+                                    }
+                                }
+                            }
+                            newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
+                            {
+                                theGreatCacher.Instance.swivels.Add(player.Value.mortarSkinName, newTex);
+                            }
+                            newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
+                            {
+                                theGreatCacher.Instance.swivels.Add(player.Value.mortarSkinName + "_met", newTex);
+                            }
+                        }
+                        alreadyDownloaded.Add(player.Value.mortarSkinName);
+                    }
+                }
                 // Flags
                 if (player.Value.flagNavySkinName != "default")
                 {
@@ -2652,6 +2722,7 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SwivelSkins/");
+                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MortarSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MaskSkins/");
                 Directory.CreateDirectory(Application.dataPath + texturesFilePath + "Flags/");
             }
