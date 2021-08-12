@@ -9,7 +9,7 @@ using System.Collections;
 
 namespace Alternion.Fixes
 {
-#if DEBUG
+#if EXTRAS
     public class botPlayerChanges : MonoBehaviour
     {
         public static botPlayerChanges Instance;

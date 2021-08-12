@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Alternion.Fixes
 {
-#if DEBUG
+#if EXTRAS
+
     public class birbHandler : MonoBehaviour
     {
         public static birbHandler Instance;

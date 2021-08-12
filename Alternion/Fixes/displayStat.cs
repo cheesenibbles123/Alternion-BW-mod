@@ -3,7 +3,7 @@ using Steamworks;
 
 namespace Alternion.Fixes
 {
-#if DEBUG
+#if EXTRAS
     class displayStat
     {
         
