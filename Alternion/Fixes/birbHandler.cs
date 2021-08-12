@@ -51,7 +51,7 @@ namespace Alternion.Fixes
         /// Harmony patch to disable bird in first person
         /// </summary>
         [HarmonyPatch(typeof(PlayerInfo), "setWinner")]
-        static class isWinnerPatch
+        class isWinnerPatch
         {
             static void Postfx(PlayerInfo __instance, ïçîìäîóäìïæ.åéðñðçîîïêç info)
             {

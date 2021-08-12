@@ -6,7 +6,7 @@ namespace Alternion.Fixes
     {
 
         [HarmonyPatch(typeof(GameMode), "getPlayerInfo")]
-        static class getPlayerInfoPatch
+        class getPlayerInfoPatch
         {
             /// <summary>
             /// Patches into getPlayerInfo and removes references to 'game', aka calls for when a bot does something

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
+﻿using Harmony;
 using Steamworks;
 
 namespace Alternion.Fixes
@@ -13,7 +8,7 @@ namespace Alternion.Fixes
     {
         
         [HarmonyPatch(typeof(PlayerInfo), "setupRemotePlayer")]
-        static class displayStatPatch
+        class displayStatPatch
         {
             static void Postfix(PlayerInfo __instance, string pName, int t, int s, int k, int d, int a, bool back, string dStat, int dMedal, int ks, float kd, short wins, float wl, short bm, short sm, short gm)
             {
@@ -24,7 +19,7 @@ namespace Alternion.Fixes
         }
 
         [HarmonyPatch(typeof(AccoladeItem), "ëîéæìêìëéæï")]
-        static class accoladeSetupPatch
+        class accoladeSetupPatch
         {
             static void Postfix(AccoladeItem __instance, string óéíïñîèëëêð, int òææóïíéñåïñ, string çìîñìëðêëéò, CSteamID ìçíêääéïíòç)
             {

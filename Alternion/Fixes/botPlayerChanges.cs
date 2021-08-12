@@ -193,7 +193,7 @@ namespace Alternion.Fixes
         }
 
         [HarmonyPatch(typeof(BotPlayer), "Unload")]
-        static class botPlayerUnloadPatch
+        class botPlayerUnloadPatch
         {
             static bool Prefix(BotPlayer __instance)
             {

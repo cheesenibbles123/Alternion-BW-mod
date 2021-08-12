@@ -178,7 +178,7 @@ namespace Alternion.SkinHandlers
         /// Weapon skin patch (Third person)
         /// </summary>
         [HarmonyPatch(typeof(WeaponRender), "ìæóòèðêççæî")]
-        static class goldApplyPatch
+        class goldApplyPatch
         {
             static void Postfix(WeaponRender __instance)
             {
@@ -204,7 +204,7 @@ namespace Alternion.SkinHandlers
         /// Mask skin patch
         /// </summary>
         [HarmonyPatch(typeof(Character), "setGoldMask")]
-        static class goldMaskPatch
+        class goldMaskPatch
         {
             static void Postfix(Character __instance)
             {
@@ -234,7 +234,7 @@ namespace Alternion.SkinHandlers
         /// Weapon skin patch (First person)
         /// </summary>
         [HarmonyPatch(typeof(WeaponRender), "Start")]
-        static class weaponSkinpatch1stPerson
+        class weaponSkinpatch1stPerson
         {
             static void Postfix(WeaponRender __instance)
             {

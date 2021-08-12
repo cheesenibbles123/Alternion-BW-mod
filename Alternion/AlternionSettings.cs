@@ -2,7 +2,6 @@
 using BWModLoader;
 using System.IO;
 using UnityEngine;
-using AlternionGUI;
 
 namespace Alternion
 {

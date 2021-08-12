@@ -213,7 +213,7 @@ namespace Alternion.SkinHandlers
         /// Harmony patch to "Start" for CannonDestroy
         /// </summary>
         [HarmonyPatch(typeof(CannonDestroy), "Start")]
-        static class cannonDestroySkinPatch
+        class cannonDestroySkinPatch
         {
             static void Postfix(CannonDestroy __instance)
             {
@@ -228,7 +228,7 @@ namespace Alternion.SkinHandlers
         /// Hook into cannonLOD start
         /// </summary>
         [HarmonyPatch(typeof(OnlyEnableOnMyShip), "Start")]
-        static class OnlyEnableOnMyShipPatch
+        class OnlyEnableOnMyShipPatch
         {
             static void Postfix(OnlyEnableOnMyShip __instance)
             {

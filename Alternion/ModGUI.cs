@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using BWModLoader;
-using Alternion;
 
-namespace AlternionGUI
+namespace Alternion
 {
     /// <summary>
     /// GUI class.

@@ -144,7 +144,7 @@ namespace Alternion.SkinHandlers
         /// Patches into SwivelUse.Start()
         /// </summary>
         [HarmonyPatch(typeof(SwivelUse), "Start")]
-        static class swivelPatch
+        class swivelPatch
         {
             static void Postfix(SwivelUse __instance)
             {

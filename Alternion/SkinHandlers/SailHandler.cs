@@ -244,7 +244,7 @@ namespace Alternion.SkinHandlers
         /// Hooks into OnEnable
         /// </summary>
         [HarmonyPatch(typeof(SailHealth), "OnEnable")]
-        static class sailSkinPatch
+        class sailSkinPatch
         {
             static void Postfix(SailHealth __instance)
             {

@@ -3206,7 +3206,7 @@ namespace Alternion
         /// Harmony patch to setup badges in the scoreboard
         /// </summary>
         [HarmonyPatch(typeof(ScoreboardSlot), "ñòæëíîêïæîí", new Type[] { typeof(string), typeof(int), typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(int), typeof(int), typeof(bool), typeof(bool), typeof(bool), typeof(bool), typeof(bool) })]
-        static class scoreBoardSlotAdjuster
+        class scoreBoardSlotAdjuster
         {
             static void Postfix(ScoreboardSlot __instance, string ìåäòäóëäêèæ, int óîèòèðîðçîì, string ñíçæóñðæéòó, int çïîèïçïñêïæ, int äïóïåòòéðåç, int ìëäòìèçñçìí, int óíïòðíäóïçç, int íîóìóíèíñìå, bool ðèæòðìêóëïð, bool äåîéíèñèììñ, bool æíèòîîìðçóî, int ïîñíñóóåîîñ, int æìíñèéçñîíí, bool òêóçíïåæíîë, bool æåèòðéóçêçó, bool èëçòëæêäêîå, bool ëååííåïäæîè, bool ñîäèñæïîóçó)
             {
@@ -3246,7 +3246,7 @@ namespace Alternion
         /// Harmony patch to set badge in endRound scene
         /// </summary>
         [HarmonyPatch(typeof(AccoladeItem), "ëîéæìêìëéæï")]
-        static class accoladeSetInfoPatch
+        class accoladeSetInfoPatch
         {
             static void Postfix(AccoladeItem __instance, string óéíïñîèëëêð, int òææóïíéñåïñ, string çìîñìëðêëéò, CSteamID ìçíêääéïíòç)
             {
@@ -3269,7 +3269,7 @@ namespace Alternion
         /// Harmony patch to trigger resetting of ships
         /// </summary>
         [HarmonyPatch(typeof(GameMode), "newRound")]
-        static class newRoundPatch
+        class newRoundPatch
         {
             static void Postfix(GameMode __instance)
             {
@@ -3282,7 +3282,7 @@ namespace Alternion
         /// Harmony patch to setup ships on captain pass
         /// </summary>
         [HarmonyPatch(typeof(PlayerOptions), "passCaptain")]
-        static class passCaptainPatch
+        class passCaptainPatch
         {
             static void Prefix(PlayerOptions __instance)
             {

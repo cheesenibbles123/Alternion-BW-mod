@@ -36,7 +36,7 @@ namespace Alternion.SkinHandlers
         /// Harmony patch "allBuildShip" for ShipConstruction
         /// </summary>
         [HarmonyPatch(typeof(ShipConstruction), "allBuildShip")]
-        static class buildShipPatch
+        class buildShipPatch
         {
             static void Postfix(ShipConstruction __instance, string shipType, int team, ïçîìäîóäìïæ.åéðñðçîîïêç info)
             {

@@ -92,7 +92,7 @@ namespace Alternion.SkinHandlers
         /// Mortar Use patch class
         /// </summary>
         [HarmonyPatch(typeof(MortarUse), "Start")]
-        static class mortarUsePatch
+        class mortarUsePatch
         {
             /// <summary>
             /// Mortar patch class postfix

@@ -184,7 +184,7 @@ namespace Alternion
         /// Sets flag when leaving customization menu to prevent something being overwritten
         /// </summary>
         [HarmonyPatch(typeof(MainMenu), "leaveCustomization")]
-        static class flagPatch
+        class flagPatch
         {
             static void postfix(MainMenu __instance)
             {
@@ -196,7 +196,7 @@ namespace Alternion
         /// Toggles custom/KS on KS toggle
         /// </summary>
         [HarmonyPatch(typeof(MainMenu), "toggleKSBadge")]
-        static class toggleKSPatch
+        class toggleKSPatch
         {
             static void Postfix(MainMenu __instance, bool on)
             {
@@ -214,7 +214,7 @@ namespace Alternion
         /// Sets up initial calls for returning to the mainmenu
         /// </summary>
         [HarmonyPatch(typeof(MainMenu), "Start")]
-        static class mainMenuStuffPatch
+        class mainMenuStuffPatch
         {
             static void Postfix(MainMenu __instance)
             {
@@ -229,7 +229,7 @@ namespace Alternion
         /// Updates flag in main menu based off current viewing faction
         /// </summary>
         [HarmonyPatch(typeof(CharacterCustomizationUI), "setFaction")]
-        static class characterCustomizationPatch
+        class characterCustomizationPatch
         {
             static void Postfix(CharacterCustomizationUI __instance, int íïïìîóðíçëæ)
             {
