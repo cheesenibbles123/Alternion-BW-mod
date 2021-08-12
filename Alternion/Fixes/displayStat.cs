@@ -8,9 +8,10 @@ using Steamworks;
 
 namespace Alternion.Fixes
 {
+#if DEBUG
     class displayStat
     {
-        /*
+        
         [HarmonyPatch(typeof(PlayerInfo), "setupRemotePlayer")]
         static class displayStatPatch
         {
@@ -31,6 +32,7 @@ namespace Alternion.Fixes
                 Logger.debugLog("Got Accolade setup for " + óéíïñîèëëêð);
                 Logger.debugLog($"Accolade Medal set to -{plrInf.displayStat}-{plrInf.displayStatMedal}- ");
             }
-        }*/
+        }
     }
+#endif
 }
