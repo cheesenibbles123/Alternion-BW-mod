@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Alternion
+namespace Alternion.Fixes
 {
 #if DEBUG
     public class birbHandler : MonoBehaviour
@@ -29,7 +29,10 @@ namespace Alternion
         private IEnumerator handleBird(PlayerInfo __instance)
         {
             yield return new WaitForSeconds(1f);
-            __instance.isTournyWinner = true;
+            while (__instance.character == null)
+            {
+                yield return new WaitForSeconds(.5f);
+            }
             Logger.logLow($"{!__instance.character.æïðèñìæêêñç}");
             __instance.character.óððêäóäîçñè.SetActive(!__instance.character.æïðèñìæêêñç); // Only enable if not owner
             Logger.logLow("IsBird");
@@ -50,14 +53,12 @@ namespace Alternion
         [HarmonyPatch(typeof(PlayerInfo), "setWinner")]
         static class isWinnerPatch
         {
-            static bool Prefix(PlayerInfo __instance, ïçîìäîóäìïæ.åéðñðçîîïêç info)
+            static void Postfx(PlayerInfo __instance, ïçîìäîóäìïæ.åéðñðçîîïêç info)
             {
                 if (info.åéñëîíèðòçé)
                 {
                     Instance.StartCoroutine(Instance.handleBird(__instance));
                 }
-
-                return false;
             }
         }
     }
