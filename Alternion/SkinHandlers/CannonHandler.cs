@@ -93,13 +93,13 @@ namespace Alternion.SkinHandlers
         /// <param name="renderer">Cannon renderer</param>
         void resetCannon(cachedShip vessel, Renderer renderer)
         {
-            if (vessel.hasChangedCannons)
+            if (vessel.hasChangedCannons && renderer != null)
             {
-                if (TheGreatCacher.Instance.defaultCannons != null)
+                if (TheGreatCacher.Instance.setCannonDefaults)
                 {
                     renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                 }
-                if (TheGreatCacher.Instance.defaultCannonsMet != null)
+                if (TheGreatCacher.Instance.setCannonDefaults)
                 {
                     renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                 }
