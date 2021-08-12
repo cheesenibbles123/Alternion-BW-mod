@@ -2780,17 +2780,26 @@ namespace Alternion
                 {
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
                     {
-                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        if (individualShip.Value != null)
+                        {
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        }
                     }
 
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
                     {
-                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        if (individualShip.Value != null)
+                        {
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        }
                     }
 
                     foreach (Renderer renderer in individualShip.Value.closedSails)
                     {
-                        renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        if (individualShip.Value != null)
+                        {
+                            renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                        }
                     }
                     individualShip.Value.hasChangedSails = false;
                 }
@@ -2800,35 +2809,62 @@ namespace Alternion
                 {
                     foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
                     {
-                        indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                        if (indvidualCannon.Value != null)
+                        {
+                            indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                        }
                     }
                     foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
                     {
-                        indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                        if (indvidualCannon.Value != null)
+                        {
+                            indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                        }
                     }
 
-                    individualShip.Value.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                    individualShip.Value.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                    if (individualShip.Value.cannonLOD != null)
+                    {
+                        individualShip.Value.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                        individualShip.Value.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                    }
                     individualShip.Value.hasChangedCannons = false;
                 }
 
                 // Only reset if swivel texture has been set
                 if (theGreatCacher.Instance.setSwivelDefaults)
                 {
-                    foreach (Renderer swivel in individualShip.Value.Swivels)
+                    Renderer swivel;
+                    for (int i = individualShip.Value.Swivels.Count; i >= 0; i--)
                     {
-                        swivel.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultSwivel);
-                        swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                        swivel = individualShip.Value.Swivels[i];
+                        if (swivel != null)
+                        {
+                            swivel.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultSwivel);
+                            swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                        }
+                        else
+                        {
+                            individualShip.Value.Swivels.RemoveAt(i);
+                        }
                     }
                 }
 
                 // Only reset if mortar texture has been set
                 if (theGreatCacher.Instance.setMortarDefaults)
                 {
-                    foreach (Renderer mortar in individualShip.Value.mortars)
+                    Renderer mortar;
+                    for (int i = individualShip.Value.mortars.Count; i >= 0; i--)
                     {
-                        mortar.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultMortar);
-                        mortar.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
+                        mortar = individualShip.Value.mortars[i];
+                        if (mortar != null)
+                        {
+                            mortar.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultMortar);
+                            mortar.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
+                        }
+                        else
+                        {
+                            individualShip.Value.mortars.RemoveAt(i);
+                        }
                     }
                 }
 
