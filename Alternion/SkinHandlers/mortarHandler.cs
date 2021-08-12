@@ -34,11 +34,11 @@ namespace Alternion.SkinHandlers
         void applySkin(Renderer renderer, string skinName)
         {
             Texture img;
-            if (theGreatCacher.Instance.mortarSkins.TryGetValue(skinName, out img))
+            if (TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName, out img))
             {
                 renderer.material.mainTexture = img;
             }
-            if (theGreatCacher.Instance.mortarSkins.TryGetValue(skinName + "_met", out img))
+            if (TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName + "_met", out img))
             {
                 renderer.material.SetTexture("_Metallic", img);
             }
@@ -61,7 +61,7 @@ namespace Alternion.SkinHandlers
                 {
                     string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
-                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
                         applySkin(renderer, player.mortarSkinName);
                     }
@@ -80,11 +80,11 @@ namespace Alternion.SkinHandlers
         /// <param name="renderer">Mortar renderer</param>
         void handleDefaults(Renderer renderer)
         {
-            if (!theGreatCacher.Instance.setMortarDefaults)
+            if (!TheGreatCacher.Instance.setMortarDefaults)
             {
-                theGreatCacher.Instance.defaultMortar = renderer.material.mainTexture;
-                theGreatCacher.Instance.defaultMortarMet = renderer.material.GetTexture("_Metallic");
-                theGreatCacher.Instance.setMortarDefaults = true;
+                TheGreatCacher.Instance.defaultMortar = renderer.material.mainTexture;
+                TheGreatCacher.Instance.defaultMortarMet = renderer.material.GetTexture("_Metallic");
+                TheGreatCacher.Instance.setMortarDefaults = true;
             }
         }
 
@@ -112,7 +112,7 @@ namespace Alternion.SkinHandlers
                                 Instance.handleDefaults(renderers[i]);
 
                                 int index = GameMode.getParentIndex(__instance.transform.root);
-                                cachedShip vessel = theGreatCacher.getCachedShip(index.ToString());
+                                cachedShip vessel = TheGreatCacher.getCachedShip(index.ToString());
                                 vessel.mortars.Add(renderers[i]);
 
                                 Instance.StartCoroutine(Instance.wasteTime(renderers[i], index, vessel));                                

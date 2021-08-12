@@ -90,22 +90,22 @@ namespace Alternion
             switch (type)
             {
                 case "badge":
-                    theGreatCacher.Instance.badges.Add(tName, newTex);
+                    TheGreatCacher.Instance.badges.Add(tName, newTex);
                     break;
                 case "sail":
-                    theGreatCacher.Instance.secondarySails.Add(tName, newTex);
+                    TheGreatCacher.Instance.secondarySails.Add(tName, newTex);
                     break;
                 case "mainsail":
-                    theGreatCacher.Instance.mainSails.Add(tName, newTex);
+                    TheGreatCacher.Instance.mainSails.Add(tName, newTex);
                     break;
                 case "cannon":
-                    theGreatCacher.Instance.cannonSkins.Add(tName, newTex);
+                    TheGreatCacher.Instance.cannonSkins.Add(tName, newTex);
                     break;
                 case "goldmask":
-                    theGreatCacher.Instance.maskSkins.Add(tName, newTex);
+                    TheGreatCacher.Instance.maskSkins.Add(tName, newTex);
                     break;
                 case "weaponskin":
-                    theGreatCacher.Instance.weaponSkins.Add(tName, newTex);
+                    TheGreatCacher.Instance.weaponSkins.Add(tName, newTex);
                     break;
                 default:
                     break;
@@ -137,15 +137,15 @@ namespace Alternion
                 {
 
                     // Check if user in dictionary
-                    if (theGreatCacher.Instance.players.ContainsKey(steamID))
+                    if (TheGreatCacher.Instance.players.ContainsKey(steamID))
                     {
                         // Only update if actually changed
-                        if (theGreatCacher.Instance.players[steamID] != player)
+                        if (TheGreatCacher.Instance.players[steamID] != player)
                         {
                             try
                             {
                                 updateUser(steamID, player);
-                                theGreatCacher.Instance.players[steamID] = player;
+                                TheGreatCacher.Instance.players[steamID] = player;
                             }
                             catch (Exception e)
                             {
@@ -156,7 +156,7 @@ namespace Alternion
                     else
                     {
                         addNewPlayer(player);
-                        theGreatCacher.Instance.players.Add(player.steamID, player);
+                        TheGreatCacher.Instance.players.Add(player.steamID, player);
                     }
                     break;
                 }
@@ -168,7 +168,7 @@ namespace Alternion
             switch (type)
             {
                 case "badge":
-                    if (theGreatCacher.Instance.badges.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.badges.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -177,7 +177,7 @@ namespace Alternion
                         return false;
                     }
                 case "sail":
-                    if (theGreatCacher.Instance.secondarySails.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.secondarySails.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -186,7 +186,7 @@ namespace Alternion
                         return false;
                     }
                 case "mainsail":
-                    if (theGreatCacher.Instance.mainSails.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.mainSails.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -195,7 +195,7 @@ namespace Alternion
                         return false;
                     }
                 case "cannon":
-                    if (theGreatCacher.Instance.cannonSkins.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.cannonSkins.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -204,7 +204,7 @@ namespace Alternion
                         return false;
                     }
                 case "goldmask":
-                    if (theGreatCacher.Instance.maskSkins.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.maskSkins.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -213,7 +213,7 @@ namespace Alternion
                         return false;
                     }
                 case "weaponskin":
-                    if (theGreatCacher.Instance.weaponSkins.ContainsKey(assetName))
+                    if (TheGreatCacher.Instance.weaponSkins.ContainsKey(assetName))
                     {
                         return true;
                     }
@@ -229,7 +229,7 @@ namespace Alternion
         private static void updateUser(string steamID, playerObject player)
         {
             // Overall stuff
-            if (theGreatCacher.Instance.players[steamID].badgeName != player.badgeName)
+            if (TheGreatCacher.Instance.players[steamID].badgeName != player.badgeName)
             {
                 if (!checkIfItemIsCached("badge", player.badgeName))
                 {
@@ -237,7 +237,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.badgeName, "badge"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].sailSkinName != player.sailSkinName)
+            if (TheGreatCacher.Instance.players[steamID].sailSkinName != player.sailSkinName)
             {
                 if (!checkIfItemIsCached("sail", player.sailSkinName))
                 {
@@ -245,7 +245,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.sailSkinName, "sail"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].mainSailName != player.mainSailName)
+            if (TheGreatCacher.Instance.players[steamID].mainSailName != player.mainSailName)
             {
                 if (!checkIfItemIsCached("mainsail", player.mainSailName))
                 {
@@ -253,7 +253,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.mainSailName, "mainsail"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].cannonSkinName != player.cannonSkinName)
+            if (TheGreatCacher.Instance.players[steamID].cannonSkinName != player.cannonSkinName)
             {
                 if (!checkIfItemIsCached("cannon", player.cannonSkinName))
                 {
@@ -261,7 +261,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cannonSkinName, "cannon"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].maskSkinName != player.maskSkinName)
+            if (TheGreatCacher.Instance.players[steamID].maskSkinName != player.maskSkinName)
             {
                 if (!checkIfItemIsCached("goldmask", player.maskSkinName))
                 {
@@ -271,7 +271,7 @@ namespace Alternion
             }
 
             // Weapon skins
-            if (theGreatCacher.Instance.players[steamID].musketSkinName != player.musketSkinName)
+            if (TheGreatCacher.Instance.players[steamID].musketSkinName != player.musketSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "musket_" + player.musketSkinName))
                 {
@@ -279,7 +279,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.musketSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].blunderbussSkinName != player.blunderbussSkinName)
+            if (TheGreatCacher.Instance.players[steamID].blunderbussSkinName != player.blunderbussSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "blunderbuss_" + player.blunderbussSkinName))
                 {
@@ -288,7 +288,7 @@ namespace Alternion
 
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].nockgunSkinName != player.nockgunSkinName)
+            if (TheGreatCacher.Instance.players[steamID].nockgunSkinName != player.nockgunSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "nockgun_" + player.nockgunSkinName))
                 {
@@ -296,7 +296,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.nockgunSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].handMortarSkinName != player.handMortarSkinName)
+            if (TheGreatCacher.Instance.players[steamID].handMortarSkinName != player.handMortarSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "handmortar_" + player.handMortarSkinName))
                 {
@@ -305,7 +305,7 @@ namespace Alternion
                 }
             }
 
-            if (theGreatCacher.Instance.players[steamID].standardPistolSkinName != player.standardPistolSkinName)
+            if (TheGreatCacher.Instance.players[steamID].standardPistolSkinName != player.standardPistolSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "standardPistol_" + player.standardPistolSkinName))
                 {
@@ -313,7 +313,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.standardPistolSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].shortPistolSkinName != player.shortPistolSkinName)
+            if (TheGreatCacher.Instance.players[steamID].shortPistolSkinName != player.shortPistolSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "shortPistol_" + player.shortPistolSkinName))
                 {
@@ -321,7 +321,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.standardPistolSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].duckfootSkinName != player.duckfootSkinName)
+            if (TheGreatCacher.Instance.players[steamID].duckfootSkinName != player.duckfootSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "duckfoot_" + player.duckfootSkinName))
                 {
@@ -329,7 +329,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.duckfootSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].matchlockRevolverSkinName != player.matchlockRevolverSkinName)
+            if (TheGreatCacher.Instance.players[steamID].matchlockRevolverSkinName != player.matchlockRevolverSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "matchlock_" + player.matchlockRevolverSkinName))
                 {
@@ -337,7 +337,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.matchlockRevolverSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].annelyRevolverSkinName != player.annelyRevolverSkinName)
+            if (TheGreatCacher.Instance.players[steamID].annelyRevolverSkinName != player.annelyRevolverSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "annelyRevolver_" + player.annelyRevolverSkinName))
                 {
@@ -346,7 +346,7 @@ namespace Alternion
                 }
             }
 
-            if (theGreatCacher.Instance.players[steamID].axeSkinName != player.axeSkinName)
+            if (TheGreatCacher.Instance.players[steamID].axeSkinName != player.axeSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "axe_" + player.axeSkinName))
                 {
@@ -354,7 +354,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.axeSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].rapierSkinName != player.rapierSkinName)
+            if (TheGreatCacher.Instance.players[steamID].rapierSkinName != player.rapierSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "rapier_" + player.rapierSkinName))
                 {
@@ -362,7 +362,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.rapierSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].daggerSkinName != player.daggerSkinName)
+            if (TheGreatCacher.Instance.players[steamID].daggerSkinName != player.daggerSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "dagger_" + player.daggerSkinName))
                 {
@@ -370,7 +370,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.daggerSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].bottleSkinName != player.bottleSkinName)
+            if (TheGreatCacher.Instance.players[steamID].bottleSkinName != player.bottleSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "bottle_" + player.bottleSkinName))
                 {
@@ -378,7 +378,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.bottleSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].cutlassSkinName != player.cutlassSkinName)
+            if (TheGreatCacher.Instance.players[steamID].cutlassSkinName != player.cutlassSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "cutlass_" + player.cutlassSkinName))
                 {
@@ -386,7 +386,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cutlassSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].pikeSkinName != player.pikeSkinName)
+            if (TheGreatCacher.Instance.players[steamID].pikeSkinName != player.pikeSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "pike_" + player.pikeSkinName))
                 {
@@ -395,7 +395,7 @@ namespace Alternion
                 }
             }
 
-            if (theGreatCacher.Instance.players[steamID].tomahawkSkinName != player.tomahawkSkinName)
+            if (TheGreatCacher.Instance.players[steamID].tomahawkSkinName != player.tomahawkSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "tomahawk_" + player.tomahawkSkinName))
                 {
@@ -403,7 +403,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.tomahawkSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].spyglassSkinName != player.spyglassSkinName)
+            if (TheGreatCacher.Instance.players[steamID].spyglassSkinName != player.spyglassSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "spyglass_" + player.spyglassSkinName))
                 {
@@ -411,7 +411,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.spyglassSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].grenadeSkinName != player.grenadeSkinName)
+            if (TheGreatCacher.Instance.players[steamID].grenadeSkinName != player.grenadeSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "grenade_" + player.grenadeSkinName))
                 {
@@ -419,7 +419,7 @@ namespace Alternion
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.grenadeSkinName, "weaponskin"));
                 }
             }
-            if (theGreatCacher.Instance.players[steamID].healItemSkinName != player.healItemSkinName)
+            if (TheGreatCacher.Instance.players[steamID].healItemSkinName != player.healItemSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "healItem_" + player.healItemSkinName))
                 {
@@ -428,7 +428,7 @@ namespace Alternion
                 }
             }
 
-            if (theGreatCacher.Instance.players[steamID].hammerSkinName != player.hammerSkinName)
+            if (TheGreatCacher.Instance.players[steamID].hammerSkinName != player.hammerSkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "hammer_" + player.hammerSkinName))
                 {
@@ -437,7 +437,7 @@ namespace Alternion
                 }
             }
 
-            if (theGreatCacher.Instance.players[steamID].atlas01SkinName != player.atlas01SkinName)
+            if (TheGreatCacher.Instance.players[steamID].atlas01SkinName != player.atlas01SkinName)
             {
                 if (!checkIfItemIsCached("weaponskin", "atlas01_" + player.atlas01SkinName))
                 {
@@ -454,7 +454,7 @@ namespace Alternion
             // Badges
             if (player.badgeName != "default")
             {
-                if (!theGreatCacher.Instance.badges.ContainsKey(player.badgeName))
+                if (!TheGreatCacher.Instance.badges.ContainsKey(player.badgeName))
                 {
                     string filePathEnd = "Badges/" + player.badgeName + ".png";
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.atlas01SkinName, "badge"));
@@ -464,7 +464,7 @@ namespace Alternion
             // Masks
             if (player.maskSkinName != "default")
             {
-                if (!theGreatCacher.Instance.maskSkins.ContainsKey(player.maskSkinName))
+                if (!TheGreatCacher.Instance.maskSkins.ContainsKey(player.maskSkinName))
                 {
                     string filePathEnd = "MaskSkins/" + player.maskSkinName + ".png";
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.maskSkinName, "goldmask"));
@@ -474,7 +474,7 @@ namespace Alternion
             // Sails
             if (player.sailSkinName != "default")
             {
-                if (!theGreatCacher.Instance.secondarySails.ContainsKey(player.sailSkinName))
+                if (!TheGreatCacher.Instance.secondarySails.ContainsKey(player.sailSkinName))
                 {
                     string filePathEnd = "SailSkins/" + player.sailSkinName + ".png";
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.sailSkinName, "sail"));
@@ -483,7 +483,7 @@ namespace Alternion
 
             if (player.mainSailName != "default")
             {
-                if (!theGreatCacher.Instance.mainSails.ContainsKey(player.mainSailName))
+                if (!TheGreatCacher.Instance.mainSails.ContainsKey(player.mainSailName))
                 {
                     string filePathEnd = "MainSailSkins/" + player.mainSailName + ".png";
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.mainSailName, "mainsail"));
@@ -493,7 +493,7 @@ namespace Alternion
             // Cannons
             if (player.cannonSkinName != "default")
             {
-                if (!theGreatCacher.Instance.cannonSkins.ContainsKey(player.cannonSkinName))
+                if (!TheGreatCacher.Instance.cannonSkins.ContainsKey(player.cannonSkinName))
                 {
                     string filePathEnd = "CannonSkins/" + player.cannonSkinName + ".png";
                     Instance.StartCoroutine(Instance.textureSetup(filePathEnd, player.cannonSkinName, "cannon"));
@@ -503,7 +503,7 @@ namespace Alternion
             // Primary weapons
             if (player.musketSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.musketSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.musketSkinName))
                 {
                     fullWeaponString = "musket_" + player.musketSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -513,7 +513,7 @@ namespace Alternion
 
             if (player.blunderbussSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.blunderbussSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.blunderbussSkinName))
                 {
                     fullWeaponString = "blunderbuss_" + player.blunderbussSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -523,7 +523,7 @@ namespace Alternion
 
             if (player.nockgunSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.nockgunSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.nockgunSkinName))
                 {
                     fullWeaponString = "nockgun_" + player.nockgunSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -533,7 +533,7 @@ namespace Alternion
 
             if (player.handMortarSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.handMortarSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.handMortarSkinName))
                 {
                     fullWeaponString = "handmortar_" + player.handMortarSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -544,7 +544,7 @@ namespace Alternion
             // Secondary Weapons
             if (player.standardPistolSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.standardPistolSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.standardPistolSkinName))
                 {
                     fullWeaponString = "standardPistol_" + player.standardPistolSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -554,7 +554,7 @@ namespace Alternion
 
             if (player.shortPistolSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.shortPistolSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.shortPistolSkinName))
                 {
                     fullWeaponString = "shortPistol_" + player.shortPistolSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -564,7 +564,7 @@ namespace Alternion
 
             if (player.duckfootSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.duckfootSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.duckfootSkinName))
                 {
                     fullWeaponString = "duckfoot_" + player.duckfootSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -574,7 +574,7 @@ namespace Alternion
 
             if (player.matchlockRevolverSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.matchlockRevolverSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.matchlockRevolverSkinName))
                 {
                     fullWeaponString = "matchlock_" + player.matchlockRevolverSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -584,7 +584,7 @@ namespace Alternion
 
             if (player.annelyRevolverSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.annelyRevolverSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.annelyRevolverSkinName))
                 {
                     fullWeaponString = "annelyRevolver_" + player.annelyRevolverSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -596,7 +596,7 @@ namespace Alternion
             // Melee weapons
             if (player.axeSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.axeSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.axeSkinName))
                 {
                     fullWeaponString = "axe_" + player.axeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -606,7 +606,7 @@ namespace Alternion
 
             if (player.rapierSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.rapierSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.rapierSkinName))
                 {
                     fullWeaponString = "rapier_" + player.rapierSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -616,7 +616,7 @@ namespace Alternion
 
             if (player.daggerSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.daggerSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.daggerSkinName))
                 {
                     fullWeaponString = "dagger_" + player.daggerSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -626,7 +626,7 @@ namespace Alternion
 
             if (player.bottleSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.bottleSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.bottleSkinName))
                 {
                     fullWeaponString = "bottle_" + player.bottleSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -636,7 +636,7 @@ namespace Alternion
 
             if (player.cutlassSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.cutlassSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.cutlassSkinName))
                 {
                     fullWeaponString = "cutlass_" + player.cutlassSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -646,7 +646,7 @@ namespace Alternion
 
             if (player.pikeSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.pikeSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.pikeSkinName))
                 {
                     fullWeaponString = "pike_" + player.pikeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -657,7 +657,7 @@ namespace Alternion
             // Specials
             if (player.tomahawkSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.tomahawkSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.tomahawkSkinName))
                 {
                     fullWeaponString = "tomohawk_" + player.tomahawkSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -667,7 +667,7 @@ namespace Alternion
 
             if (player.spyglassSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.spyglassSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.spyglassSkinName))
                 {
                     fullWeaponString = "spyglass_" + player.spyglassSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -677,7 +677,7 @@ namespace Alternion
 
             if (player.grenadeSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.grenadeSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.grenadeSkinName))
                 {
                     fullWeaponString = "grenade_" + player.grenadeSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -687,7 +687,7 @@ namespace Alternion
 
             if (player.healItemSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.healItemSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.healItemSkinName))
                 {
                     fullWeaponString = "healItem_" + player.healItemSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -698,7 +698,7 @@ namespace Alternion
             // Hammer
             if (player.hammerSkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.hammerSkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.hammerSkinName))
                 {
                     fullWeaponString = "hammer_" + player.hammerSkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";
@@ -708,7 +708,7 @@ namespace Alternion
 
             if (player.atlas01SkinName != "default")
             {
-                if (!theGreatCacher.Instance.weaponSkins.ContainsKey(player.atlas01SkinName))
+                if (!TheGreatCacher.Instance.weaponSkins.ContainsKey(player.atlas01SkinName))
                 {
                     fullWeaponString = "atlas01_" + player.atlas01SkinName;
                     string filePathEnd = "WeaponSkins/" + fullWeaponString + ".png";

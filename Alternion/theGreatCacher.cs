@@ -9,9 +9,9 @@ namespace Alternion
     /// Stores all loaded assets.
     /// </summary>
     [Mod]
-    public class theGreatCacher : MonoBehaviour
+    public class TheGreatCacher : MonoBehaviour
     {
-        public static theGreatCacher Instance;
+        public static TheGreatCacher Instance;
         /// <summary>
         /// Check for if the default cannons have been set or not
         /// </summary>

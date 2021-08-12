@@ -44,7 +44,7 @@ namespace Alternion.SkinHandlers
                 {
                     Instance.StartCoroutine(Instance.setFlag(team));
                 }
-                else if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
+                else if (TheGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
                 {
                     Instance.resetFlag(vessel);
                 }
@@ -61,14 +61,14 @@ namespace Alternion.SkinHandlers
             Transform shipTransform = GameMode.Instance.teamParents[team];
             Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true); // Get all renderers
 
-            if (theGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel)) // Fetch existing ship
+            if (TheGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel)) // Fetch existing ship
             {
                 loopRenderers(renderers, vessel, false, team);
             }
             else
             {
                 cachedShip newVessel = new cachedShip(); // Create new ship
-                theGreatCacher.Instance.ships.Add(team.ToString(), newVessel); // Add ship to cache
+                TheGreatCacher.Instance.ships.Add(team.ToString(), newVessel); // Add ship to cache
 
                 loopRenderers(renderers, newVessel, true, team);
 
@@ -115,10 +115,10 @@ namespace Alternion.SkinHandlers
                     vessel.isInitialized = true;
                 }
 
-                if (theGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
+                if (TheGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
                 {
                     string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                    if (theGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
+                    if (TheGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
                     {
                         if (flag.name != "FAILED")
                         {
@@ -155,13 +155,13 @@ namespace Alternion.SkinHandlers
         /// <param name="renderer">Renderer</param>
         void defaultsHandler(Renderer renderer)
         {
-            if (!theGreatCacher.Instance.setNavyFlag && (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british"))
+            if (!TheGreatCacher.Instance.setNavyFlag && (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british"))
             {
-                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
+                TheGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
             }
-            else if (!theGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
+            else if (!TheGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
             {
-                theGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
+                TheGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
             }
         }
 
@@ -175,11 +175,11 @@ namespace Alternion.SkinHandlers
             {
                 if (vessel.isNavy)
                 {
-                    setFlagsToSkin(vessel, theGreatCacher.Instance.navyFlag);
+                    setFlagsToSkin(vessel, TheGreatCacher.Instance.navyFlag);
                 }
                 else
                 {
-                    setFlagsToSkin(vessel, theGreatCacher.Instance.pirateFlag);
+                    setFlagsToSkin(vessel, TheGreatCacher.Instance.pirateFlag);
                 }
                 vessel.hasChangedFlag = false;
             }

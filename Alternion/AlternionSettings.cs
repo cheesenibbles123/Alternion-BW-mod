@@ -414,10 +414,10 @@ namespace Alternion
                         ModGUI.setCheckBox(texture);
                         break;
                     case "prp_cannon_alb":
-                        theGreatCacher.setDefaultCannons(texture);
+                        TheGreatCacher.setDefaultCannons(texture);
                         break;
                     case "ships_sails_alb":
-                        theGreatCacher.setDefaultSails(texture);
+                        TheGreatCacher.setDefaultSails(texture);
                         break;
                     default:
                         //log(texture.name);

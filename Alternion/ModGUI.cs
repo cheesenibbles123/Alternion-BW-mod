@@ -356,7 +356,7 @@ namespace Alternion
                 // Force Update
                 if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y, buttonWH.x, buttonWH.y), "Force Update"))
                 {
-                    theGreatCacher.forceUpdate();
+                    TheGreatCacher.forceUpdate();
                 }
 
                 // Download On Startup

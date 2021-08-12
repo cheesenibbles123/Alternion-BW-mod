@@ -9,12 +9,12 @@ using Alternion.Structs;
 namespace Alternion.SkinHandlers
 {
     [Mod]
-    public class WeaponSkinHandler : MonoBehaviour
+    public class weaponSkinHandler : MonoBehaviour
     {
         /// <summary>
         /// WeaponSkinHandler instance
         /// </summary>
-        public static WeaponSkinHandler Instance;
+        public static weaponSkinHandler Instance;
 
         /// <summary>
         /// Assigns the weapon skin to the weapon.
@@ -30,11 +30,11 @@ namespace Alternion.SkinHandlers
                 if (weaponSkin != "default")
                 {
                     Texture newTex;
-                    if (theGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
+                    if (TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                     }
-                    if (theGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
+                    if (TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
                     {
                         renderer.material.SetTexture("_Metallic", newTex);
                     }
@@ -51,7 +51,7 @@ namespace Alternion.SkinHandlers
         /// </summary>
         /// <param name="__instance">WeaponRender Instance</param>
         /// <param name="player">Player loadout</param>
-        static void weaponSkinHandler(WeaponRender __instance, playerObject player)
+        static void mainSkinHandler(WeaponRender __instance, playerObject player)
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
@@ -187,9 +187,9 @@ namespace Alternion.SkinHandlers
                     try
                     {
                         string steamID = __instance.ìäóêäðçóììî.ìêïòëîåëìòñ.gameObject.transform.parent.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                        if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
-                            weaponSkinHandler(__instance, player);
+                            mainSkinHandler(__instance, player);
                         }
                     }
                     catch (Exception e)
@@ -213,9 +213,9 @@ namespace Alternion.SkinHandlers
                     if (AlternionSettings.useMaskSkins)
                     {
                         string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                        if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
-                            if (theGreatCacher.Instance.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
+                            if (TheGreatCacher.Instance.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
                             {
                                 // Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
                                 __instance.éäéïéðïåææè.transform.GetComponent<Renderer>().material.mainTexture = newTex;
@@ -246,9 +246,9 @@ namespace Alternion.SkinHandlers
                         {
                             //Grab local steamID
                             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
-                            if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                            if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                             {
-                                weaponSkinHandler(__instance, player);
+                                mainSkinHandler(__instance, player);
                             }
                         }
                     }

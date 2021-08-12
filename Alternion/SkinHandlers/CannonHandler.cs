@@ -7,13 +7,13 @@ using Alternion.Structs;
 namespace Alternion.SkinHandlers
 {
     [Mod]
-    public class CannonHandler : MonoBehaviour
+    public class cannonHandler : MonoBehaviour
     {
 
         /// <summary>
         /// Cannon Skin Handler
         /// </summary>
-        public static CannonHandler Instance;
+        public static cannonHandler Instance;
 
         /// <summary>
         /// Applies skin to cannon
@@ -23,20 +23,20 @@ namespace Alternion.SkinHandlers
         /// <param name="renderer">Cannon renderer</param>
         void applySkins(cachedShip vessel, string steamID, Renderer renderer)
         {
-            if (!theGreatCacher.Instance.setCannonDefaults)
+            if (!TheGreatCacher.Instance.setCannonDefaults)
             {
-                theGreatCacher.Instance.setCannonDefaults = true;
-                theGreatCacher.Instance.defaultCannons = renderer.material.mainTexture;
-                theGreatCacher.Instance.defaultCannonsMet = renderer.material.GetTexture("_Metallic");
+                TheGreatCacher.Instance.setCannonDefaults = true;
+                TheGreatCacher.Instance.defaultCannons = renderer.material.mainTexture;
+                TheGreatCacher.Instance.defaultCannonsMet = renderer.material.GetTexture("_Metallic");
             }
 
-            if (AlternionSettings.useCannonSkins && theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+            if (AlternionSettings.useCannonSkins && TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 if (player.cannonSkinName != "default")
                 {
                     Texture newTex;
                     // ALB
-                    if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                         if (!vessel.hasChangedCannons)
@@ -44,13 +44,13 @@ namespace Alternion.SkinHandlers
                             vessel.hasChangedCannons = true;
                         }
                     }
-                    else if (theGreatCacher.Instance.defaultCannons != null)
+                    else if (TheGreatCacher.Instance.defaultCannons != null)
                     {
-                        renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                        renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                     }
 
                     // MET
-                    if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                     {
                         renderer.material.SetTexture("_Metallic", newTex);
                         if (!vessel.hasChangedCannons)
@@ -58,9 +58,9 @@ namespace Alternion.SkinHandlers
                             vessel.hasChangedCannons = true;
                         }
                     }
-                    else if (theGreatCacher.Instance.defaultCannonsMet != null)
+                    else if (TheGreatCacher.Instance.defaultCannonsMet != null)
                     {
-                        renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                        renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                     }
                 }
                 else
@@ -95,13 +95,13 @@ namespace Alternion.SkinHandlers
         {
             if (vessel.hasChangedCannons)
             {
-                if (theGreatCacher.Instance.defaultCannons != null)
+                if (TheGreatCacher.Instance.defaultCannons != null)
                 {
-                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                 }
-                if (theGreatCacher.Instance.defaultCannonsMet != null)
+                if (TheGreatCacher.Instance.defaultCannonsMet != null)
                 {
-                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace Alternion.SkinHandlers
         /// <param name="steamID">Captain SteamID</param>
         void checkCached(CannonDestroy __instance, int index, string steamID)
         {
-            if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+            if (TheGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
             {
                 vessel.cannonDestroyDict.Add((vessel.cannonDestroyDict.Count + 1).ToString(), __instance);
                 Instance.applySkins(vessel, steamID, __instance.îæïíïíäìéêé.GetComponent<Renderer>());
@@ -125,7 +125,7 @@ namespace Alternion.SkinHandlers
             {
                 cachedShip newVessel = new cachedShip();
                 newVessel.cannonDestroyDict.Add("0", __instance);
-                theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
+                TheGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                 Instance.applySkins(vessel, steamID, __instance.îæïíïíäìéêé.GetComponent<Renderer>());
                 Transform trans = __instance.æïìçñðåììêç.transform.GetChild(2);
                 Instance.applySkins(vessel, steamID, trans.GetComponent<Renderer>());
@@ -140,7 +140,7 @@ namespace Alternion.SkinHandlers
         /// <param name="steamID">Captain SteamID</param>
         void checkCached(Renderer rend, int index, string steamID)
         {
-            if (theGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+            if (TheGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
             {
                 vessel.cannonLOD = rend;
                 Instance.applySkins(vessel, steamID, rend);
@@ -149,7 +149,7 @@ namespace Alternion.SkinHandlers
             {
                 cachedShip newVessel = new cachedShip();
                 newVessel.cannonLOD = rend;
-                theGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
+                TheGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
                 Instance.applySkins(vessel, steamID, rend);
             }
         }

@@ -103,7 +103,7 @@ namespace Alternion
                 playerObject player = JsonUtility.FromJson<playerObject>(json[i]);
                 try
                 {
-                    theGreatCacher.Instance.players.Add(player.steamID, player);
+                    TheGreatCacher.Instance.players.Add(player.steamID, player);
                 }
                 catch (Exception e)
                 {
@@ -131,7 +131,7 @@ namespace Alternion
             {
                 // I didn't want to do this, but unity has forced my hand
                 weaponSkinAttributes skin = JsonUtility.FromJson<weaponSkinAttributes>(json[i]);
-                theGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
+                TheGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
                 LoadingBar.updatePercentage(10 + (10 * ((float)i / (float)json.Length)), "Downloading skinInfo...");
 
                 if (skin.weaponSkin == "mortar_royal")
@@ -190,7 +190,7 @@ namespace Alternion
 
             //Grab Player textures
             int count = 0;
-            foreach (KeyValuePair<string, playerObject> player in theGreatCacher.Instance.players)
+            foreach (KeyValuePair<string, playerObject> player in TheGreatCacher.Instance.players)
             {
                 // I don't think I have ever typed the word "default" as much as I did the last few days
 
@@ -219,7 +219,7 @@ namespace Alternion
                         {
                             newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40);
                             newTex.name = player.Value.badgeName;
-                            theGreatCacher.Instance.badges.Add(player.Value.badgeName, newTex);
+                            TheGreatCacher.Instance.badges.Add(player.Value.badgeName, newTex);
                             alreadyDownloaded.Add(player.Value.badgeName);
                         }
                         catch (Exception e)
@@ -240,7 +240,7 @@ namespace Alternion
                     if (!flag)
                     {
                         string fullString = "mask_" + player.Value.maskSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue("mask_" + player.Value.maskSkinName, out weaponSkinAttributes skinInfo);
+                        TheGreatCacher.Instance.skinAttributes.TryGetValue("mask_" + player.Value.maskSkinName, out weaponSkinAttributes skinInfo);
                         if (AlternionSettings.downloadOnStartup)
                         {
                             if (skinInfo.hasAlb)
@@ -291,7 +291,7 @@ namespace Alternion
                                 newTex = loadTexture(fullString, texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -299,7 +299,7 @@ namespace Alternion
                                 newTex = loadTexture(fullString + "_met", texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -307,7 +307,7 @@ namespace Alternion
                                 newTex = loadTexture(fullString + "_nrm", texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
                                 }
                             }
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
@@ -341,7 +341,7 @@ namespace Alternion
                         {
                             newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
                             newTex.name = player.Value.sailSkinName;
-                            theGreatCacher.Instance.secondarySails.Add(player.Value.sailSkinName, newTex);
+                            TheGreatCacher.Instance.secondarySails.Add(player.Value.sailSkinName, newTex);
                             alreadyDownloaded.Add(player.Value.sailSkinName);
                         }
                         catch (Exception e)
@@ -378,7 +378,7 @@ namespace Alternion
                         {
                             newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
                             newTex.name = player.Value.mainSailName;
-                            theGreatCacher.Instance.mainSails.Add(player.Value.mainSailName, newTex);
+                            TheGreatCacher.Instance.mainSails.Add(player.Value.mainSailName, newTex);
                             alreadyDownloaded.Add(player.Value.mainSailName);
                         }
                         catch (Exception e)
@@ -397,7 +397,7 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.cannonSkinName);
                     if (!flag)
                     {
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.Value.cannonSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -454,7 +454,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName, newTex);
+                                    TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -462,7 +462,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.cannonSkinName + "_met", texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
+                                    TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -470,7 +470,7 @@ namespace Alternion
                                 newTex = loadTexture(player.Value.cannonSkinName + "_nrm", texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
+                                    TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
                                 }
                             }
                         }
@@ -482,7 +482,7 @@ namespace Alternion
                     flag = alreadyDownloaded.Contains(player.Value.swivelSkinName);
                     if (!flag)
                     {
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.swivelSkinName, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.Value.swivelSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -537,12 +537,12 @@ namespace Alternion
                             newTex = loadTexture(player.Value.swivelSkinName, texturesFilePath + "SwivelSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
+                                TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
                             }
                             newTex = loadTexture(player.Value.swivelSkinName + "_met", texturesFilePath + "SwivelSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
+                                TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
                             }
                         }
                         alreadyDownloaded.Add(player.Value.swivelSkinName);
@@ -555,7 +555,7 @@ namespace Alternion
                     if (!flag)
                     {
                         Logger.logLow("isNew");
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -617,12 +617,12 @@ namespace Alternion
                             newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
+                                TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
                             }
                             newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
-                                theGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
+                                TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
                             }
                         }
                         alreadyDownloaded.Add("mortar_" + player.Value.mortarSkinName);
@@ -653,7 +653,7 @@ namespace Alternion
                         newTex = loadTexture(player.Value.flagNavySkinName, texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.flags.Add(player.Value.flagNavySkinName, newTex);
+                            TheGreatCacher.Instance.flags.Add(player.Value.flagNavySkinName, newTex);
                         }
                         alreadyDownloaded.Add(player.Value.flagNavySkinName);
                     }
@@ -682,7 +682,7 @@ namespace Alternion
                         newTex = loadTexture(player.Value.flagPirateSkinName, texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.flags.Add(player.Value.flagPirateSkinName, newTex);
+                            TheGreatCacher.Instance.flags.Add(player.Value.flagPirateSkinName, newTex);
                         }
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
@@ -695,7 +695,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "musket_" + player.Value.musketSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -753,7 +753,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -761,7 +761,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -769,7 +769,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -782,7 +782,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "blunderbuss_" + player.Value.blunderbussSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -841,7 +841,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -849,7 +849,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -857,7 +857,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -870,7 +870,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "nockgun_" + player.Value.nockgunSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -929,7 +929,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -937,7 +937,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -945,7 +945,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -958,7 +958,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "handmortar_" + player.Value.handMortarSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1017,7 +1017,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1025,7 +1025,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1033,7 +1033,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1048,7 +1048,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "standardPistol_" + player.Value.standardPistolSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1106,7 +1106,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1114,7 +1114,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1122,7 +1122,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1135,7 +1135,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "shortPistol_" + player.Value.shortPistolSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1194,7 +1194,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1202,7 +1202,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1210,7 +1210,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1223,7 +1223,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "duckfoot_" + player.Value.duckfootSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1281,7 +1281,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1289,7 +1289,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1297,7 +1297,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1310,7 +1310,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "matchlock_" + player.Value.matchlockRevolverSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1368,7 +1368,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1376,7 +1376,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1384,7 +1384,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1397,7 +1397,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "annelyRevolver_" + player.Value.annelyRevolverSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -1454,7 +1454,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1462,7 +1462,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1470,7 +1470,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1485,7 +1485,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "axe_" + player.Value.axeSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1541,7 +1541,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1549,7 +1549,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1557,7 +1557,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1570,7 +1570,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "rapier_" + player.Value.rapierSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1626,7 +1626,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1634,7 +1634,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1642,7 +1642,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1655,7 +1655,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "dagger_" + player.Value.daggerSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1711,7 +1711,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1719,7 +1719,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1727,7 +1727,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1740,7 +1740,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "bottle_" + player.Value.bottleSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1796,7 +1796,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1804,7 +1804,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1812,7 +1812,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1825,7 +1825,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "cutlass_" + player.Value.cutlassSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1881,7 +1881,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1889,7 +1889,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1897,7 +1897,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1910,7 +1910,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "pike_" + player.Value.pikeSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -1966,7 +1966,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -1974,7 +1974,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -1982,7 +1982,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -1997,7 +1997,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "tomahawk_" + player.Value.tomahawkSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2053,7 +2053,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2061,7 +2061,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2069,7 +2069,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2082,7 +2082,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "spyglass_" + player.Value.spyglassSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2138,7 +2138,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2146,7 +2146,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2154,7 +2154,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2167,7 +2167,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "grenade_" + player.Value.grenadeSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2223,7 +2223,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2231,7 +2231,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2239,7 +2239,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2252,7 +2252,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "healItem_" + player.Value.healItemSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2308,7 +2308,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2316,7 +2316,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2324,7 +2324,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2337,7 +2337,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaCup_" + player.Value.teaCupSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2393,7 +2393,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2401,7 +2401,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2409,7 +2409,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2422,7 +2422,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "teaWater_" + player.Value.teaWaterSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2478,7 +2478,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2486,7 +2486,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2494,7 +2494,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2507,7 +2507,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "bucket_" + player.Value.bucketSkinName;
-                        theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
+                        TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo);
 
                         if (AlternionSettings.downloadOnStartup)
                         {
@@ -2561,13 +2561,13 @@ namespace Alternion
                         newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                            TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                         }
 
                         newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                            TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
@@ -2580,7 +2580,7 @@ namespace Alternion
                     if (!flag)
                     {
                         fullWeaponString = "hammer_" + player.Value.hammerSkinName;
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
 
                             if (AlternionSettings.downloadOnStartup)
@@ -2636,7 +2636,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -2644,7 +2644,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -2652,7 +2652,7 @@ namespace Alternion
                                 newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
-                                    theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                    TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
                         }
@@ -2700,20 +2700,20 @@ namespace Alternion
                         newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
+                            TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                         }
 
                         newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
-                            theGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                            TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
 
                 count++;
-                float newPercentage = 20.0f + (60.0f * ((float)count / theGreatCacher.Instance.players.Count));
+                float newPercentage = 20.0f + (60.0f * ((float)count / TheGreatCacher.Instance.players.Count));
                 LoadingBar.updatePercentage(newPercentage, "Downloading Textures");
             }
 
@@ -2773,16 +2773,16 @@ namespace Alternion
             // Destroyed cannons
             // Swivels
             // Mortars
-            foreach (KeyValuePair<string, cachedShip> individualShip in theGreatCacher.Instance.ships)
+            foreach (KeyValuePair<string, cachedShip> individualShip in TheGreatCacher.Instance.ships)
             {
                 // Only reset if sail texture has been set
-                if (theGreatCacher.Instance.defaultSails)
+                if (TheGreatCacher.Instance.defaultSails)
                 {
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
                     {
                         if (individualShip.Value != null)
                         {
-                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                         }
                     }
 
@@ -2790,7 +2790,7 @@ namespace Alternion
                     {
                         if (individualShip.Value != null)
                         {
-                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                         }
                     }
 
@@ -2798,40 +2798,40 @@ namespace Alternion
                     {
                         if (individualShip.Value != null)
                         {
-                            renderer.material.mainTexture = theGreatCacher.Instance.defaultSails;
+                            renderer.material.mainTexture = TheGreatCacher.Instance.defaultSails;
                         }
                     }
                     individualShip.Value.hasChangedSails = false;
                 }
 
                 // Only reset if cannon texture has been set
-                if (theGreatCacher.Instance.defaultCannons)
+                if (TheGreatCacher.Instance.defaultCannons)
                 {
                     foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
                     {
                         if (indvidualCannon.Value != null)
                         {
-                            indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                            indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultCannons);
                         }
                     }
                     foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
                     {
                         if (indvidualCannon.Value != null)
                         {
-                            indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", theGreatCacher.Instance.defaultCannons);
+                            indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultCannons);
                         }
                     }
 
                     if (individualShip.Value.cannonLOD != null)
                     {
-                        individualShip.Value.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                        individualShip.Value.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                        individualShip.Value.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                        individualShip.Value.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                     }
                     individualShip.Value.hasChangedCannons = false;
                 }
 
                 // Only reset if swivel texture has been set
-                if (theGreatCacher.Instance.setSwivelDefaults)
+                if (TheGreatCacher.Instance.setSwivelDefaults)
                 {
                     Renderer swivel;
                     for (int i = individualShip.Value.Swivels.Count; i >= 0; i--)
@@ -2839,8 +2839,8 @@ namespace Alternion
                         swivel = individualShip.Value.Swivels[i];
                         if (swivel != null)
                         {
-                            swivel.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultSwivel);
-                            swivel.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultSwivelMet);
+                            swivel.material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultSwivel);
+                            swivel.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
                         }
                         else
                         {
@@ -2850,7 +2850,7 @@ namespace Alternion
                 }
 
                 // Only reset if mortar texture has been set
-                if (theGreatCacher.Instance.setMortarDefaults)
+                if (TheGreatCacher.Instance.setMortarDefaults)
                 {
                     Renderer mortar;
                     for (int i = individualShip.Value.mortars.Count; i >= 0; i--)
@@ -2858,8 +2858,8 @@ namespace Alternion
                         mortar = individualShip.Value.mortars[i];
                         if (mortar != null)
                         {
-                            mortar.material.SetTexture("_MainTex", theGreatCacher.Instance.defaultMortar);
-                            mortar.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
+                            mortar.material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultMortar);
+                            mortar.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
                         }
                         else
                         {
@@ -2886,22 +2886,22 @@ namespace Alternion
                 // Functional Cannons
                 // Destroyed Cannons
                 Texture newTex;
-                if (theGreatCacher.Instance.ships.TryGetValue(index, out cachedShip mightyVessel))
+                if (TheGreatCacher.Instance.ships.TryGetValue(index, out cachedShip mightyVessel))
                 {
-                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
                         // Only apply new texture if config has sail textures enabled
                         if (AlternionSettings.useSecondarySails)
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                if (theGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
+                                if (TheGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
                                 else
                                 {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
                         }
@@ -2909,7 +2909,7 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
                         }
 
@@ -2918,13 +2918,13 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                if (theGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
+                                if (TheGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
                                 else
                                 {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
                         }
@@ -2932,16 +2932,16 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
                         }
 
                         if (AlternionSettings.useMainSails || AlternionSettings.useSecondarySails)
                         {
-                            SailHandler.Instance.handleClosedSails(mightyVessel, player);
+                            sailHandler.Instance.handleClosedSails(mightyVessel, player);
                         }
                         else {
-                            SailHandler.Instance.resetClosedSails(mightyVessel);
+                            sailHandler.Instance.resetClosedSails(mightyVessel);
                         }
 
                         // Only apply new texture if config has cannon textures enabled
@@ -2950,41 +2950,41 @@ namespace Alternion
                             foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
                                 Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                                 {
                                     renderer.material.mainTexture = newTex;
                                 }
                                 else
                                 {
-                                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                                 }
 
-                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                                 {
                                     renderer.material.SetTexture("_Metallic", newTex);
                                 }
                                 else
                                 {
-                                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
 
-                            if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                            if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                             {
                                 mightyVessel.cannonLOD.material.mainTexture = newTex;
                             }
                             else
                             {
-                                mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                                mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                             }
 
-                            if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                            if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                             {
                                 mightyVessel.cannonLOD.material.SetTexture("_Metallic", newTex);
                             }
                             else
                             {
-                                mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                             }
                         }
                         else if (mightyVessel.hasChangedCannons)
@@ -2992,12 +2992,12 @@ namespace Alternion
                             foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
                                 Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                             }
 
-                            mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                            mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                         }
 
                         // Only apply new texture if config has cannon textures enabled
@@ -3006,22 +3006,22 @@ namespace Alternion
                             foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
                             {
                                 Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                                 {
                                     renderer.material.mainTexture = newTex;
                                 }
                                 else
                                 {
-                                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
+                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                                 }
 
-                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                                 {
                                     renderer.material.SetTexture("_Metallic", newTex);
                                 }
                                 else
                                 {
-                                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
                         }
@@ -3030,8 +3030,8 @@ namespace Alternion
                             foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
                             {
                                 Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                             }
                         }
 
@@ -3039,7 +3039,7 @@ namespace Alternion
                         if (AlternionSettings.showFlags)
                         {
                             string flagSkin = mightyVessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                            if (flagSkin != "default" && theGreatCacher.Instance.flags.TryGetValue(flagSkin, out newTex))
+                            if (flagSkin != "default" && TheGreatCacher.Instance.flags.TryGetValue(flagSkin, out newTex))
                             {
                                 flagHandler.Instance.setFlagsToSkin(mightyVessel, newTex);
                             }
@@ -3068,22 +3068,22 @@ namespace Alternion
                         {
                             for (int i = 0; i < mightyVessel.mortars.Count; i++)
                             {
-                                if (theGreatCacher.Instance.mortarSkins.TryGetValue(player.mortarSkinName, out newTex))
+                                if (TheGreatCacher.Instance.mortarSkins.TryGetValue(player.mortarSkinName, out newTex))
                                 {
                                     mightyVessel.mortars[i].material.mainTexture = newTex;
                                 }
                                 else
                                 {
-                                    mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
+                                    mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
                                 }
 
-                                if (theGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                                 {
                                     mightyVessel.mortars[i].material.SetTexture("_Metallic", newTex);
                                 }
                                 else
                                 {
-                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortarMet);
+                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
                                 }
                             }
                         }
@@ -3091,8 +3091,8 @@ namespace Alternion
                         {
                             for (int i = 0; i < mightyVessel.mortars.Count; i++)
                             {
-                                mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
-                                mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortar);
+                                mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortar);
                             }
 
                             mightyVessel.hasChangedMortars = false;
@@ -3104,25 +3104,25 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
                             {
-                                if (theGreatCacher.Instance.setCannonDefaults)
+                                if (TheGreatCacher.Instance.setCannonDefaults)
                                 {
                                     Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
                             foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
                             {
-                                if (theGreatCacher.Instance.setCannonDefaults)
+                                if (TheGreatCacher.Instance.setCannonDefaults)
                                 {
                                     Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                    renderer.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                                    renderer.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                                 }
                             }
 
-                            mightyVessel.cannonLOD.material.mainTexture = theGreatCacher.Instance.defaultCannons;
-                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", theGreatCacher.Instance.defaultCannonsMet);
+                            mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
 
                             mightyVessel.hasChangedCannons = false;
                         }
@@ -3130,20 +3130,20 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                if (theGreatCacher.Instance.setSailDefaults)
+                                if (TheGreatCacher.Instance.setSailDefaults)
                                 {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                if (theGreatCacher.Instance.setSailDefaults)
+                                if (TheGreatCacher.Instance.setSailDefaults)
                                 {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = theGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
 
-                            SailHandler.Instance.resetClosedSails(mightyVessel);
+                            sailHandler.Instance.resetClosedSails(mightyVessel);
 
                             mightyVessel.hasChangedSails = false;
                         }
@@ -3152,8 +3152,8 @@ namespace Alternion
                         {
                             for (int i=0; i < mightyVessel.mortars.Count; i++)
                             {
-                                mightyVessel.mortars[i].material.mainTexture = theGreatCacher.Instance.defaultMortar;
-                                mightyVessel.mortars[i].material.SetTexture("_Metallic", theGreatCacher.Instance.defaultMortar);
+                                mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortar);
                             }
 
                             mightyVessel.hasChangedMortars = false;
@@ -3251,10 +3251,10 @@ namespace Alternion
                     try
                     {
                         string steamID = GameMode.getPlayerInfo(ìåäòäóëäêèæ).steamID.ToString();
-                        if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                        if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                         {
                             // if they have a TW OR KS badge, this will dictate if it should or shouldn't override it visually
-                            if (checkIfTWOrKS(__instance) && theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
+                            if (checkIfTWOrKS(__instance) && TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
                             {
                                 __instance.éòëèïòëóæèó.texture = newTexture;
                             }
@@ -3290,9 +3290,9 @@ namespace Alternion
                 if (AlternionSettings.useBadges)
                 {
                     string steamID = ìçíêääéïíòç.m_SteamID.ToString();
-                    if (theGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
-                        if (checkIfTWOrKS(óéíïñîèëëêð) && theGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
+                        if (checkIfTWOrKS(óéíïñîèëëêð) && TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
                         {
                             __instance.äæåéåîèòéîñ.texture = newTex;
                         }

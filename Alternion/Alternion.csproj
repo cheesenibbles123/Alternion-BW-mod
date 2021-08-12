@@ -65,14 +65,15 @@
     <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="Fixes\gameModeChanges.cs" />
-    <Compile Include="SkinHandlers\CannonHandler.cs" />
+    <Compile Include="Fixes\shipLod.cs" />
+    <Compile Include="SkinHandlers\cannonHandler.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
     <Compile Include="MainMenuCL.cs" />
     <Compile Include="SkinHandlers\mortarHandler.cs" />
-    <Compile Include="SkinHandlers\SailHandler.cs" />
+    <Compile Include="SkinHandlers\sailHandler.cs" />
     <Compile Include="Structs\SkinAttributes.cs" />
     <Compile Include="SkinHandlers\swivelHandler.cs" />
-    <Compile Include="theGreatCacher.cs" />
+    <Compile Include="TheGreatCacher.cs" />
     <Compile Include="Structs\cachedShip.cs" />
     <Compile Include="LoadingBar.cs" />
     <Compile Include="RuntimeUpdater.cs" />
@@ -81,7 +82,7 @@
     <Compile Include="Mainmod.cs" />
     <Compile Include="ModGUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SkinHandlers\WeaponSkinHandler.cs" />
+    <Compile Include="SkinHandlers\weaponSkinHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
