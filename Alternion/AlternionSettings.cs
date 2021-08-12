@@ -81,7 +81,8 @@ namespace Alternion
         /// Use Flags.
         /// </summary>
         public static bool showFlags = true;
-
+        
+        public static string version = "9.0";
         /// <summary>
         /// Config file location.
         /// </summary>
