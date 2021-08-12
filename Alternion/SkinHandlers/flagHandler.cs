@@ -4,7 +4,7 @@ using BWModLoader;
 using Harmony;
 using UnityEngine;
 
-namespace Alternion
+namespace Alternion.SkinHandlers
 {
     /// <summary>
     /// Handles all flag interactions

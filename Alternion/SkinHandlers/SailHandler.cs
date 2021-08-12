@@ -6,7 +6,7 @@ using BWModLoader;
 using UnityEngine;
 
 
-namespace Alternion
+namespace Alternion.SkinHandlers
 {
     /// <summary>
     /// Handles all sail interactions

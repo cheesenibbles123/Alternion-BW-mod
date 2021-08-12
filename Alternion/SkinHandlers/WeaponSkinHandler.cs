@@ -4,7 +4,7 @@ using Steamworks;
 using UnityEngine;
 using BWModLoader;
 
-namespace Alternion
+namespace Alternion.SkinHandlers
 {
     [Mod]
     public class WeaponSkinHandler : MonoBehaviour

@@ -3,7 +3,7 @@ using UnityEngine;
 using BWModLoader;
 using Harmony;
 
-namespace Alternion
+namespace Alternion.SkinHandlers
 {
     [Mod]
     public class CannonHandler : MonoBehaviour

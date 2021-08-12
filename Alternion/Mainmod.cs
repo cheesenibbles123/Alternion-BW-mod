@@ -6,7 +6,7 @@ using UnityEngine;
 using BWModLoader;
 using Harmony;
 using Steamworks;
-
+using Alternion.SkinHandlers;
 
 namespace Alternion
 {

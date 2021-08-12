@@ -3,7 +3,7 @@ using BWModLoader;
 using UnityEngine;
 using Harmony;
 
-namespace Alternion
+namespace Alternion.SkinHandlers
 {
     [Mod]
     public class swivelHandler : MonoBehaviour
