@@ -71,7 +71,7 @@
     <Compile Include="MainMenuCL.cs" />
     <Compile Include="SkinHandlers\mortarHandler.cs" />
     <Compile Include="SkinHandlers\sailHandler.cs" />
-    <Compile Include="Structs\SkinAttributes.cs" />
+    <Compile Include="Structs\skinAttributes.cs" />
     <Compile Include="SkinHandlers\swivelHandler.cs" />
     <Compile Include="TheGreatCacher.cs" />
     <Compile Include="Structs\cachedShip.cs" />
