@@ -4,6 +4,8 @@ using Steamworks;
 using UnityEngine;
 using BWModLoader;
 
+using Alternion.Structs;
+
 namespace Alternion.SkinHandlers
 {
     [Mod]

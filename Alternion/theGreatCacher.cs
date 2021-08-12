@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using BWModLoader;
+using Alternion.Structs;
 
 namespace Alternion
 {

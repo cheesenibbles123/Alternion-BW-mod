@@ -2,6 +2,7 @@
 using UnityEngine;
 using BWModLoader;
 using Harmony;
+using Alternion.Structs;
 
 namespace Alternion.SkinHandlers
 {

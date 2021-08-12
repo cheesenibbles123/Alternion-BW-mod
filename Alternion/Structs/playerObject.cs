@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Alternion
+namespace Alternion.Structs
 {
     /// <summary>
     /// Stores player loadout.

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Harmony;
 using BWModLoader;
 using UnityEngine;
-
+using Alternion.Structs;
 
 namespace Alternion.SkinHandlers
 {

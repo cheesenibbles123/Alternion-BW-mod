@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Alternion
+namespace Alternion.Structs
 {
     /// <summary>
     /// Single cached ship object, stores sails, flags and cannons.

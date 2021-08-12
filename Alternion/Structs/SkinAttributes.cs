@@ -1,4 +1,4 @@
-﻿namespace Alternion
+﻿namespace Alternion.Structs
 {
     public class weaponSkinAttributes
     {

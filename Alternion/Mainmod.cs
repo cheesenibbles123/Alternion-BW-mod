@@ -7,6 +7,7 @@ using BWModLoader;
 using Harmony;
 using Steamworks;
 using Alternion.SkinHandlers;
+using Alternion.Structs;
 
 namespace Alternion
 {

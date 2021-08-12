@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Harmony;
 using BWModLoader;
+using Alternion.Structs;
 
 namespace Alternion.SkinHandlers
 {

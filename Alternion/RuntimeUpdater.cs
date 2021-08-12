@@ -5,6 +5,7 @@ using Harmony;
 using UnityEngine;
 using System.Collections;
 using BWModLoader;
+using Alternion.Structs;
 
 namespace Alternion
 {

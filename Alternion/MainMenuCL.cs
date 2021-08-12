@@ -3,7 +3,7 @@ using Harmony;
 using UnityEngine;
 using BWModLoader;
 using Steamworks;
-using System.Collections;
+using Alternion.Structs;
 
 namespace Alternion
 {
