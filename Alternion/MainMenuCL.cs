@@ -176,7 +176,7 @@ namespace Alternion
             if (Input.GetKeyUp("-"))
             {
                 // Useful response that i totally always remember to keep up-to-date
-                Logger.debugLog("v8.0");
+                Logger.debugLog(AlternionSettings.version);
             }
         }
 
