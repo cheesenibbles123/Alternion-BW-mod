@@ -132,6 +132,11 @@ namespace Alternion
                 weaponSkinAttributes skin = JsonUtility.FromJson<weaponSkinAttributes>(json[i]);
                 theGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
                 LoadingBar.updatePercentage(10 + (10 * ((float)i / (float)json.Length)), "Downloading skinInfo...");
+
+                if (skin.weaponSkin == "mortar_royal")
+                {
+                    Logger.logLow(skin.ToString());
+                }
             }
             StartCoroutine(downloadTextures());
         }
@@ -544,15 +549,19 @@ namespace Alternion
                 }
                 if (player.Value.mortarSkinName != "default")
                 {
-                    flag = alreadyDownloaded.Contains(player.Value.mortarSkinName);
+                    Logger.logLow("Got custom mortar skin for player");
+                    flag = alreadyDownloaded.Contains("mortar_" + player.Value.mortarSkinName);
                     if (!flag)
                     {
-                        if (theGreatCacher.Instance.skinAttributes.TryGetValue(player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
+                        Logger.logLow("isNew");
+                        if (theGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
+                                Logger.logLow("Downloading skin");
                                 if (skinInfo.hasAlb)
                                 {
+                                    Logger.logLow("Has ALB");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + ".png");
                                     yield return www;
 
@@ -565,10 +574,12 @@ namespace Alternion
                                     {
                                         Logger.debugLog(e.Message);
                                     }
+                                    Logger.logLow("Got custom mortar alb skin for player");
                                 }
 
                                 if (skinInfo.hasMet)
                                 {
+                                    Logger.logLow("Has MET");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_met.png");
                                     yield return www;
 
@@ -581,10 +592,12 @@ namespace Alternion
                                     {
                                         Logger.logLow("No met found for " + player.Value.mortarSkinName);
                                     }
+                                    Logger.logLow("Got custom mortar met skin for player");
                                 }
 
                                 if (skinInfo.hasNrm)
                                 {
+                                    Logger.logLow("Has NRM");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png");
                                     yield return www;
 
@@ -597,6 +610,7 @@ namespace Alternion
                                     {
                                         Logger.logLow("No nrm found for " + player.Value.mortarSkinName);
                                     }
+                                    Logger.logLow("Got custom mortar nrm skin for player");
                                 }
                             }
                             newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
@@ -610,7 +624,7 @@ namespace Alternion
                                 theGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
                             }
                         }
-                        alreadyDownloaded.Add(player.Value.mortarSkinName);
+                        alreadyDownloaded.Add("mortar_" + player.Value.mortarSkinName);
                     }
                 }
                 // Flags
@@ -2749,7 +2763,7 @@ namespace Alternion
         /// <summary>
         /// Resets all ship assets to default textures. Cannons + Sails
         /// </summary>
-        static void resetAllShipsToDefault()
+        static void resetAllShipsToDefault() // TO DO: Null reference error somewhere
         {
             // Loop through all ships, and set all visuals to defaults in the following order:
             // Sails
