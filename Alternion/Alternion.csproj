@@ -62,7 +62,9 @@
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
     <Compile Include="Fixes\birbHandler.cs" />
+    <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
+    <Compile Include="Fixes\GameModechanges.cs" />
     <Compile Include="SkinHandlers\CannonHandler.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
     <Compile Include="MainMenuCL.cs" />
