@@ -163,12 +163,19 @@ namespace Alternion
             bool doesntExist = true;
             while (doesntExist) // Good ol while loops :)
             {
-                int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
-
-                if (GameMode.Instance.teamCaptains[index] && __instance.æïìçñðåììêç)
+                if (__instance.æïìçñðåììêç)
                 {
-                    checkCached(__instance, index, GameMode.Instance.teamCaptains[index].steamID.ToString());
-                    doesntExist = false;
+                    int index = GameMode.getParentIndex(__instance.æïìçñðåììêç.transform.root);
+
+                    if (GameMode.Instance.teamCaptains[index])
+                    {
+                        checkCached(__instance, index, GameMode.Instance.teamCaptains[index].steamID.ToString());
+                        doesntExist = false;
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(1f);
+                    }
                 }
                 else
                 {
