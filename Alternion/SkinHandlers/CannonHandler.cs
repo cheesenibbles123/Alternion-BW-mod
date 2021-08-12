@@ -135,7 +135,7 @@ namespace Alternion.SkinHandlers
         /// <summary>
         /// Checks if the ship is cacned
         /// </summary>
-        /// <param name="__instance">Cannon</param>
+        /// <param name="rend">Cannon LOD renderer</param>
         /// <param name="index">Team Num</param>
         /// <param name="steamID">Captain SteamID</param>
         void checkCached(Renderer rend, int index, string steamID)
