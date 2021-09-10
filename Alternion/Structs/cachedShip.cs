@@ -57,20 +57,16 @@ namespace Alternion.Structs
         /// </summary>
         public List<Renderer> mortars = new List<Renderer>();
         /// <summary>
-        /// Stores all Secondary Sails.
+        /// Stores all the cannons
+        /// </summary>
+        public List<Renderer> cannons = new List<Renderer>();
+        /// <summary>
+        /// Stores all the secondary sails
         /// </summary>
         public Dictionary<string, SailHealth> sailDict = new Dictionary<string, SailHealth>();
         /// <summary>
         /// Stores all Main Sails.
         /// </summary>
         public Dictionary<string, SailHealth> mainSailDict = new Dictionary<string, SailHealth>();
-        /// <summary>
-        /// Stores Operational Cannons.
-        /// </summary>
-        public Dictionary<string, CannonUse> cannonOperationalDict = new Dictionary<string, CannonUse>();
-        /// <summary>
-        /// Stores Destroyed cannons.
-        /// </summary>
-        public Dictionary<string, CannonDestroy> cannonDestroyDict = new Dictionary<string, CannonDestroy>();
     }
 }
