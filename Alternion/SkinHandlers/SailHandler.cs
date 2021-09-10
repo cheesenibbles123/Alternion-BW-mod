@@ -165,10 +165,6 @@ namespace Alternion.SkinHandlers
                 Texture newTex;
                 foreach (Renderer renderer in vessel.closedSails)
                 {
-                    Logger.debugLog("#############");
-                    Logger.debugLog(renderer.name);
-                    Logger.debugLog(renderer.transform.parent.name);
-                    Logger.debugLog("#############");
                     if (mainSailList.Contains("text") && AlternionSettings.useMainSails)
                     {
                         // Handle Main Sail
