@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Harmony;
 
 namespace Alternion.Fixes
 {
+#if EXTRAS
     class shipLod
     {
         [HarmonyPatch(typeof(ShipLOD), "Update")]
@@ -22,4 +22,5 @@ namespace Alternion.Fixes
             }
         }
     }
+#endif
 }

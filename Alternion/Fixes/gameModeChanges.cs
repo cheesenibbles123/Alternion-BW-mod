@@ -2,6 +2,7 @@
 
 namespace Alternion.Fixes
 {
+    
     class gameModeChanges
     {
 
@@ -11,7 +12,7 @@ namespace Alternion.Fixes
             /// <summary>
             /// Patches into getPlayerInfo and removes references to 'game', aka calls for when a bot does something
             /// </summary>
-            /// <param name="__instance">Current instance of GameMode</param>
+            /// <param name="__result">Current instance of GameMode</param>
             /// <param name="pname">Player Name</param>
             /// <returns></returns>
             static bool Prefix(ref PlayerInfo __result, string pname)
@@ -26,4 +27,5 @@ namespace Alternion.Fixes
         }
 
     }
+
 }
