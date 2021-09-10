@@ -133,11 +133,6 @@ namespace Alternion
                 weaponSkinAttributes skin = JsonUtility.FromJson<weaponSkinAttributes>(json[i]);
                 TheGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
                 LoadingBar.updatePercentage(10 + (10 * ((float)i / (float)json.Length)), "Downloading skinInfo...");
-
-                if (skin.weaponSkin == "mortar_royal")
-                {
-                    Logger.logLow(skin.ToString());
-                }
             }
             StartCoroutine(downloadTextures());
         }
@@ -2807,18 +2802,18 @@ namespace Alternion
                 // Only reset if cannon texture has been set
                 if (TheGreatCacher.Instance.defaultCannons)
                 {
-                    foreach (KeyValuePair<string, CannonUse> indvidualCannon in individualShip.Value.cannonOperationalDict)
+                    Logger.debugLog("Resetting ship cannons");
+                    for (int i = individualShip.Value.cannons.Count - 1; i >= 0; i--)
                     {
-                        if (indvidualCannon.Value != null)
+                        Renderer rend = individualShip.Value.cannons[i];
+                        if (rend)
                         {
-                            indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>().material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultCannons);
+                            rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                            rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                         }
-                    }
-                    foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in individualShip.Value.cannonDestroyDict)
-                    {
-                        if (indvidualCannon.Value != null)
+                        else
                         {
-                            indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>().material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultCannons);
+                            individualShip.Value.cannons.RemoveAt(i);
                         }
                     }
 
@@ -2833,39 +2828,29 @@ namespace Alternion
                 // Only reset if swivel texture has been set
                 if (TheGreatCacher.Instance.setSwivelDefaults)
                 {
-                    Renderer swivel;
-                    for (int i = individualShip.Value.Swivels.Count; i >= 0; i--)
+                    foreach (Renderer swivel in individualShip.Value.Swivels)
                     {
-                        swivel = individualShip.Value.Swivels[i];
                         if (swivel != null)
                         {
-                            swivel.material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultSwivel);
+                            swivel.material.mainTexture = TheGreatCacher.Instance.defaultSwivel;
                             swivel.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
                         }
-                        else
-                        {
-                            individualShip.Value.Swivels.RemoveAt(i);
-                        }
                     }
+                    individualShip.Value.hasChangedSwivels = false;
                 }
 
                 // Only reset if mortar texture has been set
                 if (TheGreatCacher.Instance.setMortarDefaults)
                 {
-                    Renderer mortar;
-                    for (int i = individualShip.Value.mortars.Count; i >= 0; i--)
+                    foreach (Renderer mortar in individualShip.Value.mortars)
                     {
-                        mortar = individualShip.Value.mortars[i];
                         if (mortar != null)
                         {
-                            mortar.material.SetTexture("_MainTex", TheGreatCacher.Instance.defaultMortar);
+                            mortar.material.mainTexture = TheGreatCacher.Instance.defaultMortar;
                             mortar.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
                         }
-                        else
-                        {
-                            individualShip.Value.mortars.RemoveAt(i);
-                        }
                     }
+                    individualShip.Value.hasChangedMortars = false;
                 }
 
             }
@@ -2947,28 +2932,35 @@ namespace Alternion
                         // Only apply new texture if config has cannon textures enabled
                         if (AlternionSettings.useCannonSkins)
                         {
-                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                            for (int i = mightyVessel.cannons.Count - 1; i >= 0; i--)
                             {
-                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                                Renderer rend = mightyVessel.cannons[i];
+                                if (rend)
                                 {
-                                    renderer.material.mainTexture = newTex;
+                                    bool isNotSet = true;
+                                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                                    {
+                                        rend.material.mainTexture = newTex;
+                                        isNotSet = false;
+                                    }
+                                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                                    {
+                                        rend.material.SetTexture("_Metallic", newTex);
+                                        isNotSet = false;
+                                    }
+                                    if (isNotSet)
+                                    {
+                                        rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                        rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                    }
                                 }
                                 else
                                 {
-                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                }
-
-                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
-                                {
-                                    renderer.material.SetTexture("_Metallic", newTex);
-                                }
-                                else
-                                {
-                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                    mightyVessel.cannons.RemoveAt(i);
                                 }
                             }
 
+                            // LOD
                             if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                             {
                                 mightyVessel.cannonLOD.material.mainTexture = newTex;
@@ -2989,50 +2981,15 @@ namespace Alternion
                         }
                         else if (mightyVessel.hasChangedCannons)
                         {
-                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                            foreach (Renderer cannon in mightyVessel.cannons)
                             {
-                                Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                cannon.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                cannon.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                             }
 
                             mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                             mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
-                        }
-
-                        // Only apply new texture if config has cannon textures enabled
-                        if (AlternionSettings.useCannonSkins)
-                        {
-                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
-                            {
-                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
-                                {
-                                    renderer.material.mainTexture = newTex;
-                                }
-                                else
-                                {
-                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                }
-
-                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
-                                {
-                                    renderer.material.SetTexture("_Metallic", newTex);
-                                }
-                                else
-                                {
-                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
-                                }
-                            }
-                        }
-                        else if (mightyVessel.hasChangedCannons)
-                        {
-                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
-                            {
-                                Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
-                            }
+                            mightyVessel.hasChangedCannons = false;
                         }
 
                         // Only apply new texture if config has flag textures enabled
@@ -3066,7 +3023,7 @@ namespace Alternion
                         // Only apply new texture if config has mortar textures enabled
                         if (AlternionSettings.useMortarSkins)
                         {
-                            for (int i = 0; i < mightyVessel.mortars.Count; i++)
+                            for (int i = 0; i < mightyVessel.mortars.Count - 1; i++)
                             {
                                 if (TheGreatCacher.Instance.mortarSkins.TryGetValue(player.mortarSkinName, out newTex))
                                 {
@@ -3102,22 +3059,17 @@ namespace Alternion
                     {
                         if (mightyVessel.hasChangedCannons)
                         {
-                            foreach (KeyValuePair<string, CannonUse> indvidualCannon in mightyVessel.cannonOperationalDict)
+                            for (int i = mightyVessel.cannons.Count - 1; i >= 0; i--)
                             {
-                                if (TheGreatCacher.Instance.setCannonDefaults)
+                                Renderer rend = mightyVessel.cannons[i];
+                                if (rend)
                                 {
-                                    Renderer renderer = indvidualCannon.Value.transform.FindChild("cannon").GetComponent<Renderer>();
-                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                    rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                                    rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                                 }
-                            }
-                            foreach (KeyValuePair<string, CannonDestroy> indvidualCannon in mightyVessel.cannonDestroyDict)
-                            {
-                                if (TheGreatCacher.Instance.setCannonDefaults)
+                                else
                                 {
-                                    Renderer renderer = indvidualCannon.Value.îæïíïíäìéêé.GetComponent<Renderer>();
-                                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                    mightyVessel.cannons.RemoveAt(i);
                                 }
                             }
 
