@@ -57,7 +57,7 @@ namespace Alternion.SkinHandlers
             bool notFoundCaptain = true;
             while (notFoundCaptain)
             {
-                if (GameMode.Instance.teamCaptains[index] != null)
+                if (GameMode.Instance.teamCaptains.Length >= index && GameMode.Instance.teamCaptains[index] != null)
                 {
                     string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
