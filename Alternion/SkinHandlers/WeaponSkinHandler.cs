@@ -55,17 +55,6 @@ namespace Alternion.SkinHandlers
         {
 
             Renderer renderer = __instance.GetComponent<Renderer>();
-#if DEBUG
-            //foreach (Transform transf in __instance.transform.parent)
-            //{
-            //logLow(transf.name);
-            //}
-            //logLow("__instance.transform.parent.parent:");
-            //foreach (Transform transf in __instance.transform.parent.parent)
-            //{
-            //    logLow(transf.name);
-            //}
-#endif
 
             switch (renderer.material.mainTexture.name)
             {
