@@ -2825,6 +2825,24 @@ namespace Alternion
                     individualShip.Value.hasChangedCannons = false;
                 }
 
+                // Only reset if default Navy flag texture has been set
+                if (TheGreatCacher.Instance.setNavyFlag && individualShip.Value.isNavy)
+                {
+                    for (int i=0; i< individualShip.Value.flags.Count; i++)
+                    {
+                        individualShip.Value.flags[i].material.mainTexture = TheGreatCacher.Instance.navyFlag;
+                    }
+                }
+
+                // Only reset if default Pirate flag texture has been set
+                if (TheGreatCacher.Instance.setPirateFlag && !individualShip.Value.isNavy)
+                {
+                    for (int i = 0; i < individualShip.Value.flags.Count; i++)
+                    {
+                        individualShip.Value.flags[i].material.mainTexture = TheGreatCacher.Instance.pirateFlag;
+                    }
+                }
+
                 // Only reset if swivel texture has been set
                 if (TheGreatCacher.Instance.setSwivelDefaults)
                 {
