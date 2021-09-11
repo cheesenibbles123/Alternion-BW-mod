@@ -545,19 +545,15 @@ namespace Alternion
                 }
                 if (player.Value.mortarSkinName != "default")
                 {
-                    Logger.logLow("Got custom mortar skin for player");
                     flag = alreadyDownloaded.Contains("mortar_" + player.Value.mortarSkinName);
                     if (!flag)
                     {
-                        Logger.logLow("isNew");
                         if (TheGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
-                                Logger.logLow("Downloading skin");
                                 if (skinInfo.hasAlb)
                                 {
-                                    Logger.logLow("Has ALB");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + ".png");
                                     yield return www;
 
@@ -570,12 +566,10 @@ namespace Alternion
                                     {
                                         Logger.debugLog(e.Message);
                                     }
-                                    Logger.logLow("Got custom mortar alb skin for player");
                                 }
 
                                 if (skinInfo.hasMet)
                                 {
-                                    Logger.logLow("Has MET");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_met.png");
                                     yield return www;
 
@@ -588,12 +582,10 @@ namespace Alternion
                                     {
                                         Logger.logLow("No met found for " + player.Value.mortarSkinName);
                                     }
-                                    Logger.logLow("Got custom mortar met skin for player");
                                 }
 
                                 if (skinInfo.hasNrm)
                                 {
-                                    Logger.logLow("Has NRM");
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png");
                                     yield return www;
 
@@ -606,7 +598,6 @@ namespace Alternion
                                     {
                                         Logger.logLow("No nrm found for " + player.Value.mortarSkinName);
                                     }
-                                    Logger.logLow("Got custom mortar nrm skin for player");
                                 }
                             }
                             newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
