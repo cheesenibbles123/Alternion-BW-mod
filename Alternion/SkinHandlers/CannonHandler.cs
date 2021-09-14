@@ -129,7 +129,7 @@ namespace Alternion.SkinHandlers
             {
                 int index = GameMode.getParentIndex(__instance.gameObject.transform.root);
 
-                if (GameMode.Instance.teamCaptains.Length >= index && GameMode.Instance.teamCaptains[index])
+                if (GameMode.Instance.teamCaptains.Length > index && GameMode.Instance.teamCaptains[index])
                 {
                     setupLod(__instance, index, GameMode.Instance.teamCaptains[index].steamID.ToString());
                     doesntExist = false;
@@ -152,7 +152,7 @@ namespace Alternion.SkinHandlers
             bool doesntExist = true;
             while (doesntExist)
             {
-                if (GameMode.Instance.teamCaptains.Length >= index && GameMode.Instance.teamCaptains[index])
+                if (GameMode.Instance.teamCaptains.Length > index && GameMode.Instance.teamCaptains[index])
                 {
                     cachedShip vessel = TheGreatCacher.getCachedShip(index.ToString());
                     try {
