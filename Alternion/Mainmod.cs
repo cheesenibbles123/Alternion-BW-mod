@@ -545,10 +545,10 @@ namespace Alternion
                 }
                 if (player.Value.mortarSkinName != "default")
                 {
-                    flag = alreadyDownloaded.Contains("mortar_" + player.Value.mortarSkinName);
+                    flag = alreadyDownloaded.Contains(player.Value.mortarSkinName);
                     if (!flag)
                     {
-                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue("mortar_" + player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
+                        if (TheGreatCacher.Instance.skinAttributes.TryGetValue(player.Value.mortarSkinName, out weaponSkinAttributes skinInfo))
                         {
                             if (AlternionSettings.downloadOnStartup)
                             {
@@ -600,18 +600,32 @@ namespace Alternion
                                     }
                                 }
                             }
-                            newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
+                            if (skinInfo.hasAlb)
                             {
-                                TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
+                                newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
+                                }
                             }
-                            newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
-                            if (newTex.name != "FAILED")
+                            if (skinInfo.hasMet)
                             {
-                                TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
+                                newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
+                                }
+                            }
+                            if (skinInfo.hasNrm)
+                            {
+                                newTex = loadTexture(player.Value.mortarSkinName + "_nrm", texturesFilePath + "MortarSkins/", 2048, 2048);
+                                if (newTex.name != "FAILED")
+                                {
+                                    TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_nrm", newTex);
+                                }
                             }
                         }
-                        alreadyDownloaded.Add("mortar_" + player.Value.mortarSkinName);
+                        alreadyDownloaded.Add(player.Value.mortarSkinName);
                     }
                 }
                 // Flags
