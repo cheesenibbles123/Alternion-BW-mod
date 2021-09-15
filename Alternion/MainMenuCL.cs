@@ -193,7 +193,6 @@ namespace Alternion
 
         void Update()
         {
-            handleLogVersion();
             if (menuCharacter && óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1))
             {
                 // If it has been found
@@ -220,15 +219,6 @@ namespace Alternion
             if (getKeyPress("3"))
             {
                 menuCharacterAnimation.CrossFade("Crouch_Idle");
-            }
-        }
-
-        void handleLogVersion()
-        {
-            if (Input.GetKeyUp(AlternionSettings.versionDisplayKey))
-            {
-                // Useful response that i totally always remember to keep up-to-date
-                Logger.debugLog(AlternionSettings.version);
             }
         }
 

@@ -133,6 +133,10 @@ namespace Alternion
         /// </summary>
         void setupDefaults()
         {
+            /*
+             * Initializations are mostly redundant as values are setup above to prevent a typo or incorrect parse to fail to populate a variable.
+             * (Mostly serves as a backup)
+             */
             loggingLevel = 0;
             showTWBadges = false;
             showKSBadges = false;
@@ -147,36 +151,8 @@ namespace Alternion
             updateDuringRuntime = true;
             showFlags = true;
             configKeyInput = "]";
-
-            StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
-            streamWriter.WriteLine("[Alternion config file]");
-            streamWriter.WriteLine("");
-            streamWriter.WriteLine("[General]");
-            streamWriter.WriteLine("configMenuHotkey=" + configKeyInput);
-            streamWriter.WriteLine("loggingLevel=" + loggingLevel);
-            streamWriter.WriteLine("");
-            streamWriter.WriteLine("[Visuals]");
-            streamWriter.WriteLine("------------");
-            streamWriter.WriteLine("Format:");
-            streamWriter.WriteLine("1 : Enabled");
-            streamWriter.WriteLine("0 : Disabled");
-            streamWriter.WriteLine("------------");
-            streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
-            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
-            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
-            streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
-            streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
-            streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
-            streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
-            streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
-            streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
-            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
-            streamWriter.WriteLine("useMortarSkins=" + checkBool(useMortarSkins));
-            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
-            streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
-            streamWriter.Close();
-
-            Logger.debugLog("No config file found. Created default config file.");
+            versionDisplayKey = "-";
+            saveSettings(true);
         }
 
         /// <summary>
@@ -204,6 +180,9 @@ namespace Alternion
                         {
                             case "configMenuHotkey":
                                 configKeyInput = splitArr[1];
+                                break;
+                            case "versionDisplayKey":
+                                versionDisplayKey = splitArr[1];
                                 break;
                             case "loggingLevel":
                                 try
@@ -357,9 +336,9 @@ namespace Alternion
         /// <summary>
         /// Saves the current runtime settings to the config file.
         /// </summary>
-        public static void saveSettings()
+        public static void saveSettings(bool isNew)
         {
-            StreamWriter streamWriter = new StreamWriter("AlternionConfig.cfg");
+            StreamWriter streamWriter = new StreamWriter(configFile);
             streamWriter.WriteLine("[Alternion config file]");
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[General]");
@@ -387,7 +366,14 @@ namespace Alternion
             streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
             streamWriter.Close();
 
-            Logger.debugLog("Saved config to file.");
+            if (isNew)
+            {
+                Logger.debugLog("Generated default config file.");
+            }
+            else
+            {
+                Logger.debugLog("Saved config to file.");
+            }
         }
 
         /// <summary>

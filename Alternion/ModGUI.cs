@@ -414,7 +414,7 @@ namespace Alternion
             //Save Button
             if (GUI.Button(new Rect(saveButton.x, saveButton.y, saveButton.z, saveButton.w), "Save"))
             {
-                AlternionSettings.saveSettings();
+                AlternionSettings.saveSettings(false);
             }
 
             GUI.skin.button.normal.background = defaultGUIBackground;
