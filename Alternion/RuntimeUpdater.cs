@@ -10,7 +10,7 @@ using Alternion.Structs;
 namespace Alternion
 {
     /// <summary>
-    /// Runtime Updater
+    /// Runtime Updater (ALL EXPERIMENTAL AND NOT FULLY WORKING STUFF)
     /// </summary>
     [Mod]
     public class RuntimeUpdater : MonoBehaviour
