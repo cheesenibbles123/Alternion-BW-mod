@@ -80,8 +80,14 @@ namespace Alternion
         /// Use Flags.
         /// </summary>
         public static bool showFlags = true;
-        
-        public static string version = "9.0";
+        /// <summary>
+        /// Current version number
+        /// </summary>
+        public static string version = "a9.1";
+        /// <summary>
+        /// Button to press to display current version in the log
+        /// </summary>
+        public static string versionDisplayKey = "-";
         /// <summary>
         /// Config file location.
         /// </summary>
@@ -95,6 +101,16 @@ namespace Alternion
         {
             checkConfig();
             setTextures();
+        }
+
+        void Update()
+        {
+            // Display output of current version on keypress (Good for checking version numbers)
+            if (Input.GetKeyUp(versionDisplayKey))
+            {
+                // Useful response that I totally always remember to keep up-to-date ;)
+                Logger.debugLog(version);
+            }
         }
 
         /// <summary>

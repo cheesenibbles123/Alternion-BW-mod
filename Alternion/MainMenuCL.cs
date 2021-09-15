@@ -4,6 +4,7 @@ using UnityEngine;
 using BWModLoader;
 using Steamworks;
 using Alternion.Structs;
+using System.Collections.Generic;
 
 namespace Alternion
 {
@@ -14,7 +15,9 @@ namespace Alternion
         /// Main menu character transform.
         /// </summary>
         static Transform menuCharacter;
-
+        static Animation menuCharacterAnimation;
+        static GameObject weapon;
+        static List<AnimationClip> mainMenuAnimations = new List<AnimationClip>();
         /// <summary>
         /// MainMenuCL Instance.
         /// </summary>
@@ -127,20 +130,30 @@ namespace Alternion
         void setMenuCharacter()
         {
             // Find the musket object
-            var musket = GameObject.Find("wpn_standardMusket_LOD1");
-            if (musket != null)
+            weapon = GameObject.Find("wpn_standardMusket_LOD1");
+            if (weapon != null)
             {
-                // If it exists, then go to root and find the character model in the heirachy
-                Transform rootTransf = musket.transform.root;
-                foreach (Transform transform in rootTransf)
+                // Get Animator
+                foreach (Animation anim in weapon.transform.root.GetComponentsInChildren<Animation>())
                 {
-                    if (transform.name == "default_character_rig")
+                    if (anim.name == "default_character_rig")
                     {
-                        // Save it for the rotating in Update()
-                        menuCharacter = transform;
+                        menuCharacterAnimation = anim;
+                        menuCharacter = anim.transform;
+                        setupMenuCharacterAnimations();
                         break;
                     }
                 }
+
+            }
+
+        }
+
+        void setupMenuCharacterAnimations()
+        {
+            foreach (AnimationClip clip in mainMenuAnimations)
+            {
+                menuCharacterAnimation.AddClip(clip, clip.name);
             }
         }
 
@@ -155,6 +168,21 @@ namespace Alternion
             {
                 DestroyImmediate(this);
             }
+
+            AnimationClip[] animations = Resources.FindObjectsOfTypeAll<AnimationClip>();
+            List<string> clips = new List<string>()
+                {
+                    "Sprint",
+                    "Crouch_Idle",
+                };
+            for (int i = 0; i < animations.Length; i++)
+            {
+                Logger.debugLog($"Clip: {animations[i].name} {animations[i].frameRate} {animations[i].length} {animations[i].legacy}");
+                if (clips.Contains(animations[i].name))
+                {
+                    mainMenuAnimations.Add(animations[i]);
+                }
+            }
         }
 
         void Start()
@@ -165,6 +193,7 @@ namespace Alternion
 
         void Update()
         {
+            handleLogVersion();
             if (menuCharacter && óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1))
             {
                 // If it has been found
@@ -172,12 +201,50 @@ namespace Alternion
                 menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
 
             }
+            if (menuCharacterAnimation)
+            {
+                handleMenuAnimationAndPoses();
+            }
+        }
 
-            if (Input.GetKeyUp("-"))
+        void handleMenuAnimationAndPoses()
+        {
+            if (getKeyPress("1"))
+            {
+                menuCharacterAnimation.CrossFade("Sprint");
+            }
+            if (getKeyPress("2"))
+            {
+                menuCharacterAnimation.CrossFade("Idle");
+            }
+            if (getKeyPress("3"))
+            {
+                menuCharacterAnimation.CrossFade("Crouch_Idle");
+            }
+        }
+
+        void handleLogVersion()
+        {
+            if (Input.GetKeyUp(AlternionSettings.versionDisplayKey))
             {
                 // Useful response that i totally always remember to keep up-to-date
                 Logger.debugLog(AlternionSettings.version);
             }
+        }
+
+        /// <summary>
+        /// Does the same as Input.GetKey("key"). Just looks nicer.
+        /// </summary>
+        /// <param name="key">Key to check if released</param>
+        /// <returns>True/False</returns>
+        bool getKeyPress(string key)
+        {
+            return Input.GetKey(key);
+        }
+
+        void getWeaponByKeypress()
+        {
+            
         }
 
         /// <summary>
