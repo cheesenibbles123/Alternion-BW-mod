@@ -336,6 +336,7 @@ namespace Alternion
         /// <summary>
         /// Saves the current runtime settings to the config file.
         /// </summary>
+        /// <param name="isNew">New config generated or updating existing config file</param>
         public static void saveSettings(bool isNew)
         {
             StreamWriter streamWriter = new StreamWriter(configFile);
@@ -377,23 +378,17 @@ namespace Alternion
         }
 
         /// <summary>
-        /// Converts an int (1:true, 0:false) to a bool.
+        /// Converts an bool to an int (1:true, 0:false).
         /// </summary>
         /// <param name="checking">Bool to convert</param>
         static int checkBool(bool checking)
         {
-            if (checking)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
+            return checking ? 1 : 0;
         }
 
         /// <summary>
         /// Checks for all textures, and stores the relevant ones into their respective slots.
+        /// Mostly serves to fill default textures, as well as config menu backgrounds and images.
         /// </summary>
         void setTextures()
         {
