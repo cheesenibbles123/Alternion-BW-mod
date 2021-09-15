@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
-    <Compile Include="downloader.cs" />
     <Compile Include="Fixes\birbHandler.cs" />
     <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
@@ -80,11 +79,9 @@
     <Compile Include="MainMenuCL.cs" />
     <Compile Include="SkinHandlers\mortarHandler.cs" />
     <Compile Include="SkinHandlers\sailHandler.cs" />
-    <Compile Include="Structs\imageFormats.cs" />
     <Compile Include="Structs\menuAnimation.cs" />
     <Compile Include="Structs\skinAttributes.cs" />
     <Compile Include="SkinHandlers\swivelHandler.cs" />
-    <Compile Include="Structs\type.cs" />
     <Compile Include="TheGreatCacher.cs" />
     <Compile Include="Structs\cachedShip.cs" />
     <Compile Include="LoadingBar.cs" />
