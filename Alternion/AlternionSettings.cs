@@ -89,7 +89,7 @@ namespace Alternion
         /// </summary>
         public static string versionDisplayKey = "-";
         /// <summary>
-        /// Config file location.
+        /// Config file Name.
         /// </summary>
         static string configFile = "AlternionConfig.cfg";
         /// <summary>
