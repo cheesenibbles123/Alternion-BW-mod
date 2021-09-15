@@ -89,6 +89,10 @@ namespace Alternion
         /// </summary>
         public static string versionDisplayKey = "-";
         /// <summary>
+        /// Button to press to step to the next main menu animation
+        /// </summary>
+        public static string mainMenuAnimationStepKey = "1";
+        /// <summary>
         /// Config file Name.
         /// </summary>
         static string configFile = "AlternionConfig.cfg";
@@ -184,13 +188,16 @@ namespace Alternion
                             case "versionDisplayKey":
                                 versionDisplayKey = splitArr[1];
                                 break;
+                            case "mainMenuAnimationStepKey":
+                                mainMenuAnimationStepKey = splitArr[1];
+                                break;
                             case "loggingLevel":
                                 try
                                 {
                                     loggingLevel = Convert.ToInt32(splitArr[1]);
                                 }catch (Exception e)
                                 {
-                                    Logger.debugLog("Error loading loggingLevel config option. Setting default of 0.");
+                                    Logger.debugLog("Error loading loggingLevel config option. Setting to default of 0.");
                                     Logger.debugLog(e.Message);
                                     loggingLevel = 0;
                                 }
@@ -344,6 +351,8 @@ namespace Alternion
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[General]");
             streamWriter.WriteLine("configMenuHotkey=" + configKeyInput);
+            streamWriter.WriteLine("versionDisplayKey=" + versionDisplayKey);
+            streamWriter.WriteLine("mainMenuAnimationStepKey=" + mainMenuAnimationStepKey);
             streamWriter.WriteLine("loggingLevel=" + loggingLevel);
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[Visuals]");

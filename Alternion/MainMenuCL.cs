@@ -17,7 +17,23 @@ namespace Alternion
         static Transform menuCharacter;
         static Animation menuCharacterAnimation;
         static GameObject weapon;
-        static List<AnimationClip> mainMenuAnimations = new List<AnimationClip>();
+
+        public class menuAnimation
+        {
+            public AnimationClip animation;
+            public bool weaponVisible;
+            public string clipName;
+            public menuAnimation(AnimationClip clip, bool visibleWeapon, string nameOfClip)
+            {
+                animation = clip;
+                weaponVisible = visibleWeapon;
+                clipName = nameOfClip;
+            }
+        }
+
+        static List<menuAnimation> animationClips = new List<menuAnimation>();
+        static int currentClip = 0;
+
         /// <summary>
         /// MainMenuCL Instance.
         /// </summary>
@@ -133,27 +149,39 @@ namespace Alternion
             weapon = GameObject.Find("wpn_standardMusket_LOD1");
             if (weapon != null)
             {
-                // Get Animator
+                // Get Animator and vendor clips
+                int vendorNum = 0;
                 foreach (Animation anim in weapon.transform.root.GetComponentsInChildren<Animation>())
                 {
                     if (anim.name == "default_character_rig")
                     {
                         menuCharacterAnimation = anim;
                         menuCharacter = anim.transform;
-                        setupMenuCharacterAnimations();
-                        break;
+                        animationClips.Add(new menuAnimation(
+                                anim.clip,
+                                true,
+                                anim.name
+                            ));
+                    }
+                    else
+                    {
+                        animationClips.Add(new menuAnimation(
+                                anim.clip,
+                                false,
+                                $"{anim.name}-{vendorNum}"
+                            ));
+                        vendorNum++;
                     }
                 }
-
+                setupMenuCharacterAnimations();
             }
-
         }
 
         void setupMenuCharacterAnimations()
         {
-            foreach (AnimationClip clip in mainMenuAnimations)
+            foreach (menuAnimation animation in animationClips)
             {
-                menuCharacterAnimation.AddClip(clip, clip.name);
+                menuCharacterAnimation.AddClip(animation.animation, animation.clipName);
             }
         }
 
@@ -177,10 +205,13 @@ namespace Alternion
                 };
             for (int i = 0; i < animations.Length; i++)
             {
-                Logger.debugLog($"Clip: {animations[i].name} {animations[i].frameRate} {animations[i].length} {animations[i].legacy}");
                 if (clips.Contains(animations[i].name))
                 {
-                    mainMenuAnimations.Add(animations[i]);
+                    animationClips.Add(new menuAnimation(
+                        animations[i],
+                        true,
+                        animations[i].name
+                        ));
                 }
             }
         }
@@ -193,32 +224,44 @@ namespace Alternion
 
         void Update()
         {
-            if (menuCharacter && óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1))
+            if (menuCharacter)
             {
-                // If it has been found
-                // Rotation code copied from CharacterCustomizationUI
-                menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
-
-            }
-            if (menuCharacterAnimation)
-            {
-                handleMenuAnimationAndPoses();
+                if (óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1))
+                {
+                    /*
+                     * If it has been found
+                     * Rotation code copied from CharacterCustomizationUI
+                     */
+                    menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
+                }
+                if (menuCharacterAnimation)
+                {
+                    handleMenuAnimationAndPoses();
+                }
+                if (weapon)
+                {
+                    handleWeaponChange();
+                }
             }
         }
 
         void handleMenuAnimationAndPoses()
         {
-            if (getKeyPress("1"))
+            if (getKeyPress(AlternionSettings.mainMenuAnimationStepKey))
             {
-                menuCharacterAnimation.CrossFade("Sprint");
-            }
-            if (getKeyPress("2"))
-            {
-                menuCharacterAnimation.CrossFade("Idle");
-            }
-            if (getKeyPress("3"))
-            {
-                menuCharacterAnimation.CrossFade("Crouch_Idle");
+                menuCharacterAnimation.CrossFade(animationClips[currentClip].clipName);
+                if (animationClips[currentClip].weaponVisible && !weapon.activeSelf)
+                {
+                    weapon.SetActive(true);
+                }else if (!animationClips[currentClip].weaponVisible && weapon.activeSelf)
+                {
+                    weapon.SetActive(false);
+                }
+                currentClip++;
+                if (currentClip >= animationClips.Count)
+                {
+                    currentClip = 0;
+                }
             }
         }
 
@@ -229,10 +272,10 @@ namespace Alternion
         /// <returns>True/False</returns>
         bool getKeyPress(string key)
         {
-            return Input.GetKey(key);
+            return Input.GetKeyUp(key);
         }
 
-        void getWeaponByKeypress()
+        void handleWeaponChange()
         {
             
         }
