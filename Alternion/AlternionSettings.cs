@@ -100,6 +100,14 @@ namespace Alternion
         /// Website file name.
         /// </summary>
         public static string remoteFile = "playerList2.json";
+        /// <summary>
+        /// Filepath to the textures.
+        /// </summary>
+        public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
+        /// <summary>
+        /// Website URL.
+        /// </summary>
+        public static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
 
         void Start()
         {
