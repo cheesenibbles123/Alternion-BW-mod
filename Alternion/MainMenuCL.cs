@@ -18,19 +18,6 @@ namespace Alternion
         static Animation menuCharacterAnimation;
         static GameObject weapon;
 
-        public class menuAnimation
-        {
-            public AnimationClip animation;
-            public bool weaponVisible;
-            public string clipName;
-            public menuAnimation(AnimationClip clip, bool visibleWeapon, string nameOfClip)
-            {
-                animation = clip;
-                weaponVisible = visibleWeapon;
-                clipName = nameOfClip;
-            }
-        }
-
         static List<menuAnimation> animationClips = new List<menuAnimation>();
         static int currentClip = 0;
 
