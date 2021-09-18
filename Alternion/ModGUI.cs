@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BWModLoader;
+using System.IO;
 
 namespace Alternion
 {
@@ -414,7 +415,11 @@ namespace Alternion
             //Save Button
             if (GUI.Button(new Rect(saveButton.x, saveButton.y, saveButton.z, saveButton.w), "Save"))
             {
-                AlternionSettings.saveSettings(false);
+                AlternionSettings.saveSettings(false, AlternionSettings.configFile);
+                if (File.Exists(Application.dataPath + AlternionSettings.altConfigFile))
+                {
+                    AlternionSettings.saveSettings(false, AlternionSettings.altConfigFile);
+                }
             }
 
             GUI.skin.button.normal.background = defaultGUIBackground;

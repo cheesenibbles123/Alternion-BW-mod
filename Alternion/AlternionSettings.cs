@@ -99,7 +99,11 @@ namespace Alternion
         /// <summary>
         /// Config file Name.
         /// </summary>
-        static string configFile = "AlternionConfig.cfg";
+        public static readonly string configFile = "AlternionConfig.cfg";
+        /// <summary>
+        /// Alternative config file location.
+        /// </summary>
+        public static readonly string altConfigFile = "/Managed/Mods/Configs/AlternionConfig.cfg";
         /// <summary>
         /// Website file name.
         /// </summary>
@@ -134,13 +138,17 @@ namespace Alternion
         /// </summary>
         void checkConfig()
         {
-            if (!File.Exists(configFile))
+            if (File.Exists(Application.dataPath + altConfigFile))
             {
-                setupDefaults();
+                loadSettings(altConfigFile);
+            }else
+            if (File.Exists(Application.dataPath + configFile))
+            {
+                loadSettings(configFile);
             }
             else
             {
-                loadSettings();
+                setupDefaults();
             }
         }
 
@@ -164,28 +172,35 @@ namespace Alternion
             useCannonSkins = true;
             useMortarSkins = true;
             downloadOnStartup = true;
-            updateDuringRuntime = true;
+            updateDuringRuntime = false;
             showFlags = true;
             configKeyInput = "]";
             versionDisplayKey = "-";
             mainMenuAnimationStepKey = "1";
             mainMenuWeaponStepKey = "2";
-            saveSettings(true);
+            saveSettings(true, configFile);
         }
 
         /// <summary>
         /// Loads the settings from the config file.
         /// </summary>
-        void loadSettings()
+        void loadSettings(string configToLoad)
         {
-            if (!File.Exists(configFile))
+            if (!File.Exists(Application.dataPath + configToLoad))
             {
-                Logger.debugLog("No config found! Generating new config file.");
-                setupDefaults();
-                loadSettings();
+                if (configToLoad != configFile)
+                {
+                    loadSettings(configFile);
+                    Logger.debugLog("No custom config found! Defaulting to standard.");
+                }else
+                {
+                    Logger.debugLog("No config found! Generating new config file.");
+                    setupDefaults();
+                    loadSettings(configFile);
+                }
                 return;
             }
-            string[] array = File.ReadAllLines(configFile);
+            string[] array = File.ReadAllLines(Application.dataPath + configToLoad);
             char splitCharacter = '=';
             for (int i = 0; i < array.Length; i++)
             {
@@ -364,8 +379,9 @@ namespace Alternion
         /// Saves the current runtime settings to the config file.
         /// </summary>
         /// <param name="isNew">New config generated or updating existing config file</param>
-        public static void saveSettings(bool isNew)
+        public static void saveSettings(bool isNew, string config)
         {
+            
             StreamWriter streamWriter = new StreamWriter(configFile);
             streamWriter.WriteLine("[Alternion config file]");
             streamWriter.WriteLine("");
