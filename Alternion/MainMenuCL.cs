@@ -388,7 +388,7 @@ namespace Alternion
         /// </summary>
         void handleWeaponChange()
         {
-            if (getKeyPress("2"))
+            if (getKeyPress(AlternionSettings.mainMenuWeaponStepKey))
             {
                 currentWeapon.mesh = wpnl[currentEquippedWeapon];
                 setMenuSkin(currentEquippedWeapon);

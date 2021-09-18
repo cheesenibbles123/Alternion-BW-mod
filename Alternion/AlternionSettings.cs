@@ -93,6 +93,10 @@ namespace Alternion
         /// </summary>
         public static string mainMenuAnimationStepKey = "1";
         /// <summary>
+        /// Button to press to step to the next main menu weapon
+        /// </summary>
+        public static string mainMenuWeaponStepKey = "2";
+        /// <summary>
         /// Config file Name.
         /// </summary>
         static string configFile = "AlternionConfig.cfg";
@@ -164,6 +168,8 @@ namespace Alternion
             showFlags = true;
             configKeyInput = "]";
             versionDisplayKey = "-";
+            mainMenuAnimationStepKey = "1";
+            mainMenuWeaponStepKey = "2";
             saveSettings(true);
         }
 
@@ -198,6 +204,9 @@ namespace Alternion
                                 break;
                             case "mainMenuAnimationStepKey":
                                 mainMenuAnimationStepKey = splitArr[1];
+                                break;
+                            case "mainMenuWeaponStepKey":
+                                mainMenuWeaponStepKey = splitArr[1];
                                 break;
                             case "loggingLevel":
                                 try
@@ -361,6 +370,7 @@ namespace Alternion
             streamWriter.WriteLine("configMenuHotkey=" + configKeyInput);
             streamWriter.WriteLine("versionDisplayKey=" + versionDisplayKey);
             streamWriter.WriteLine("mainMenuAnimationStepKey=" + mainMenuAnimationStepKey);
+            streamWriter.WriteLine("mainMenuWeaponStepKey=" + mainMenuWeaponStepKey);
             streamWriter.WriteLine("loggingLevel=" + loggingLevel);
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[Visuals]");
@@ -409,7 +419,7 @@ namespace Alternion
         /// </summary>
         void setTextures()
         {
-            var mainTex = Resources.FindObjectsOfTypeAll<Texture>();
+            Texture[] mainTex = Resources.FindObjectsOfTypeAll<Texture>();
             //Texture background;
             foreach (Texture texture in mainTex)
             {
@@ -433,6 +443,7 @@ namespace Alternion
                     case "ships_sails_alb":
                         TheGreatCacher.setDefaultSails(texture);
                         break;
+
                     case "wpn_nockGun_stock_alb":
                         TheGreatCacher.primaryWeaponsDefault[0].alb = texture;
                         break;
