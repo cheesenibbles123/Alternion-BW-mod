@@ -35,6 +35,10 @@ namespace Alternion
         /// </summary>
         static int currentClip = 0;
         /// <summary>
+        /// Position of the next weapon to be equipped
+        /// </summary>
+        static int currentEquippedWeapon = 0;
+        /// <summary>
         /// List of all the primary weapon meshes
         /// </summary>
         static List<Mesh> wpnl = new List<Mesh>();
@@ -384,25 +388,15 @@ namespace Alternion
         /// </summary>
         void handleWeaponChange()
         {
-            if (getKeyPress("u"))
+            if (getKeyPress("2"))
             {
-                currentWeapon.mesh = wpnl[0];
-                setMenuSkin(0);
-            }
-            else if (getKeyPress("i"))
-            {
-                currentWeapon.mesh = wpnl[1];
-                setMenuSkin(1);
-            }
-            else if (getKeyPress("o"))
-            {
-                currentWeapon.mesh = wpnl[2];
-                setMenuSkin(2);
-            }
-            else if (getKeyPress("p"))
-            {
-                currentWeapon.mesh = wpnl[3];
-                setMenuSkin(3);
+                currentWeapon.mesh = wpnl[currentEquippedWeapon];
+                setMenuSkin(currentEquippedWeapon);
+                currentEquippedWeapon++;
+                if (currentEquippedWeapon >= 4)
+                {
+                    currentEquippedWeapon = 0;
+                }
             }
         }
 
