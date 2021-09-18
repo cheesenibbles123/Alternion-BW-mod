@@ -79,6 +79,7 @@
     <Compile Include="MainMenuCL.cs" />
     <Compile Include="SkinHandlers\mortarHandler.cs" />
     <Compile Include="SkinHandlers\sailHandler.cs" />
+    <Compile Include="Structs\defaultPrimaryWeapon.cs" />
     <Compile Include="Structs\menuAnimation.cs" />
     <Compile Include="Structs\skinAttributes.cs" />
     <Compile Include="SkinHandlers\swivelHandler.cs" />

@@ -20,7 +20,9 @@ namespace Alternion
 
         static List<menuAnimation> animationClips = new List<menuAnimation>();
         static int currentClip = 0;
-
+        static List<Mesh> wpnl = new List<Mesh>();
+        static MeshFilter currentWeapon;
+        static Renderer currentWeaponRend;
         /// <summary>
         /// MainMenuCL Instance.
         /// </summary>
@@ -160,6 +162,9 @@ namespace Alternion
                         vendorNum++;
                     }
                 }
+
+                currentWeapon = weapon.GetComponent<MeshFilter>();
+                currentWeaponRend = weapon.GetComponent<Renderer>();
                 setupMenuCharacterAnimations();
             }
         }
@@ -201,6 +206,23 @@ namespace Alternion
                         ));
                 }
             }
+
+            Mesh[] meshes = Resources.FindObjectsOfTypeAll<Mesh>();
+            List<string> wpns = new List<string>()
+                {
+                    "wpn_standardMusket_LOD1",
+                    "wpn_standardBlunder_LOD1",
+                    "wpn_standardNockGun_LOD1",
+                    "wpn_standardHandMotar_LOD1"
+                };
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                //Logger.debugLog($"Mesh: {meshes[i].name}");
+                if (wpns.Contains(meshes[i].name))
+                {
+                    wpnl.Add(meshes[i]);
+                }
+            }
         }
 
         void Start()
@@ -211,12 +233,13 @@ namespace Alternion
 
         void Update()
         {
+            // Only check if menuCharacter isn't null
             if (menuCharacter)
             {
                 if (óèïòòåææäêï.åìçæçìíäåóë != null && !óèïòòåææäêï.åìçæçìíäåóë.activeSelf && global::Input.GetMouseButton(1))
                 {
                     /*
-                     * If it has been found
+                     * If the character is found in the scene
                      * Rotation code copied from CharacterCustomizationUI
                      */
                     menuCharacter.Rotate(Vector3.up, 1000f * Time.deltaTime * -global::Input.GetAxisRaw("Mouse X"));
@@ -232,6 +255,10 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Loops over the poses/clips for the main menu.
+        /// Toggles weapon based off animation preset.
+        /// </summary>
         void handleMenuAnimationAndPoses()
         {
             if (getKeyPress(AlternionSettings.mainMenuAnimationStepKey))
@@ -262,9 +289,90 @@ namespace Alternion
             return Input.GetKeyUp(key);
         }
 
+        /// <summary>
+        /// Sets the weapon skin for the weapon
+        /// </summary>
+        /// <param name="wpn">ID of the weapon used</param>
+        void setMenuSkin(int wpn)
+        {
+            string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+            TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player);
+
+            string skinName = "";
+            switch (wpn)
+            {
+                case 0:
+                    skinName = $"nockgun_{player.nockgunSkinName}";
+                    break;
+                case 1:
+                    skinName = $"handmortar_{player.handMortarSkinName}";
+                    break;
+                case 2:
+                    skinName = $"blunderbuss_{player.blunderbussSkinName}";
+                    break;
+                case 3:
+                    skinName = $"musket_{player.musketSkinName}";
+                    break;
+            }
+            Texture skin;
+            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName, out skin))
+            {
+                currentWeaponRend.material.mainTexture = skin;
+            }
+            else
+            {
+                currentWeaponRend.material.mainTexture = TheGreatCacher.primaryWeaponsDefault[wpn].alb;
+            }
+
+            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_met", out skin))
+            {
+                currentWeaponRend.material.SetTexture("_Metallic", skin);
+            }
+            else
+            {
+                currentWeaponRend.material.SetTexture("_Metallic", TheGreatCacher.primaryWeaponsDefault[wpn].met);
+            }
+
+            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_nrm", out skin))
+            {
+                currentWeaponRend.material.SetTexture("_BumpMap", skin);
+            }
+            else
+            {
+                currentWeaponRend.material.SetTexture("_BumpMap", TheGreatCacher.primaryWeaponsDefault[wpn].nrm);
+            }
+
+            // If AO support ever gets added, needs to be setup for it
+            currentWeaponRend.material.SetTexture("_Occlusion", TheGreatCacher.primaryWeaponsDefault[wpn].ao);
+
+
+        }
+
+        /// <summary>
+        /// Switches the weapon based on keypress, and then calls the function to setup the weapon skin
+        /// </summary>
         void handleWeaponChange()
         {
-            
+            if (getKeyPress("u"))
+            {
+                currentWeapon.mesh = wpnl[0];
+                setMenuSkin(0);
+            }
+            else if (getKeyPress("i"))
+            {
+                currentWeapon.mesh = wpnl[1];
+                setMenuSkin(1);
+            }
+            else if (getKeyPress("o"))
+            {
+                currentWeapon.mesh = wpnl[2];
+                setMenuSkin(2);
+            }
+            else if (getKeyPress("p"))
+            {
+                currentWeapon.mesh = wpnl[3];
+                setMenuSkin(3);
+            }
         }
 
         /// <summary>

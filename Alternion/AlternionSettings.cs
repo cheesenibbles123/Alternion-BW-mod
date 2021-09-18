@@ -433,6 +433,57 @@ namespace Alternion
                     case "ships_sails_alb":
                         TheGreatCacher.setDefaultSails(texture);
                         break;
+                    case "wpn_nockGun_stock_alb":
+                        TheGreatCacher.primaryWeaponsDefault[0].alb = texture;
+                        break;
+                    case "wpn_nockGun_stock_met":
+                        TheGreatCacher.primaryWeaponsDefault[0].met = texture;
+                        break;
+                    case "wpn_nockGun_stock_nrm":
+                        TheGreatCacher.primaryWeaponsDefault[0].nrm = texture;
+                        break;
+                    case "wpn_nockGun_stock_ao":
+                        TheGreatCacher.primaryWeaponsDefault[0].ao = texture;
+                        break;
+
+                    case "wpn_handMortar_alb":
+                        TheGreatCacher.primaryWeaponsDefault[1].alb = texture;
+                        break;
+                    case "wpn_handMortar_met":
+                        TheGreatCacher.primaryWeaponsDefault[1].met = texture;
+                        break;
+                    case "wpn_handMortar_nrm":
+                        TheGreatCacher.primaryWeaponsDefault[1].nrm = texture;
+                        break;
+                    case "wpn_handMortar_ao":
+                        TheGreatCacher.primaryWeaponsDefault[1].ao = texture;
+                        break;
+
+                    case "wpn_blunderbuss_alb":
+                        TheGreatCacher.primaryWeaponsDefault[2].alb = texture;
+                        break;
+                    case "wpn_blunderbuss_met":
+                        TheGreatCacher.primaryWeaponsDefault[2].met = texture;
+                        break;
+                    case "wpn_blunderbuss_nrm":
+                        TheGreatCacher.primaryWeaponsDefault[2].nrm = texture;
+                        break;
+                    case "wpn_blunderbuss_ao":
+                        TheGreatCacher.primaryWeaponsDefault[2].ao = texture;
+                        break;
+
+                    case "wpn_standardMusket_stock_alb":
+                        TheGreatCacher.primaryWeaponsDefault[3].alb = texture;
+                        break;
+                    case "wpn_standardMusket_stock_met":
+                        TheGreatCacher.primaryWeaponsDefault[3].met = texture;
+                        break;
+                    case "wpn_standardMusket_stock_nrm":
+                        TheGreatCacher.primaryWeaponsDefault[3].nrm = texture;
+                        break;
+                    case "wpn_standardMusket_stock_ao":
+                        TheGreatCacher.primaryWeaponsDefault[3].ao = texture;
+                        break;
                     default:
                         //log(texture.name);
                         break;

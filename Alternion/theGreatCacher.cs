@@ -123,6 +123,8 @@ namespace Alternion
 
         public Dictionary<string, weaponSkinAttributes> skinAttributes = new Dictionary<string, weaponSkinAttributes>();
 
+        public static defaultPrimaryWeapon[] primaryWeaponsDefault = new defaultPrimaryWeapon[4];
+
         void Awake()
         {
             if (!Instance)
