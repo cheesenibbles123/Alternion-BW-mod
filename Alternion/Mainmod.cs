@@ -27,10 +27,6 @@ namespace Alternion
         /// </summary>
         bool setWatermark = false;
         /// <summary>
-        /// Filepath to the textures.
-        /// </summary>
-        public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
-        /// <summary>
         /// Website URL.
         /// </summary>
         static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
@@ -2734,18 +2730,18 @@ namespace Alternion
         public void createDirectories()
         {
             //Create directories prior to downloading all asset files
-            if (!File.Exists(Application.dataPath + texturesFilePath))
+            if (!File.Exists(Application.dataPath + AlternionSettings.texturesFilePath))
             {
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath);
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "Badges/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "WeaponSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SailSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MainSailSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "CannonSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "SwivelSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MortarSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "MaskSkins/");
-                Directory.CreateDirectory(Application.dataPath + texturesFilePath + "Flags/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath);
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "Badges/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "SailSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "MainSailSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "CannonSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "SwivelSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "MortarSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "MaskSkins/");
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "Flags/");
             }
 
             //Grab online JSON file
