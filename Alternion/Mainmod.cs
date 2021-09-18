@@ -144,7 +144,7 @@ namespace Alternion
         {
             byte[] bytes = null;
             // Check if pfp is already downloaded or not
-            if (!File.Exists(Application.dataPath + texturesFilePath + "pfp.png"))
+            if (!File.Exists(Application.dataPath + AlternionSettings.texturesFilePath + "pfp.png"))
             {
                 WWW www = new WWW(mainUrl + "pfp.png");
                 yield return www;
@@ -152,7 +152,7 @@ namespace Alternion
                 try
                 {
                     bytes = www.texture.EncodeToPNG();
-                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "pfp.png", bytes);
+                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "pfp.png", bytes);
                 }
                 catch (Exception e)
                 {
@@ -162,7 +162,7 @@ namespace Alternion
 
             }
 
-            watermarkTex = loadTexture("pfp", texturesFilePath, 258, 208);
+            watermarkTex = loadTexture("pfp", AlternionSettings.texturesFilePath, 258, 208);
             if (watermarkTex != null)
             {
                 setWatermark = true;
@@ -202,7 +202,7 @@ namespace Alternion
                             try
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "Badges/" + player.Value.badgeName + ".png", bytes);
                             }
                             catch (Exception e)
                             {
@@ -212,7 +212,7 @@ namespace Alternion
 
                         try
                         {
-                            newTex = loadTexture(player.Value.badgeName, texturesFilePath + "Badges/", 100, 40);
+                            newTex = loadTexture(player.Value.badgeName, AlternionSettings.texturesFilePath + "Badges/", 100, 40);
                             newTex.name = player.Value.badgeName;
                             TheGreatCacher.Instance.badges.Add(player.Value.badgeName, newTex);
                             alreadyDownloaded.Add(player.Value.badgeName);
@@ -245,7 +245,7 @@ namespace Alternion
                                 try
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + fullString + ".png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MaskSkins/" + fullString + ".png", bytes);
                                 }
                                 catch (Exception e)
                                 {
@@ -259,7 +259,7 @@ namespace Alternion
                                 try
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + fullString + "_met.png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MaskSkins/" + fullString + "_met.png", bytes);
                                 }
                                 catch (Exception e)
                                 {
@@ -273,7 +273,7 @@ namespace Alternion
                                 try
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "MaskSkins/" + fullString + "_nrm.png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MaskSkins/" + fullString + "_nrm.png", bytes);
                                 }
                                 catch (Exception e)
                                 {
@@ -283,7 +283,7 @@ namespace Alternion
                         }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullString, texturesFilePath + "MaskSkins/", 2048, 2048);
+                                newTex = loadTexture(fullString, AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
@@ -291,7 +291,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullString + "_met", texturesFilePath + "MaskSkins/", 2048, 2048);
+                                newTex = loadTexture(fullString + "_met", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
@@ -299,7 +299,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullString + "_nrm", texturesFilePath + "MaskSkins/", 2048, 2048);
+                                newTex = loadTexture(fullString + "_nrm", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
@@ -322,7 +322,7 @@ namespace Alternion
                             try
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "SailSkins/" + player.Value.sailSkinName + ".png", bytes);
                             }
                             catch (Exception e)
                             {
@@ -334,7 +334,7 @@ namespace Alternion
 
                         try
                         {
-                            newTex = loadTexture(player.Value.sailSkinName, texturesFilePath + "SailSkins/", 2048, 2048);
+                            newTex = loadTexture(player.Value.sailSkinName, AlternionSettings.texturesFilePath + "SailSkins/", 2048, 2048);
                             newTex.name = player.Value.sailSkinName;
                             TheGreatCacher.Instance.secondarySails.Add(player.Value.sailSkinName, newTex);
                             alreadyDownloaded.Add(player.Value.sailSkinName);
@@ -361,7 +361,7 @@ namespace Alternion
                             try
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MainSailSkins/" + player.Value.mainSailName + ".png", bytes);
                             }
                             catch (Exception e)
                             {
@@ -371,7 +371,7 @@ namespace Alternion
 
                         try
                         {
-                            newTex = loadTexture(player.Value.mainSailName, texturesFilePath + "MainSailSkins/", 2048, 2048);
+                            newTex = loadTexture(player.Value.mainSailName, AlternionSettings.texturesFilePath + "MainSailSkins/", 2048, 2048);
                             newTex.name = player.Value.mainSailName;
                             TheGreatCacher.Instance.mainSails.Add(player.Value.mainSailName, newTex);
                             alreadyDownloaded.Add(player.Value.mainSailName);
@@ -404,7 +404,7 @@ namespace Alternion
                                     try
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + ".png", bytes);
                                     }
                                     catch (Exception e)
                                     {
@@ -420,7 +420,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -436,7 +436,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -446,7 +446,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(player.Value.cannonSkinName, texturesFilePath + "CannonSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.cannonSkinName, AlternionSettings.texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName, newTex);
@@ -454,7 +454,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(player.Value.cannonSkinName + "_met", texturesFilePath + "CannonSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.cannonSkinName + "_met", AlternionSettings.texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_met", newTex);
@@ -462,7 +462,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(player.Value.cannonSkinName + "_nrm", texturesFilePath + "CannonSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.cannonSkinName + "_nrm", AlternionSettings.texturesFilePath + "CannonSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
@@ -489,7 +489,7 @@ namespace Alternion
                                     try
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + ".png", bytes);
                                     }
                                     catch (Exception e)
                                     {
@@ -505,7 +505,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -521,7 +521,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -529,12 +529,12 @@ namespace Alternion
                                     }
                                 }
                             }
-                            newTex = loadTexture(player.Value.swivelSkinName, texturesFilePath + "SwivelSkins/", 2048, 2048);
+                            newTex = loadTexture(player.Value.swivelSkinName, AlternionSettings.texturesFilePath + "SwivelSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
                                 TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName, newTex);
                             }
-                            newTex = loadTexture(player.Value.swivelSkinName + "_met", texturesFilePath + "SwivelSkins/", 2048, 2048);
+                            newTex = loadTexture(player.Value.swivelSkinName + "_met", AlternionSettings.texturesFilePath + "SwivelSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
                             {
                                 TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
@@ -560,7 +560,7 @@ namespace Alternion
                                     try
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + ".png", bytes);
                                     }
                                     catch (Exception e)
                                     {
@@ -576,7 +576,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -592,7 +592,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -602,7 +602,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(player.Value.mortarSkinName, texturesFilePath + "MortarSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.mortarSkinName, AlternionSettings.texturesFilePath + "MortarSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName, newTex);
@@ -610,7 +610,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(player.Value.mortarSkinName + "_met", texturesFilePath + "MortarSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.mortarSkinName + "_met", AlternionSettings.texturesFilePath + "MortarSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_met", newTex);
@@ -618,7 +618,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(player.Value.mortarSkinName + "_nrm", texturesFilePath + "MortarSkins/", 2048, 2048);
+                                newTex = loadTexture(player.Value.mortarSkinName + "_nrm", AlternionSettings.texturesFilePath + "MortarSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_nrm", newTex);
@@ -642,7 +642,7 @@ namespace Alternion
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagNavySkinName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "Flags/" + player.Value.flagNavySkinName + ".png", bytes);
                             }
                             else
                             {
@@ -650,7 +650,7 @@ namespace Alternion
                             }
 
                         }
-                        newTex = loadTexture(player.Value.flagNavySkinName, texturesFilePath + "Flags/", 1024, 512);
+                        newTex = loadTexture(player.Value.flagNavySkinName, AlternionSettings.texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.flags.Add(player.Value.flagNavySkinName, newTex);
@@ -671,7 +671,7 @@ namespace Alternion
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "Flags/" + player.Value.flagPirateSkinName + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "Flags/" + player.Value.flagPirateSkinName + ".png", bytes);
                             }
                             else
                             {
@@ -679,7 +679,7 @@ namespace Alternion
                             }
 
                         }
-                        newTex = loadTexture(player.Value.flagPirateSkinName, texturesFilePath + "Flags/", 1024, 512);
+                        newTex = loadTexture(player.Value.flagPirateSkinName, AlternionSettings.texturesFilePath + "Flags/", 1024, 512);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.flags.Add(player.Value.flagPirateSkinName, newTex);
@@ -707,7 +707,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -723,7 +723,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -739,7 +739,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -750,7 +750,7 @@ namespace Alternion
 
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -758,7 +758,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -766,7 +766,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -795,7 +795,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -811,7 +811,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -827,7 +827,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -838,7 +838,7 @@ namespace Alternion
 
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -846,7 +846,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -854,7 +854,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -883,7 +883,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -899,7 +899,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -915,7 +915,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -926,7 +926,7 @@ namespace Alternion
 
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -934,7 +934,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -942,7 +942,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -971,7 +971,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -987,7 +987,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1003,7 +1003,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1014,7 +1014,7 @@ namespace Alternion
 
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1022,7 +1022,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1030,7 +1030,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1061,7 +1061,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1077,7 +1077,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1093,7 +1093,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1103,7 +1103,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1111,7 +1111,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1119,7 +1119,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1148,7 +1148,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1164,7 +1164,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1180,7 +1180,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1191,7 +1191,7 @@ namespace Alternion
 
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1199,7 +1199,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1207,7 +1207,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1236,7 +1236,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1252,7 +1252,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1268,7 +1268,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1278,7 +1278,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1286,7 +1286,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1294,7 +1294,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1323,7 +1323,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1339,7 +1339,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1355,7 +1355,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1365,7 +1365,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1373,7 +1373,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1381,7 +1381,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1409,7 +1409,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1425,7 +1425,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1441,7 +1441,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1451,7 +1451,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1459,7 +1459,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1467,7 +1467,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1498,7 +1498,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1513,7 +1513,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1528,7 +1528,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1538,7 +1538,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1546,7 +1546,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1554,7 +1554,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1583,7 +1583,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1598,7 +1598,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1613,7 +1613,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1623,7 +1623,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1631,7 +1631,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1639,7 +1639,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1668,7 +1668,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1683,7 +1683,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1698,7 +1698,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1708,7 +1708,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1716,7 +1716,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1724,7 +1724,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1753,7 +1753,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1768,7 +1768,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1783,7 +1783,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1793,7 +1793,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1801,7 +1801,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1809,7 +1809,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1838,7 +1838,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1853,7 +1853,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1868,7 +1868,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1878,7 +1878,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1886,7 +1886,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1894,7 +1894,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -1923,7 +1923,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -1938,7 +1938,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -1953,7 +1953,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -1963,7 +1963,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -1971,7 +1971,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -1979,7 +1979,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2010,7 +2010,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2025,7 +2025,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2040,7 +2040,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2050,7 +2050,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2058,7 +2058,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2066,7 +2066,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2095,7 +2095,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2110,7 +2110,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2125,7 +2125,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2135,7 +2135,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2143,7 +2143,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2151,7 +2151,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2180,7 +2180,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2195,7 +2195,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2210,7 +2210,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2220,7 +2220,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2228,7 +2228,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2236,7 +2236,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2265,7 +2265,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2280,7 +2280,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2295,7 +2295,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2305,7 +2305,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2313,7 +2313,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2321,7 +2321,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2350,7 +2350,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2365,7 +2365,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2380,7 +2380,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2390,7 +2390,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2398,7 +2398,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2406,7 +2406,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2435,7 +2435,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2450,7 +2450,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2465,7 +2465,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2475,7 +2475,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2483,7 +2483,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2491,7 +2491,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2519,7 +2519,7 @@ namespace Alternion
                                 if (string.IsNullOrEmpty(www.error))
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                 }
                                 else
                                 {
@@ -2534,7 +2534,7 @@ namespace Alternion
                                 if (string.IsNullOrEmpty(www.error))
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                 }
                                 else
                                 {
@@ -2549,7 +2549,7 @@ namespace Alternion
                                 if (string.IsNullOrEmpty(www.error))
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                 }
                                 else
                                 {
@@ -2558,16 +2558,22 @@ namespace Alternion
                             }
                         }
 
-                        newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                        newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                         }
 
-                        newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                        newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
+                        }
+
+                        newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
+                        if (newTex.name != "FAILED")
+                        {
+                            TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
@@ -2593,7 +2599,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                                     }
                                     else
                                     {
@@ -2608,7 +2614,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                                     }
                                     else
                                     {
@@ -2623,7 +2629,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_nrm.png", bytes);
                                     }
                                     else
                                     {
@@ -2633,7 +2639,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasAlb)
                             {
-                                newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
@@ -2641,7 +2647,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasMet)
                             {
-                                newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
@@ -2649,7 +2655,7 @@ namespace Alternion
                             }
                             if (skinInfo.hasNrm)
                             {
-                                newTex = loadTexture(fullWeaponString + "_nrm", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                                newTex = loadTexture(fullWeaponString + "_nrm", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
@@ -2675,7 +2681,7 @@ namespace Alternion
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
                             }
                             else
                             {
@@ -2689,7 +2695,7 @@ namespace Alternion
                             if (string.IsNullOrEmpty(www.error))
                             {
                                 byte[] bytes = www.texture.EncodeToPNG();
-                                File.WriteAllBytes(Application.dataPath + texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
+                                File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + "_met.png", bytes);
                             }
                             else
                             {
@@ -2697,13 +2703,13 @@ namespace Alternion
                             }
                         }
 
-                        newTex = loadTexture(fullWeaponString, texturesFilePath + "WeaponSkins/", 2048, 2048);
+                        newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString, newTex);
                         }
 
-                        newTex = loadTexture(fullWeaponString + "_met", texturesFilePath + "WeaponSkins/", 2048, 2048);
+                        newTex = loadTexture(fullWeaponString + "_met", AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_met", newTex);
