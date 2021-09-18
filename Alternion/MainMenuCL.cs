@@ -8,6 +8,9 @@ using System.Collections.Generic;
 
 namespace Alternion
 {
+    /// <summary>
+    /// Handles everything that happens within the main menu scene
+    /// </summary>
     [Mod]
     public class MainMenuCL : MonoBehaviour
     {
@@ -15,13 +18,33 @@ namespace Alternion
         /// Main menu character transform.
         /// </summary>
         static Transform menuCharacter;
+        /// <summary>
+        /// Animation reference for the main menu character
+        /// </summary>
         static Animation menuCharacterAnimation;
+        /// <summary>
+        /// Weapon gameobject
+        /// </summary>
         static GameObject weapon;
-
+        /// <summary>
+        /// List of all the animations to add to the menu character
+        /// </summary>
         static List<menuAnimation> animationClips = new List<menuAnimation>();
+        /// <summary>
+        /// Position of current animation within the animationClips list
+        /// </summary>
         static int currentClip = 0;
+        /// <summary>
+        /// List of all the primary weapon meshes
+        /// </summary>
         static List<Mesh> wpnl = new List<Mesh>();
+        /// <summary>
+        /// MeshFilter of the current main menu weapon
+        /// </summary>
         static MeshFilter currentWeapon;
+        /// <summary>
+        /// Renderer of the current main menu weapon
+        /// </summary>
         static Renderer currentWeaponRend;
         /// <summary>
         /// MainMenuCL Instance.
@@ -144,6 +167,7 @@ namespace Alternion
                 {
                     if (anim.name == "default_character_rig")
                     {
+                        // If default IDLE animation
                         menuCharacterAnimation = anim;
                         menuCharacter = anim.transform;
                         animationClips.Add(new menuAnimation(
@@ -154,6 +178,7 @@ namespace Alternion
                     }
                     else
                     {
+                        // If vendor pose
                         animationClips.Add(new menuAnimation(
                                 anim.clip,
                                 false,
@@ -169,6 +194,9 @@ namespace Alternion
             }
         }
 
+        /// <summary>
+        /// Adds all the loaded animations to the character
+        /// </summary>
         void setupMenuCharacterAnimations()
         {
             foreach (menuAnimation animation in animationClips)
@@ -189,6 +217,9 @@ namespace Alternion
                 DestroyImmediate(this);
             }
 
+            /*
+             * Load all animations, then load the relevant ones (This is just to load the sprint and crouch animations)
+             */
             AnimationClip[] animations = Resources.FindObjectsOfTypeAll<AnimationClip>();
             List<string> clips = new List<string>()
                 {
@@ -206,7 +237,7 @@ namespace Alternion
                         ));
                 }
             }
-
+            // Loop over all meshes and load the LOD1 of each primary
             Mesh[] meshes = Resources.FindObjectsOfTypeAll<Mesh>();
             List<string> wpns = new List<string>()
                 {
