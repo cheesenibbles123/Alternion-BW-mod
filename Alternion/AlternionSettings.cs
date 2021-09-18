@@ -208,6 +208,9 @@ namespace Alternion
                             case "mainMenuWeaponStepKey":
                                 mainMenuWeaponStepKey = splitArr[1];
                                 break;
+                            case "texturesFilePath":
+                                texturesFilePath = splitArr[1];
+                                break;
                             case "loggingLevel":
                                 try
                                 {
@@ -371,6 +374,7 @@ namespace Alternion
             streamWriter.WriteLine("versionDisplayKey=" + versionDisplayKey);
             streamWriter.WriteLine("mainMenuAnimationStepKey=" + mainMenuAnimationStepKey);
             streamWriter.WriteLine("mainMenuWeaponStepKey=" + mainMenuWeaponStepKey);
+            streamWriter.WriteLine("texturesFilePath=" + texturesFilePath);
             streamWriter.WriteLine("loggingLevel=" + loggingLevel);
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[Visuals]");
