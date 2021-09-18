@@ -120,9 +120,13 @@ namespace Alternion
         /// Stores all swivel textures.
         /// </summary>
         public Dictionary<string, Texture> swivels = new Dictionary<string, Texture>();
-
+        /// <summary>
+        /// Dictionary containing the info about each skins attributes, indexed by skin name
+        /// </summary>
         public Dictionary<string, weaponSkinAttributes> skinAttributes = new Dictionary<string, weaponSkinAttributes>();
-
+        /// <summary>
+        /// Array to store primary weapons default textures
+        /// </summary>
         public static defaultPrimaryWeapon[] primaryWeaponsDefault = new defaultPrimaryWeapon[4];
 
         void Awake()
@@ -189,6 +193,12 @@ namespace Alternion
             Mainmod.Instance.createDirectories();
         }
 
+        /// <summary>
+        /// Fetch a cached ship.
+        /// If none found creates new one.
+        /// </summary>
+        /// <param name="team">Team number</param>
+        /// <returns>The ship for the given team</returns>
         public static cachedShip getCachedShip(string team)
         {
             if (Instance.ships.TryGetValue(team, out cachedShip ship))
