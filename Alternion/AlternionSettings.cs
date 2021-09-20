@@ -142,13 +142,22 @@ namespace Alternion
             {
                 loadSettings(altConfigFile);
             }else
-            if (File.Exists(Application.dataPath + configFile))
+            if (File.Exists(configFile))
             {
                 loadSettings(configFile);
             }
             else
             {
                 setupDefaults();
+            }
+        }
+
+        public static void saveConfig()
+        {
+            saveSettings(false, configFile);
+            if (File.Exists(Application.dataPath + altConfigFile))
+            {
+                saveSettings(false, Application.dataPath + altConfigFile);
             }
         }
 
@@ -382,7 +391,7 @@ namespace Alternion
         public static void saveSettings(bool isNew, string config)
         {
             
-            StreamWriter streamWriter = new StreamWriter(configFile);
+            StreamWriter streamWriter = new StreamWriter(config);
             streamWriter.WriteLine("[Alternion config file]");
             streamWriter.WriteLine("");
             streamWriter.WriteLine("[General]");
