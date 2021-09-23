@@ -353,7 +353,7 @@ namespace Alternion
                     break;
             }
             Texture skin;
-            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName, out skin))
+            if (AlternionSettings.useWeaponSkins && TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName, out skin))
             {
                 currentWeaponRend.material.mainTexture = skin;
             }
@@ -362,7 +362,7 @@ namespace Alternion
                 currentWeaponRend.material.mainTexture = TheGreatCacher.primaryWeaponsDefault[wpn].alb;
             }
 
-            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_met", out skin))
+            if (AlternionSettings.useWeaponSkins && TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_met", out skin))
             {
                 currentWeaponRend.material.SetTexture("_Metallic", skin);
             }
@@ -371,7 +371,7 @@ namespace Alternion
                 currentWeaponRend.material.SetTexture("_Metallic", TheGreatCacher.primaryWeaponsDefault[wpn].met);
             }
 
-            if (TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_nrm", out skin))
+            if (AlternionSettings.useWeaponSkins && TheGreatCacher.Instance.weaponSkins.TryGetValue(skinName + "_nrm", out skin))
             {
                 currentWeaponRend.material.SetTexture("_BumpMap", skin);
             }
