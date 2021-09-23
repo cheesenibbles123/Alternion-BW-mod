@@ -83,7 +83,7 @@ namespace Alternion
         /// <summary>
         /// Current version number
         /// </summary>
-        public static string version = "a9.1.2";
+        public static string version = "v9.1.2";
         /// <summary>
         /// Button to press to display current version in the log
         /// </summary>
