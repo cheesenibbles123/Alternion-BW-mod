@@ -83,7 +83,7 @@ namespace Alternion
         /// <summary>
         /// Current version number
         /// </summary>
-        public static string version = "v9.1.1";
+        public static string version = "a9.1.2";
         /// <summary>
         /// Button to press to display current version in the log
         /// </summary>
@@ -103,7 +103,7 @@ namespace Alternion
         /// <summary>
         /// Alternative config file location.
         /// </summary>
-        public static readonly string altConfigFile = "/Managed/Mods/Configs/AlternionConfig.cfg";
+        public static readonly string altConfigFile = "Blackwake_Data/Managed/Mods/Configs/AlternionConfig.cfg";
         /// <summary>
         /// Website file name.
         /// </summary>
@@ -138,7 +138,7 @@ namespace Alternion
         /// </summary>
         void checkConfig()
         {
-            if (File.Exists(Application.dataPath + altConfigFile))
+            if (File.Exists(altConfigFile))
             {
                 loadSettings(altConfigFile);
             }else
@@ -155,9 +155,9 @@ namespace Alternion
         public static void saveConfig()
         {
             saveSettings(false, configFile);
-            if (File.Exists(Application.dataPath + altConfigFile))
+            if (File.Exists(altConfigFile))
             {
-                saveSettings(false, Application.dataPath + altConfigFile);
+                saveSettings(false, altConfigFile);
             }
         }
 
@@ -192,16 +192,19 @@ namespace Alternion
 
         /// <summary>
         /// Loads the settings from the config file.
+        /// PASS REFERENCE WITHOUT Application.dataPath APPENDED.
         /// </summary>
+        /// <param name="configToLoad">Config file path relative to common/Blackwake/</param>
         void loadSettings(string configToLoad)
         {
-            if (!File.Exists(Application.dataPath + configToLoad))
+            if (!File.Exists(configToLoad))
             {
                 if (configToLoad != configFile)
                 {
                     loadSettings(configFile);
                     Logger.debugLog("No custom config found! Defaulting to standard.");
-                }else
+                }
+                else
                 {
                     Logger.debugLog("No config found! Generating new config file.");
                     setupDefaults();
@@ -209,7 +212,7 @@ namespace Alternion
                 }
                 return;
             }
-            string[] array = File.ReadAllLines(Application.dataPath + configToLoad);
+            string[] array = File.ReadAllLines(configToLoad);
             char splitCharacter = '=';
             for (int i = 0; i < array.Length; i++)
             {
@@ -449,7 +452,6 @@ namespace Alternion
         void setTextures()
         {
             Texture[] mainTex = Resources.FindObjectsOfTypeAll<Texture>();
-            //Texture background;
             foreach (Texture texture in mainTex)
             {
                 switch (texture.name)

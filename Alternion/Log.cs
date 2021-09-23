@@ -25,7 +25,7 @@ namespace Alternion
         }
 
         /// <summary>
-        /// Logs low priority stuff.
+        /// Logs debug items at logging levels higher than 0.
         /// </summary>
         /// <param name="message">Message to Log</param>
         public static void logLow(string message)

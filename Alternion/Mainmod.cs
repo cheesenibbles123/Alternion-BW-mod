@@ -2809,7 +2809,6 @@ namespace Alternion
                 // Only reset if cannon texture has been set
                 if (TheGreatCacher.Instance.defaultCannons)
                 {
-                    Logger.debugLog("Resetting ship cannons");
                     for (int i = individualShip.Value.cannons.Count - 1; i >= 0; i--)
                     {
                         Renderer rend = individualShip.Value.cannons[i];
