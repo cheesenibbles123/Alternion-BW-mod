@@ -113,6 +113,10 @@ namespace Alternion
         /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
         /// <summary>
+        /// Filepath to the models.
+        /// </summary>
+        public static string modelsFilePath = "/Managed/Mods/Assets/Archie/Models/";
+        /// <summary>
         /// Website URL.
         /// </summary>
         public static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
