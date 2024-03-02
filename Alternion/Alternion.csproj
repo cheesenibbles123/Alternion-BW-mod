@@ -41,9 +41,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blackwake\Blackwake_Data\Managed\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\Downloads\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blackwake\Blackwake_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -52,7 +51,7 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blackwake\Blackwake_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="BWModLoader">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Blackwake\Blackwake_Data\Managed\BWModLoader.dll</HintPath>
+      <HintPath>..\..\..\Downloads\BWModLoader.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -74,6 +73,7 @@
     <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="Fixes\gameModeChanges.cs" />
     <Compile Include="Fixes\shipLod.cs" />
+    <Compile Include="OBJImporter.cs" />
     <Compile Include="SkinHandlers\cannonHandler.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
     <Compile Include="MainMenuCL.cs" />
