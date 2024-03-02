@@ -16,6 +16,7 @@ namespace Alternion
         /// Check for if the default cannons have been set or not
         /// </summary>
         public bool setCannonDefaults = false;
+        public bool setCannonDefaultMesh = false;
         /// <summary>
         /// Check for if the default cannons have been set or not
         /// </summary>
@@ -64,6 +65,7 @@ namespace Alternion
         /// Default cannon texture.
         /// </summary>
         public Texture defaultCannons;
+        public Mesh defaultCannonMesh;
         /// <summary>
         /// Default cannon met texture.
         /// </summary>
@@ -85,6 +87,14 @@ namespace Alternion
         /// </summary>
         public Dictionary<string, Texture> weaponSkins = new Dictionary<string, Texture>();
         /// <summary>
+        /// Stores all cached custom weapon models.
+        /// </summary>
+        public Dictionary<string, Mesh> weaponModels = new Dictionary<string, Mesh>();
+        /// <summary>
+        /// Stores all cached custom weapon models.
+        /// </summary>
+        public Dictionary<string, Mesh> defaultWeaponModels = new Dictionary<string, Mesh>();
+        /// <summary>
         /// Stores all cached badges.
         /// </summary>
         public Dictionary<string, Texture> badges = new Dictionary<string, Texture>();
@@ -104,6 +114,10 @@ namespace Alternion
         /// Stores all cached cannon skins.
         /// </summary>
         public Dictionary<string, Texture> cannonSkins = new Dictionary<string, Texture>();
+        /// <summary>
+        /// Stores all cached cannon models.
+        /// </summary>
+        public Dictionary<string, Mesh> cannonModels = new Dictionary<string, Mesh>();
         /// <summary>
         /// Stores all cached mortar skins.
         /// </summary>

@@ -176,6 +176,7 @@ namespace Alternion
             bool flag;
             Texture newTex;
             string fullWeaponString;
+            ObjImporter meshLoader = new ObjImporter();
             // Update loading image
             LoadingBar.updatePercentage(20, "Downloading and assigning assets...");
 
@@ -276,6 +277,21 @@ namespace Alternion
                                     Logger.debugLog(e.Message);
                                 }
                             }
+                            if (skinInfo.hasMesh)
+                            {
+                                www = new WWW(mainUrl + "MaskModels/" + player.Value.maskSkinName + ".obj");
+                                yield return www;
+
+                                if (string.IsNullOrEmpty(www.error))
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj", bytes);
+                                }
+                                else
+                                {
+                                    Logger.logLow("No obj found for " + player.Value.maskSkinName);
+                                }
+                            }
                         }
                             if (skinInfo.hasAlb)
                             {
@@ -301,6 +317,17 @@ namespace Alternion
                                     TheGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
                                 }
                             }
+                        if (skinInfo.hasMesh)
+                        {
+                            if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj"))
+                            {
+                                TheGreatCacher.Instance.weaponModels.Add(player.Value.maskSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj"));
+                            }
+                            else
+                            {
+                                Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj");
+                            }
+                        }
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
                     }
                 }
@@ -407,7 +434,6 @@ namespace Alternion
                                         Logger.debugLog(e.Message);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_met.png");
@@ -423,7 +449,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + player.Value.cannonSkinName);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "CannonSkins/" + player.Value.cannonSkinName + "_nrm.png");
@@ -437,6 +462,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + player.Value.cannonSkinName);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "CannonModels/" + player.Value.cannonSkinName + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + player.Value.cannonSkinName);
                                     }
                                 }
                             }
@@ -462,6 +502,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.cannonSkins.Add(player.Value.cannonSkinName + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.cannonModels.Add(player.Value.cannonSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj");
                                 }
                             }
                         }
@@ -492,7 +543,6 @@ namespace Alternion
                                         Logger.debugLog(e.Message);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_met.png");
@@ -508,7 +558,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + player.Value.swivelSkinName);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "SwivelSkins/" + player.Value.swivelSkinName + "_nrm.png");
@@ -524,6 +573,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + player.Value.swivelSkinName);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "SwivelModels/" + player.Value.swivelSkinName + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + player.Value.swivelSkinName);
+                                    }
+                                }
                             }
                             newTex = loadTexture(player.Value.swivelSkinName, AlternionSettings.texturesFilePath + "SwivelSkins/", 2048, 2048);
                             if (newTex.name != "FAILED")
@@ -534,6 +598,17 @@ namespace Alternion
                             if (newTex.name != "FAILED")
                             {
                                 TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.swivelSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj");
+                                }
                             }
                         }
                         alreadyDownloaded.Add(player.Value.swivelSkinName);
@@ -563,7 +638,6 @@ namespace Alternion
                                         Logger.debugLog(e.Message);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_met.png");
@@ -579,7 +653,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + player.Value.mortarSkinName);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "MortarSkins/" + player.Value.mortarSkinName + "_nrm.png");
@@ -593,6 +666,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + player.Value.mortarSkinName);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "MortarModels/" + player.Value.mortarSkinName + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + player.Value.mortarSkinName);
                                     }
                                 }
                             }
@@ -618,6 +706,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.mortarSkins.Add(player.Value.mortarSkinName + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.mortarSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj");
                                 }
                             }
                         }
@@ -710,7 +809,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -726,7 +824,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -740,6 +837,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -766,6 +878,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -798,7 +921,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -814,7 +936,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -828,6 +949,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -854,6 +990,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -886,7 +1033,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -902,7 +1048,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -916,6 +1061,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -942,6 +1102,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -974,7 +1145,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -990,7 +1160,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -1004,6 +1173,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1030,6 +1214,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1064,7 +1259,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -1080,7 +1274,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -1094,6 +1287,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1119,6 +1327,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1151,7 +1370,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -1167,7 +1385,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -1181,6 +1398,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1207,6 +1439,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1271,6 +1514,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1294,6 +1552,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1358,6 +1627,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1381,6 +1665,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1412,7 +1707,6 @@ namespace Alternion
                                         Logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasMet)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_met.png");
@@ -1428,7 +1722,6 @@ namespace Alternion
                                         Logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
-
                                 if (skinInfo.hasNrm)
                                 {
                                     www = new WWW(mainUrl + "WeaponSkins/" + fullWeaponString + "_nrm.png");
@@ -1442,6 +1735,21 @@ namespace Alternion
                                     else
                                     {
                                         Logger.logLow("No nrm found for " + fullWeaponString);
+                                    }
+                                }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1467,6 +1775,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1531,6 +1850,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1554,6 +1888,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1616,6 +1961,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1639,6 +1999,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1701,6 +2072,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1724,6 +2110,16 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1786,6 +2182,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1809,6 +2220,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1871,6 +2293,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1894,6 +2331,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1956,6 +2404,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -1979,6 +2442,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2043,6 +2517,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2066,6 +2555,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2128,6 +2628,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2151,6 +2666,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2213,6 +2739,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2236,6 +2777,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2298,6 +2850,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2321,6 +2888,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2383,6 +2961,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2406,6 +2999,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2468,6 +3072,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2493,6 +3112,18 @@ namespace Alternion
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
                                 }
                             }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                }
+                            }
+
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
@@ -2552,6 +3183,21 @@ namespace Alternion
                                     Logger.logLow("No nrm found for " + fullWeaponString);
                                 }
                             }
+                            if (skinInfo.hasMesh)
+                            {
+                                www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                yield return www;
+
+                                if (string.IsNullOrEmpty(www.error))
+                                {
+                                    byte[] bytes = www.texture.EncodeToPNG();
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                }
+                                else
+                                {
+                                    Logger.logLow("No obj found for " + fullWeaponString);
+                                }
+                            }
                         }
 
                         newTex = loadTexture(fullWeaponString, AlternionSettings.texturesFilePath + "WeaponSkins/", 2048, 2048);
@@ -2570,6 +3216,18 @@ namespace Alternion
                         if (newTex.name != "FAILED")
                         {
                             TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                        }
+
+                        if (skinInfo.hasMesh)
+                        {
+                            if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                            {
+                                TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                            }
+                            else
+                            {
+                                Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                            }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
                     }
@@ -2632,6 +3290,21 @@ namespace Alternion
                                         Logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
+                                if (skinInfo.hasMesh)
+                                {
+                                    www = new WWW(mainUrl + "WeaponModels/" + fullWeaponString + ".obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        byte[] bytes = www.texture.EncodeToPNG();
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    }
+                                    else
+                                    {
+                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                    }
+                                }
                             }
                             if (skinInfo.hasAlb)
                             {
@@ -2655,6 +3328,17 @@ namespace Alternion
                                 if (newTex.name != "FAILED")
                                 {
                                     TheGreatCacher.Instance.weaponSkins.Add(fullWeaponString + "_nrm", newTex);
+                                }
+                            }
+                            if (skinInfo.hasMesh)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
+                                }
+                                else
+                                {
+                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2744,6 +3428,11 @@ namespace Alternion
                 Directory.CreateDirectory(Application.dataPath + AlternionSettings.texturesFilePath + "Flags/");
             }
 
+            if (!File.Exists(Application.dataPath + AlternionSettings.texturesFilePath))
+            {
+                Directory.CreateDirectory(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/");
+            }
+
             //Grab online JSON file
             StartCoroutine(loadJsonFile());
         }
@@ -2829,6 +3518,23 @@ namespace Alternion
                         individualShip.Value.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                     }
                     individualShip.Value.hasChangedCannons = false;
+                }
+
+                if (TheGreatCacher.Instance.defaultCannonMesh)
+                {
+                    for (int i = individualShip.Value.cannons.Count - 1; i >= 0; i--)
+                    {
+                        MeshFilter rend = individualShip.Value.cannonModels[i];
+                        if (rend)
+                        {
+                            rend.mesh = TheGreatCacher.Instance.defaultCannonMesh;
+                        }
+                        else
+                        {
+                            individualShip.Value.cannonModels.RemoveAt(i);
+                        }
+                    }
+                    individualShip.Value.hasChangedCannonModels = false;
                 }
 
                 // Only reset if default Navy flag texture has been set
@@ -3016,6 +3722,37 @@ namespace Alternion
                             mightyVessel.hasChangedCannons = false;
                         }
 
+                        if (AlternionSettings.useCannonSkins)
+                        {
+                            for (int i = mightyVessel.cannonModels.Count - 1; i >= 0; i--)
+                            {
+                                MeshFilter meshFilter = mightyVessel.cannonModels[i];
+                                if (meshFilter)
+                                {
+                                    if (TheGreatCacher.Instance.cannonModels.TryGetValue(player.cannonSkinName, out Mesh cannonMesh))
+                                    {
+                                        meshFilter.mesh = cannonMesh;
+                                    }else if (mightyVessel.hasChangedCannonModels)
+                                    {
+                                        meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
+                                    }
+                                }
+                                else
+                                {
+                                    mightyVessel.cannonModels.RemoveAt(i);
+                                }
+                            }
+                        }
+                        else if (mightyVessel.hasChangedCannonModels)
+                        {
+                            foreach (MeshFilter meshFilter in mightyVessel.cannonModels)
+                            {
+                                meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
+                            }
+
+                            mightyVessel.hasChangedCannonModels = false;
+                        }
+
                         // Only apply new texture if config has flag textures enabled
                         if (AlternionSettings.showFlags)
                         {
@@ -3101,6 +3838,17 @@ namespace Alternion
                             mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
 
                             mightyVessel.hasChangedCannons = false;
+                        }
+                        if (mightyVessel.hasChangedCannonModels)
+                        {
+                            for (int i = mightyVessel.cannonModels.Count - 1; i >= 0; i--)
+                            {
+                                MeshFilter meshFilter = mightyVessel.cannonModels[i];
+                                if (meshFilter)
+                                {
+                                    meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
+                                }
+                            }
                         }
                         if (mightyVessel.hasChangedSails)
                         {
