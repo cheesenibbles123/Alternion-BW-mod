@@ -75,6 +75,27 @@ namespace Alternion.SkinHandlers
             }
         }
 
+        void applyMesh(cachedShip vessel, string steamID, MeshFilter meshFilter)
+        {
+            if (!TheGreatCacher.Instance.setCannonDefaultMesh)
+            {
+                TheGreatCacher.Instance.defaultCannonMesh = meshFilter.mesh;
+                TheGreatCacher.Instance.setCannonDefaultMesh = true;
+            }
+
+            if (AlternionSettings.useCannonSkins && TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+            {
+                if (player.cannonSkinName != "default" && TheGreatCacher.Instance.cannonModels.TryGetValue(player.cannonSkinName, out Mesh cannonMesh))
+                {
+                    vessel.hasChangedCannonModels = true;
+                    meshFilter.mesh = cannonMesh;
+                    return;
+                }
+            }
+            
+            Instance.resetCannon(vessel, meshFilter);
+        }
+
         void Awake()
         {
             if (!Instance)
@@ -94,13 +115,23 @@ namespace Alternion.SkinHandlers
         /// <param name="renderer">Cannon renderer</param>
         void resetCannon(cachedShip vessel, Renderer renderer)
         {
-            if (vessel.hasChangedCannons && renderer != null)
+            if (vessel.hasChangedCannons && renderer != null && TheGreatCacher.Instance.setCannonDefaults)
             {
-                if (TheGreatCacher.Instance.setCannonDefaults)
-                {
-                    renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                    renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
-                }
+                renderer.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
+                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+            }
+        }
+
+        /// <summary>
+        /// Resets the cannon skin to default
+        /// </summary>
+        /// <param name="vessel">Ship</param>
+        /// <param name="renderer">Cannon renderer</param>
+        void resetCannon(cachedShip vessel, MeshFilter meshFilter)
+        {
+            if (vessel.hasChangedCannonModels && meshFilter != null && TheGreatCacher.Instance.setCannonDefaultMesh)
+            {
+                meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
             }
         }
 
@@ -144,7 +175,7 @@ namespace Alternion.SkinHandlers
         /// <summary>
         /// Wastes time until the captain is found
         /// </summary>
-        /// <param name="cannon">Cannon Renderer</param>
+        /// <param name="__instance">Destroyed cannon component</param>
         /// <param name="index">Team num</param>
         private IEnumerator wasteTime(CannonDestroy __instance, int index)
         {
@@ -157,15 +188,21 @@ namespace Alternion.SkinHandlers
                     cachedShip vessel = TheGreatCacher.getCachedShip(index.ToString());
                     try {
                         Renderer destroyedCannon = __instance.îæïíïíäìéêé.GetComponent<Renderer>();
-                        Renderer functionalCannon = __instance.æïìçñðåììêç.GetComponent<CannonUse>().transform.FindChild("cannon").GetComponent<Renderer>();
+
+                        Transform childCannon = __instance.æïìçñðåììêç.GetComponent<CannonUse>().transform.FindChild("cannon");
+                        Renderer functionalCannon = childCannon.GetComponent<Renderer>();
+                        MeshFilter functionCannonMeshFilter = childCannon.GetComponent<MeshFilter>();
+
                         vessel.cannons.Add(destroyedCannon);
                         vessel.cannons.Add(functionalCannon);
+                        vessel.cannonModels.Add(functionCannonMeshFilter);
+
                         string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
                         Instance.applySkins(vessel, steamID, destroyedCannon);
                         Instance.applySkins(vessel, steamID, functionalCannon);
+                        Instance.applyMesh(vessel, steamID, functionCannonMeshFilter);
                     } catch (Exception e) {
-                        Logger.debugLog("Error applying cannon skin(s).");
-                        Logger.debugLog(e.Message);
+                        Logger.debugLog("[CannonSkinHandler] " + e.Message);
                     }
                     doesntExist = false;
                 }
