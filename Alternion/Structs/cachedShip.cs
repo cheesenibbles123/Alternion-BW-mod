@@ -12,6 +12,7 @@ namespace Alternion.Structs
         /// Check for if the cannons have been changed, or are default
         /// </summary>
         public bool hasChangedCannons = false;
+        public bool hasChangedCannonModels = false;
         /// <summary>
         /// Check for if the sails have been changed, or are default
         /// </summary>
@@ -60,6 +61,7 @@ namespace Alternion.Structs
         /// Stores all the cannons
         /// </summary>
         public List<Renderer> cannons = new List<Renderer>();
+        public List<MeshFilter> cannonModels = new List<MeshFilter>();
         /// <summary>
         /// Stores all the secondary sails
         /// </summary>
