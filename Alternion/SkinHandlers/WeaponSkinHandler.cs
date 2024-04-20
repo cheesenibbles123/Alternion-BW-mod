@@ -57,7 +57,7 @@ namespace Alternion.SkinHandlers
             }
             catch (Exception e)
             {
-                Logger.debugLog("[WeaponSkinHandler] " + e.Message);
+                Logger.debugLog("[WeaponSkinHandler][AssignSkin]: " + e.Message);
             }
         }
 
@@ -199,7 +199,7 @@ namespace Alternion.SkinHandlers
                     }
                     catch (Exception e)
                     {
-                        Logger.debugLog("[WeaponSkinHandler] " + e.Message);
+                        Logger.debugLog("[WeaponSkinHandler][GoldApply]:" + e.Message);
                     }
                 }
             }
@@ -230,7 +230,7 @@ namespace Alternion.SkinHandlers
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog("[WeaponSkinHandler] " + e.Message);
+                    Logger.debugLog("[WeaponSkinHandler][SetGold]: " + e.Message);
                 }
             }
         }
@@ -259,7 +259,7 @@ namespace Alternion.SkinHandlers
                     }
                     catch (Exception e)
                     {
-                        Logger.debugLog("[WeaponSkinHandler] " + e.Message);
+                        Logger.debugLog("[WeaponSkinHandler][1st Person]: " + e.Message);
                     }
                 }
             }

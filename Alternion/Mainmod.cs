@@ -331,6 +331,7 @@ namespace Alternion
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
                     }
                 }
+
                 // Sails
                 if (player.Value.sailSkinName != "default")
                 {
@@ -408,7 +409,6 @@ namespace Alternion
                         }
                     }
                 }
-
                 // Cannons
                 if (player.Value.cannonSkinName != "default")
                 {
@@ -782,7 +782,7 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
                 }
-
+                
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
                 {
@@ -847,7 +847,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -959,7 +959,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1071,7 +1071,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1183,7 +1183,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1231,7 +1231,7 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
+                
                 // Secondary Weapons
                 if (player.Value.standardPistolSkinName != "default")
                 {
@@ -1297,7 +1297,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1408,7 +1408,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1522,7 +1522,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1635,7 +1635,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1745,7 +1745,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1792,7 +1792,7 @@ namespace Alternion
                         alreadyDownloaded.Add(fullWeaponString);
                     }
                 }
-
+                
                 // Melee weapons
                 if (player.Value.axeSkinName != "default")
                 {
@@ -1858,7 +1858,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -1969,7 +1969,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2024,7 +2024,6 @@ namespace Alternion
                         fullWeaponString = "dagger_" + player.Value.daggerSkinName;
                         if (TheGreatCacher.Instance.skinAttributes.TryGetValue(fullWeaponString, out weaponSkinAttributes skinInfo))
                         {
-
                             if (AlternionSettings.downloadOnStartup)
                             {
                                 if (skinInfo.hasAlb)
@@ -2079,8 +2078,7 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
@@ -2190,7 +2188,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2301,7 +2299,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2412,7 +2410,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2525,7 +2523,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2636,7 +2634,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2747,7 +2745,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2858,7 +2856,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -2969,7 +2967,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -3080,7 +3078,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
@@ -3191,7 +3189,7 @@ namespace Alternion
                                 if (string.IsNullOrEmpty(www.error))
                                 {
                                     byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                 }
                                 else
                                 {
@@ -3298,7 +3296,7 @@ namespace Alternion
                                     if (string.IsNullOrEmpty(www.error))
                                     {
                                         byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponSkins/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
                                     }
                                     else
                                     {
