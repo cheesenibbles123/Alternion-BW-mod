@@ -19,8 +19,8 @@ namespace Alternion
         /// Textures file path.
         /// </summary>
         public static string texturesFilePath = "/Managed/Mods/Assets/Archie/Textures/";
-        static string mainUrl = "http://www.archiesbots.com/BlackwakeStuff/";
         public static RuntimeUpdater Instance;
+        private static Logger logger = new Logger("[RuntimeUpdater]");
         static Texture2D tex;
 
         void Awake()
@@ -46,8 +46,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.debugLog(string.Format("Error loading texture {0}", texName));
-                Logger.debugLog(e.Message);
+                logger.debugLog(string.Format("Error loading texture {0}", texName));
+                logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 return Texture2D.whiteTexture;
             }
@@ -68,7 +68,7 @@ namespace Alternion
                     }
                     catch (Exception e)
                     {
-                        Logger.debugLog(e.Message);
+                        logger.debugLog(e.Message);
                     }
                 }
             }
@@ -76,7 +76,7 @@ namespace Alternion
 
         private IEnumerator textureSetup(string path, string tName, string type)
         {
-            WWW www = new WWW(mainUrl + path);
+            WWW www = new WWW(AlternionSettings.mainUrl + path);
             yield return www;
 
             if (!File.Exists(Application.dataPath + texturesFilePath + tName))
@@ -127,7 +127,7 @@ namespace Alternion
 
             WebClient webCli = new WebClient();
             // Fetch all players
-            string response = webCli.DownloadString(mainUrl + AlternionSettings.remoteFile);
+            string response = webCli.DownloadString(AlternionSettings.mainUrl + AlternionSettings.remoteFile);
             string[] json = response.Split('&');
 
             for (int i = 0; i < json.Length; i++)
@@ -149,7 +149,7 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                Logger.debugLog(e.Message);
+                                logger.debugLog(e.Message);
                             }
                         }
                     }
@@ -168,59 +168,17 @@ namespace Alternion
             switch (type)
             {
                 case "badge":
-                    if (TheGreatCacher.Instance.badges.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.badges.ContainsKey(assetName);
                 case "sail":
-                    if (TheGreatCacher.Instance.secondarySails.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.secondarySails.ContainsKey(assetName);
                 case "mainsail":
-                    if (TheGreatCacher.Instance.mainSails.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.mainSails.ContainsKey(assetName);
                 case "cannon":
-                    if (TheGreatCacher.Instance.cannonSkins.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.cannonSkins.ContainsKey(assetName);
                 case "goldmask":
-                    if (TheGreatCacher.Instance.maskSkins.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.maskSkins.ContainsKey(assetName);
                 case "weaponskin":
-                    if (TheGreatCacher.Instance.weaponSkins.ContainsKey(assetName))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return TheGreatCacher.Instance.weaponSkins.ContainsKey(assetName);
                 default:
                     return false;
            }
