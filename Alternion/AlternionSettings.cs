@@ -12,6 +12,7 @@ namespace Alternion
     public class AlternionSettings : MonoBehaviour
     {
         public static int loggingLevel = 0;
+        private static Logger logger = new Logger("[AlternionSettings]");
         /// <summary>
         /// Use Tournamentwake badges.
         /// </summary>
@@ -83,7 +84,7 @@ namespace Alternion
         /// <summary>
         /// Current version number
         /// </summary>
-        public static string version = "v10-beta";
+        public static string version = "v10.2 beta";
         /// <summary>
         /// Button to press to display current version in the log
         /// </summary>
@@ -124,7 +125,6 @@ namespace Alternion
         void Start()
         {
             checkConfig();
-            setTextures();
         }
 
         void Update()
@@ -132,8 +132,7 @@ namespace Alternion
             // Display output of current version on keypress (Good for checking version numbers)
             if (Input.GetKeyUp(versionDisplayKey))
             {
-                // Useful response that I totally always remember to keep up-to-date ;)
-                Logger.debugLog(version);
+                logger.debugLog("Version: " + version);
             }
         }
 
@@ -206,13 +205,13 @@ namespace Alternion
                 if (configToLoad != configFile)
                 {
                     loadSettings(configFile);
-                    Logger.debugLog("No custom config found! Defaulting to standard.");
+                    logger.debugLog("No custom config found! Defaulting to standard.");
                 }
                 else
                 {
-                    Logger.debugLog("No config found! Generating new config file.");
                     setupDefaults();
                     loadSettings(configFile);
+                    logger.debugLog("No config found! Generating new config file.");
                 }
                 return;
             }
@@ -248,140 +247,49 @@ namespace Alternion
                                     loggingLevel = Convert.ToInt32(splitArr[1]);
                                 }catch (Exception e)
                                 {
-                                    Logger.debugLog("Error loading loggingLevel config option. Setting to default of 0.");
-                                    Logger.debugLog(e.Message);
+                                    logger.debugLog("Error loading loggingLevel config option. Setting to default of 0.");
+                                    logger.debugLog(e.Message);
                                     loggingLevel = 0;
                                 }
                                 break;
                             case "showTWBadges":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    showTWBadges = true;
-                                }
-                                else
-                                {
-                                    showTWBadges = false;
-                                }
+                                showTWBadges = stringIntToBool(splitArr[1]);
                                 break;
                             case "showKSBadges":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    showKSBadges = true;
-                                }
-                                else
-                                {
-                                    showKSBadges = false;
-                                }
+                                showKSBadges = stringIntToBool(splitArr[1]);
                                 break;
                             case "useBadges":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useBadges = true;
-                                }
-                                else
-                                {
-                                    useBadges = false;
-                                }
+                                useBadges = stringIntToBool(splitArr[1]);
                                 break;
                             case "useMaskSkins":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useMaskSkins = true;
-                                }
-                                else
-                                {
-                                    useMaskSkins = false;
-                                }
+                                useMaskSkins = stringIntToBool(splitArr[1]);
                                 break;
                             case "useMainSails":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useMainSails = true;
-                                }
-                                else
-                                {
-                                    useMainSails = false;
-                                }
+                                useMainSails = stringIntToBool(splitArr[1]);
                                 break;
                             case "useSecondarySails":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useSecondarySails = true;
-                                }
-                                else
-                                {
-                                    useSecondarySails = false;
-                                }
+                                useSecondarySails = stringIntToBool(splitArr[1]);
                                 break;
                             case "useWeaponSkins":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useWeaponSkins = true;
-                                }
-                                else
-                                {
-                                    useWeaponSkins = false;
-                                }
+                                useWeaponSkins = stringIntToBool(splitArr[1]);
                                 break;
                             case "useCannonSkins":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useCannonSkins = true;
-                                }
-                                else
-                                {
-                                    useCannonSkins = false;
-                                }
+                                useCannonSkins = stringIntToBool(splitArr[1]);
                                 break;
                             case "useSwivelSkins":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useSwivelSkins = true;
-                                }
-                                else
-                                {
-                                    useSwivelSkins = false;
-                                }
+                                useSwivelSkins = stringIntToBool(splitArr[1]);
                                 break;
                             case "useMortarSkins":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    useMortarSkins = true;
-                                }
-                                else
-                                {
-                                    useMortarSkins = false;
-                                }
+                                useMortarSkins = stringIntToBool(splitArr[1]);
                                 break;
                             case "downloadOnStartup":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    downloadOnStartup = true;
-                                }
-                                else
-                                {
-                                    downloadOnStartup = false;
-                                }
+                                downloadOnStartup = stringIntToBool(splitArr[1]);
                                 break;
                             case "updateDuringRuntime":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    updateDuringRuntime = true;
-                                }
-                                else
-                                {
-                                    updateDuringRuntime = false;
-                                }
+                                updateDuringRuntime = stringIntToBool(splitArr[1]);
                                 break;
                             case "showFlags":
-                                if (Convert.ToInt32(splitArr[1]) == 1)
-                                {
-                                    showFlags = true;
-                                }
-                                else
-                                {
-                                    showFlags = false;
-                                }
+                                showFlags = stringIntToBool(splitArr[1]);
                                 break;
                             default:
                                 break;
@@ -415,28 +323,28 @@ namespace Alternion
             streamWriter.WriteLine("1 : Enabled");
             streamWriter.WriteLine("0 : Disabled");
             streamWriter.WriteLine("------------");
-            streamWriter.WriteLine("showTWBadges=" + checkBool(showTWBadges));
-            streamWriter.WriteLine("showKSBadges=" + checkBool(showKSBadges));
-            streamWriter.WriteLine("showFlags=" + checkBool(showFlags));
-            streamWriter.WriteLine("useBadges=" + checkBool(useBadges));
-            streamWriter.WriteLine("useMaskSkins=" + checkBool(useMaskSkins));
-            streamWriter.WriteLine("useMainSails=" + checkBool(useMainSails));
-            streamWriter.WriteLine("useSecondarySails=" + checkBool(useSecondarySails));
-            streamWriter.WriteLine("useWeaponSkins=" + checkBool(useWeaponSkins));
-            streamWriter.WriteLine("useCannonSkins=" + checkBool(useCannonSkins));
-            streamWriter.WriteLine("useSwivelSkins=" + checkBool(useSwivelSkins));
-            streamWriter.WriteLine("useMortarSkins=" + checkBool(useMortarSkins));
-            streamWriter.WriteLine("downloadOnStartup=" + checkBool(downloadOnStartup));
-            streamWriter.WriteLine("updateDuringRuntime=" + checkBool(updateDuringRuntime));
+            streamWriter.WriteLine("showTWBadges=" + boolToInt(showTWBadges));
+            streamWriter.WriteLine("showKSBadges=" + boolToInt(showKSBadges));
+            streamWriter.WriteLine("showFlags=" + boolToInt(showFlags));
+            streamWriter.WriteLine("useBadges=" + boolToInt(useBadges));
+            streamWriter.WriteLine("useMaskSkins=" + boolToInt(useMaskSkins));
+            streamWriter.WriteLine("useMainSails=" + boolToInt(useMainSails));
+            streamWriter.WriteLine("useSecondarySails=" + boolToInt(useSecondarySails));
+            streamWriter.WriteLine("useWeaponSkins=" + boolToInt(useWeaponSkins));
+            streamWriter.WriteLine("useCannonSkins=" + boolToInt(useCannonSkins));
+            streamWriter.WriteLine("useSwivelSkins=" + boolToInt(useSwivelSkins));
+            streamWriter.WriteLine("useMortarSkins=" + boolToInt(useMortarSkins));
+            streamWriter.WriteLine("downloadOnStartup=" + boolToInt(downloadOnStartup));
+            streamWriter.WriteLine("updateDuringRuntime=" + boolToInt(updateDuringRuntime));
             streamWriter.Close();
 
             if (isNew)
             {
-                Logger.debugLog("Generated default config file.");
+                logger.debugLog("Generated default config file.");
             }
             else
             {
-                Logger.debugLog("Saved config to file.");
+                logger.debugLog("Saved config to file.");
             }
         }
 
@@ -444,97 +352,14 @@ namespace Alternion
         /// Converts an bool to an int (1:true, 0:false).
         /// </summary>
         /// <param name="checking">Bool to convert</param>
-        static int checkBool(bool checking)
+        static int boolToInt(bool checking)
         {
             return checking ? 1 : 0;
         }
 
-        /// <summary>
-        /// Checks for all textures, and stores the relevant ones into their respective slots.
-        /// Mostly serves to fill default textures, as well as config menu backgrounds and images.
-        /// </summary>
-        void setTextures()
+        static bool stringIntToBool(string intInput)
         {
-            Texture[] mainTex = Resources.FindObjectsOfTypeAll<Texture>();
-            foreach (Texture texture in mainTex)
-            {
-                switch (texture.name)
-                {
-                    case "oldmap1":
-                        ModGUI.setMainBoxBackground(texture);
-                        break;
-                    case "panel_medium":
-                        ModGUI.setMainButtonBackground(texture);
-                        break;
-                    case "Checkmark":
-                        ModGUI.setCheckmark(texture);
-                        break;
-                    case "UISprite":
-                        ModGUI.setCheckBox(texture);
-                        break;
-                    case "prp_cannon_alb":
-                        TheGreatCacher.setDefaultCannons(texture);
-                        break;
-                    case "ships_sails_alb":
-                        TheGreatCacher.setDefaultSails(texture);
-                        break;
-
-                    case "wpn_nockGun_stock_alb":
-                        TheGreatCacher.primaryWeaponsDefault[0].alb = texture;
-                        break;
-                    case "wpn_nockGun_stock_met":
-                        TheGreatCacher.primaryWeaponsDefault[0].met = texture;
-                        break;
-                    case "wpn_nockGun_stock_nrm":
-                        TheGreatCacher.primaryWeaponsDefault[0].nrm = texture;
-                        break;
-                    case "wpn_nockGun_stock_ao":
-                        TheGreatCacher.primaryWeaponsDefault[0].ao = texture;
-                        break;
-
-                    case "wpn_handMortar_alb":
-                        TheGreatCacher.primaryWeaponsDefault[1].alb = texture;
-                        break;
-                    case "wpn_handMortar_met":
-                        TheGreatCacher.primaryWeaponsDefault[1].met = texture;
-                        break;
-                    case "wpn_handMortar_nrm":
-                        TheGreatCacher.primaryWeaponsDefault[1].nrm = texture;
-                        break;
-                    case "wpn_handMortar_ao":
-                        TheGreatCacher.primaryWeaponsDefault[1].ao = texture;
-                        break;
-
-                    case "wpn_blunderbuss_alb":
-                        TheGreatCacher.primaryWeaponsDefault[2].alb = texture;
-                        break;
-                    case "wpn_blunderbuss_met":
-                        TheGreatCacher.primaryWeaponsDefault[2].met = texture;
-                        break;
-                    case "wpn_blunderbuss_nrm":
-                        TheGreatCacher.primaryWeaponsDefault[2].nrm = texture;
-                        break;
-                    case "wpn_blunderbuss_ao":
-                        TheGreatCacher.primaryWeaponsDefault[2].ao = texture;
-                        break;
-
-                    case "wpn_standardMusket_stock_alb":
-                        TheGreatCacher.primaryWeaponsDefault[3].alb = texture;
-                        break;
-                    case "wpn_standardMusket_stock_met":
-                        TheGreatCacher.primaryWeaponsDefault[3].met = texture;
-                        break;
-                    case "wpn_standardMusket_stock_nrm":
-                        TheGreatCacher.primaryWeaponsDefault[3].nrm = texture;
-                        break;
-                    case "wpn_standardMusket_stock_ao":
-                        TheGreatCacher.primaryWeaponsDefault[3].ao = texture;
-                        break;
-                    default:
-                        //log(texture.name);
-                        break;
-                }
-            }
+            return Convert.ToInt32(intInput) == 1;
         }
     }
 }
