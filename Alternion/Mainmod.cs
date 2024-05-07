@@ -22,6 +22,7 @@ namespace Alternion
         /// Watermark Texture
         /// </summary>
         Texture2D watermarkTex;
+        private static Logger logger = new Logger("[Main]");
         /// <summary>
         /// True if watermark has been setup.
         /// </summary>
@@ -57,7 +58,7 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog(e.Message);
+                    logger.debugLog(e.Message);
                 }
 
                 //Starts asset fetching cycle
@@ -68,7 +69,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.debugLog(e.Message);
+                logger.debugLog(e.Message);
             }
 
         }
@@ -103,12 +104,12 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog("------------------");
-                    Logger.debugLog("Loading from JSON error");
-                    Logger.debugLog("Attempted User: " + player.steamID);
-                    Logger.debugLog(e.Message);
-                    Logger.debugLog(json[i]);
-                    Logger.debugLog("------------------");
+                    logger.debugLog("------------------");
+                    logger.debugLog("Loading from JSON error");
+                    logger.debugLog("Attempted User: " + player.steamID);
+                    logger.debugLog(e.Message);
+                    logger.debugLog(json[i]);
+                    logger.debugLog("------------------");
                 }
                 LoadingBar.updatePercentage(0 + (10 * ((float)i / (float)json.Length)), "Downloading players...");
             }
@@ -127,15 +128,13 @@ namespace Alternion
             {
                 // I didn't want to do this, but unity has forced my hand
                 weaponSkinAttributes skin = JsonUtility.FromJson<weaponSkinAttributes>(json[i]);
-                TheGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin);
+                if (TheGreatCacher.Instance.skinAttributes.ContainsKey(skin.weaponSkin)) { logger.debugLog("Got duplicate skin key entry: " + skin.weaponSkin); }
+                else { TheGreatCacher.Instance.skinAttributes.Add(skin.weaponSkin, skin); }
                 LoadingBar.updatePercentage(10 + (10 * ((float)i / (float)json.Length)), "Downloading skinInfo...");
             }
             StartCoroutine(downloadTextures());
         }
 
-        /// <summary>
-        /// Fetches and loads the watermark.
-        /// </summary>
         private IEnumerator waterMark()
         {
             byte[] bytes = null;
@@ -152,8 +151,8 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog("Error downloading watermark:");
-                    Logger.debugLog(e.Message);
+                    logger.debugLog("Error downloading watermark:");
+                    logger.debugLog(e.Message);
                 }
 
             }
@@ -167,6 +166,7 @@ namespace Alternion
 
         /// <summary>
         /// Downloads all the textures.
+        /// Could do with a cleanup someday... maybe... I'll get round to it...
         /// </summary>
         private IEnumerator downloadTextures()
         {
@@ -203,7 +203,7 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                Logger.debugLog(e.Message);
+                                logger.debugLog(e.Message);
                             }
                         }
 
@@ -216,10 +216,10 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            Logger.debugLog("------------------");
-                            Logger.debugLog("Badge Download Error");
-                            Logger.debugLog(e.Message);
-                            Logger.debugLog("------------------");
+                            logger.debugLog("------------------");
+                            logger.debugLog("Badge Download Error");
+                            logger.debugLog(e.Message);
+                            logger.debugLog("------------------");
                         }
 
                     }
@@ -237,7 +237,7 @@ namespace Alternion
                         {
                             if (skinInfo.hasAlb)
                             {
-                                www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + ".png");
+                                www = new WWW(mainUrl + "MaskSkins/" + fullString + ".png");
                                 yield return www;
                                 try
                                 {
@@ -246,12 +246,12 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    Logger.debugLog(e.Message);
+                                    logger.debugLog(e.Message);
                                 }
                             }
                             if (skinInfo.hasMet)
                             {
-                                www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + "_met.png");
+                                www = new WWW(mainUrl + "MaskSkins/" + fullString + "_met.png");
                                 yield return www;
                                 try
                                 {
@@ -260,12 +260,12 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    Logger.debugLog(e.Message);
+                                    logger.debugLog(e.Message);
                                 }
                             }
                             if (skinInfo.hasNrm)
                             {
-                                www = new WWW(mainUrl + "MaskSkins/" + player.Value.maskSkinName + "_nrm.png");
+                                www = new WWW(mainUrl + "MaskSkins/" + fullString + "_nrm.png");
                                 yield return www;
                                 try
                                 {
@@ -274,12 +274,12 @@ namespace Alternion
                                 }
                                 catch (Exception e)
                                 {
-                                    Logger.debugLog(e.Message);
+                                    logger.debugLog(e.Message);
                                 }
                             }
                             if (skinInfo.hasMesh)
                             {
-                                www = new WWW(mainUrl + "MaskModels/" + player.Value.maskSkinName + ".obj");
+                                www = new WWW(mainUrl + "MaskModels/" + fullString + ".obj");
                                 yield return www;
 
                                 if (string.IsNullOrEmpty(www.error))
@@ -289,43 +289,43 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("No obj found for " + player.Value.maskSkinName);
+                                    logger.logLow("No obj found for " + player.Value.maskSkinName);
                                 }
                             }
                         }
-                            if (skinInfo.hasAlb)
+                        if (skinInfo.hasAlb)
+                        {
+                            newTex = loadTexture(fullString, AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
                             {
-                                newTex = loadTexture(fullString, AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
-                                if (newTex.name != "FAILED")
-                                {
-                                    TheGreatCacher.Instance.weaponSkins.Add(fullString, newTex);
-                                }
+                                TheGreatCacher.Instance.maskSkins.Add(fullString, newTex);
                             }
-                            if (skinInfo.hasMet)
+                        }
+                        if (skinInfo.hasMet)
+                        {
+                            newTex = loadTexture(fullString + "_met", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
                             {
-                                newTex = loadTexture(fullString + "_met", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
-                                if (newTex.name != "FAILED")
-                                {
-                                    TheGreatCacher.Instance.weaponSkins.Add(fullString + "_met", newTex);
-                                }
+                                TheGreatCacher.Instance.maskSkins.Add(fullString + "_met", newTex);
                             }
-                            if (skinInfo.hasNrm)
+                        }
+                        if (skinInfo.hasNrm)
+                        {
+                            newTex = loadTexture(fullString + "_nrm", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
+                            if (newTex.name != "FAILED")
                             {
-                                newTex = loadTexture(fullString + "_nrm", AlternionSettings.texturesFilePath + "MaskSkins/", 2048, 2048);
-                                if (newTex.name != "FAILED")
-                                {
-                                    TheGreatCacher.Instance.weaponSkins.Add(fullString + "_nrm", newTex);
-                                }
+                                TheGreatCacher.Instance.maskSkins.Add(fullString + "_nrm", newTex);
                             }
+                        }
                         if (skinInfo.hasMesh)
                         {
-                            if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj"))
+                            if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + fullString + ".obj"))
                             {
-                                TheGreatCacher.Instance.weaponModels.Add(player.Value.maskSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj"));
+                                TheGreatCacher.Instance.maskModels.Add(fullString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + fullString + ".obj"));
                             }
                             else
                             {
-                                Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + player.Value.maskSkinName + ".obj");
+                                logger.debugLog("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MaskModels/" + fullString + ".obj");
                             }
                         }
                         alreadyDownloaded.Add("mask_" + player.Value.maskSkinName);
@@ -350,9 +350,9 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                Logger.debugLog("------------------");
-                                Logger.debugLog("Sail Skin Download Error");
-                                Logger.debugLog(e.Message);
+                                logger.debugLog("------------------");
+                                logger.debugLog("Sail Skin Download Error");
+                                logger.debugLog(e.Message);
                             }
                         }
 
@@ -365,10 +365,10 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            Logger.debugLog("------------------");
-                            Logger.debugLog("Normal Sail Setup Error");
-                            Logger.debugLog(e.Message);
-                            Logger.debugLog("------------------");
+                            logger.debugLog("------------------");
+                            logger.debugLog("Normal Sail Setup Error");
+                            logger.debugLog(e.Message);
+                            logger.debugLog("------------------");
                         }
                     }
                 }
@@ -389,7 +389,7 @@ namespace Alternion
                             }
                             catch (Exception e)
                             {
-                                Logger.debugLog(e.Message);
+                                logger.debugLog(e.Message);
                             }
                         }
 
@@ -402,10 +402,10 @@ namespace Alternion
                         }
                         catch (Exception e)
                         {
-                            Logger.debugLog("------------------");
-                            Logger.debugLog("Main Sail Download Error");
-                            Logger.debugLog(e.Message);
-                            Logger.debugLog("------------------");
+                            logger.debugLog("------------------");
+                            logger.debugLog("Main Sail Download Error");
+                            logger.debugLog(e.Message);
+                            logger.debugLog("------------------");
                         }
                     }
                 }
@@ -431,7 +431,7 @@ namespace Alternion
                                     }
                                     catch (Exception e)
                                     {
-                                        Logger.debugLog(e.Message);
+                                        logger.debugLog(e.Message);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -446,7 +446,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + player.Value.cannonSkinName);
+                                        logger.logLow("No met found for " + player.Value.cannonSkinName);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -461,7 +461,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + player.Value.cannonSkinName);
+                                        logger.logLow("No nrm found for " + player.Value.cannonSkinName);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -471,12 +471,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + player.Value.cannonSkinName);
+                                        logger.logLow("No obj found for " + player.Value.cannonSkinName);
                                     }
                                 }
                             }
@@ -512,7 +511,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "CannonModels/" + player.Value.cannonSkinName + ".obj");
                                 }
                             }
                         }
@@ -540,7 +539,7 @@ namespace Alternion
                                     }
                                     catch (Exception e)
                                     {
-                                        Logger.debugLog(e.Message);
+                                        logger.debugLog(e.Message);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -555,7 +554,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + player.Value.swivelSkinName);
+                                        logger.logLow("No met found for " + player.Value.swivelSkinName);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -570,22 +569,49 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + player.Value.swivelSkinName);
+                                        logger.logLow("No nrm found for " + player.Value.swivelSkinName);
                                     }
                                 }
-                                if (skinInfo.hasMesh)
+                                if (skinInfo.hasMeshTop != null && (bool)skinInfo.hasMeshTop)
                                 {
-                                    www = new WWW(mainUrl + "SwivelModels/" + player.Value.swivelSkinName + ".obj");
+                                    www = new WWW(mainUrl + "SwivelModels/" + player.Value.swivelSkinName + "_top.obj");
                                     yield return www;
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_top.obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + player.Value.swivelSkinName);
+                                        logger.logLow("No obj found for " + player.Value.swivelSkinName + "_top");
+                                    }
+                                }
+                                if (skinInfo.hasMeshConnector != null && (bool)skinInfo.hasMeshConnector)
+                                {
+                                    www = new WWW(mainUrl + "SwivelModels/" + player.Value.swivelSkinName + "_connector.obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_connector.obj", www.bytes);
+                                    }
+                                    else
+                                    {
+                                        logger.logLow("No obj found for " + player.Value.swivelSkinName + "_connector");
+                                    }
+                                }
+                                if (skinInfo.hasMeshBase != null && (bool)skinInfo.hasMeshBase)
+                                {
+                                    www = new WWW(mainUrl + "SwivelModels/" + player.Value.swivelSkinName + "_base.obj");
+                                    yield return www;
+
+                                    if (string.IsNullOrEmpty(www.error))
+                                    {
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_base.obj", www.bytes);
+                                    }
+                                    else
+                                    {
+                                        logger.logLow("No obj found for " + player.Value.swivelSkinName + "_base");
                                     }
                                 }
                             }
@@ -599,15 +625,37 @@ namespace Alternion
                             {
                                 TheGreatCacher.Instance.swivels.Add(player.Value.swivelSkinName + "_met", newTex);
                             }
-                            if (skinInfo.hasMesh)
+                            if (skinInfo.hasMeshTop != null && (bool)skinInfo.hasMeshTop)
                             {
-                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj"))
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_top.obj"))
                                 {
-                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.swivelSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj"));
+                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.swivelSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_top.obj"));
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_top.obj");
+                                }
+                            }
+                            if (skinInfo.hasMeshConnector != null && (bool)skinInfo.hasMeshConnector)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_connector.obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.swivelSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_connector.obj"));
+                                }
+                                else
+                                {
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_connector.obj");
+                                }
+                            }
+                            if (skinInfo.hasMeshBase != null && (bool)skinInfo.hasMeshBase)
+                            {
+                                if (File.Exists(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_base.obj"))
+                                {
+                                    TheGreatCacher.Instance.weaponModels.Add(player.Value.swivelSkinName, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_base.obj"));
+                                }
+                                else
+                                {
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "SwivelModels/" + player.Value.swivelSkinName + "_base.obj");
                                 }
                             }
                         }
@@ -635,7 +683,7 @@ namespace Alternion
                                     }
                                     catch (Exception e)
                                     {
-                                        Logger.debugLog(e.Message);
+                                        logger.debugLog(e.Message);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -650,7 +698,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + player.Value.mortarSkinName);
+                                        logger.logLow("No met found for " + player.Value.mortarSkinName);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -665,7 +713,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + player.Value.mortarSkinName);
+                                        logger.logLow("No nrm found for " + player.Value.mortarSkinName);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -675,12 +723,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + player.Value.mortarSkinName);
+                                        logger.logLow("No obj found for " + player.Value.mortarSkinName);
                                     }
                                 }
                             }
@@ -716,7 +763,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "MortarModels/" + player.Value.mortarSkinName + ".obj");
                                 }
                             }
                         }
@@ -741,7 +788,7 @@ namespace Alternion
                             }
                             else
                             {
-                                Logger.logLow("No alb found for " + player.Value.flagNavySkinName);
+                                logger.logLow("No alb found for " + player.Value.flagNavySkinName);
                             }
 
                         }
@@ -770,7 +817,7 @@ namespace Alternion
                             }
                             else
                             {
-                                Logger.logLow("No alb found for " + player.Value.flagPirateSkinName);
+                                logger.logLow("No alb found for " + player.Value.flagPirateSkinName);
                             }
 
                         }
@@ -782,7 +829,7 @@ namespace Alternion
                         alreadyDownloaded.Add(player.Value.flagPirateSkinName);
                     }
                 }
-                
+
                 // Primary weapons
                 if (player.Value.musketSkinName != "default")
                 {
@@ -806,7 +853,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -821,7 +868,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -836,7 +883,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -846,12 +893,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -888,7 +934,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -918,7 +964,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -933,7 +979,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -948,7 +994,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -958,12 +1004,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1000,7 +1045,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1030,7 +1075,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1045,7 +1090,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1060,7 +1105,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1070,12 +1115,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1112,7 +1156,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1142,7 +1186,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1157,7 +1201,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1172,7 +1216,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1182,12 +1226,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1224,7 +1267,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1256,7 +1299,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1271,7 +1314,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1286,7 +1329,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1296,12 +1339,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1337,7 +1379,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1362,12 +1404,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1382,7 +1423,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1397,7 +1438,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1412,7 +1453,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1449,7 +1490,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1474,12 +1515,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
 
@@ -1495,7 +1535,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
 
@@ -1511,7 +1551,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1526,7 +1566,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1562,7 +1602,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1587,12 +1627,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
 
@@ -1608,7 +1647,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
 
@@ -1624,7 +1663,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1639,7 +1678,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1675,7 +1714,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1704,7 +1743,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1719,7 +1758,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1734,7 +1773,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1744,12 +1783,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1785,7 +1823,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1817,7 +1855,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1832,7 +1870,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1847,7 +1885,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1857,12 +1895,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -1898,7 +1935,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -1923,12 +1960,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.texturesFilePath + "WeaponSkins/" + fullWeaponString + ".png", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -1943,7 +1979,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -1958,7 +1994,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -1973,7 +2009,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2009,7 +2045,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2038,7 +2074,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2053,7 +2089,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2068,7 +2104,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2082,7 +2118,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2117,7 +2153,7 @@ namespace Alternion
                                     TheGreatCacher.Instance.weaponModels.Add(fullWeaponString, meshLoader.ImportFile(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj"));
                                 }else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2147,7 +2183,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2162,7 +2198,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2177,7 +2213,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2187,12 +2223,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2228,7 +2263,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2258,7 +2293,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2273,7 +2308,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2288,7 +2323,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2298,12 +2333,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2339,7 +2373,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2369,7 +2403,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2384,7 +2418,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2399,7 +2433,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2409,12 +2443,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2450,7 +2483,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2482,7 +2515,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2497,7 +2530,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2512,7 +2545,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2522,12 +2555,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2563,7 +2595,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2593,7 +2625,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2608,7 +2640,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2623,7 +2655,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2633,12 +2665,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2674,7 +2705,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2704,7 +2735,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2719,7 +2750,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2734,7 +2765,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2744,12 +2775,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2785,7 +2815,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2815,7 +2845,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2830,7 +2860,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2845,7 +2875,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2860,7 +2890,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -2896,7 +2926,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -2926,7 +2956,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -2941,7 +2971,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -2956,7 +2986,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -2966,12 +2996,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -3007,7 +3036,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -3037,7 +3066,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -3052,7 +3081,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -3067,7 +3096,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -3077,12 +3106,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -3118,7 +3146,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
 
@@ -3148,7 +3176,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("No alb found for " + fullWeaponString);
+                                    logger.logLow("No alb found for " + fullWeaponString);
                                 }
                             }
                             if (skinInfo.hasMet)
@@ -3163,7 +3191,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("No met found for " + fullWeaponString);
+                                    logger.logLow("No met found for " + fullWeaponString);
                                 }
                             }
                             if (skinInfo.hasNrm)
@@ -3178,7 +3206,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("No nrm found for " + fullWeaponString);
+                                    logger.logLow("No nrm found for " + fullWeaponString);
                                 }
                             }
                             if (skinInfo.hasMesh)
@@ -3188,12 +3216,11 @@ namespace Alternion
 
                                 if (string.IsNullOrEmpty(www.error))
                                 {
-                                    byte[] bytes = www.texture.EncodeToPNG();
-                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                    File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                 }
                                 else
                                 {
-                                    Logger.logLow("No obj found for " + fullWeaponString);
+                                    logger.logLow("No obj found for " + fullWeaponString);
                                 }
                             }
                         }
@@ -3224,7 +3251,7 @@ namespace Alternion
                             }
                             else
                             {
-                                Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                             }
                         }
                         alreadyDownloaded.Add(fullWeaponString);
@@ -3255,7 +3282,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No alb found for " + fullWeaponString);
+                                        logger.logLow("No alb found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMet)
@@ -3270,7 +3297,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No met found for " + fullWeaponString);
+                                        logger.logLow("No met found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasNrm)
@@ -3285,7 +3312,7 @@ namespace Alternion
                                     }
                                     else
                                     {
-                                        Logger.logLow("No nrm found for " + fullWeaponString);
+                                        logger.logLow("No nrm found for " + fullWeaponString);
                                     }
                                 }
                                 if (skinInfo.hasMesh)
@@ -3295,12 +3322,11 @@ namespace Alternion
 
                                     if (string.IsNullOrEmpty(www.error))
                                     {
-                                        byte[] bytes = www.texture.EncodeToPNG();
-                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", bytes);
+                                        File.WriteAllBytes(Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj", www.bytes);
                                     }
                                     else
                                     {
-                                        Logger.logLow("No obj found for " + fullWeaponString);
+                                        logger.logLow("No obj found for " + fullWeaponString);
                                     }
                                 }
                             }
@@ -3336,7 +3362,7 @@ namespace Alternion
                                 }
                                 else
                                 {
-                                    Logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
+                                    logger.logLow("Unable to find mesh at location: " + Application.dataPath + AlternionSettings.modelsFilePath + "WeaponModels/" + fullWeaponString + ".obj");
                                 }
                             }
                         }
@@ -3363,7 +3389,7 @@ namespace Alternion
                             }
                             else
                             {
-                                Logger.logLow("No alb found for " + fullWeaponString);
+                                logger.logLow("No alb found for " + fullWeaponString);
                             }
 
                             // MET maps
@@ -3377,7 +3403,7 @@ namespace Alternion
                             }
                             else
                             {
-                                Logger.logLow("No met found for " + fullWeaponString);
+                                logger.logLow("No met found for " + fullWeaponString);
                             }
                         }
 
@@ -3402,7 +3428,7 @@ namespace Alternion
             }
 
             // outputPlayerDict();
-            Logger.logLow("Complete download!");
+            logger.logLow("Complete download!");
             setupMainMenu();
         }
 
@@ -3441,19 +3467,16 @@ namespace Alternion
         public static void setupMainMenu()
         {
             LoadingBar.updatePercentage(90, "Preparing Main Menu");
-            if (!AlternionSettings.useWeaponSkins && !AlternionSettings.useBadges)
-            {
-                LoadingBar.updatePercentage(100, "Finished!");
-                return;
-            }
             MainMenuCL.setMainMenuBadge();
-            MainMenuCL.Instance.setMenuFlag();
+            MainMenuCL.setMenuFlag();
+            MainMenuCL.setGoldMask();
+            LoadingBar.updatePercentage(100, "Finished!");
         }
 
         /// <summary>
         /// Resets all ship assets to default textures. Cannons + Sails
         /// </summary>
-        static void resetAllShipsToDefault() // TO DO: Null reference error somewhere
+        static void resetAllShipsToDefault()
         {
             // Loop through all ships, and set all visuals to defaults in the following order:
             // Sails
@@ -3464,37 +3487,24 @@ namespace Alternion
             // Mortars
             foreach (KeyValuePair<string, cachedShip> individualShip in TheGreatCacher.Instance.ships)
             {
-                // Only reset if sail texture has been set
-                if (TheGreatCacher.Instance.defaultSails)
+                if (individualShip.Value.hasChangedSails)
                 {
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.sailDict)
                     {
-                        if (individualShip.Value != null)
-                        {
-                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                        }
+                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                        indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                     }
 
                     foreach (KeyValuePair<string, SailHealth> indvidualSail in individualShip.Value.mainSailDict)
                     {
-                        if (individualShip.Value != null)
-                        {
-                            indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                        }
+                        indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                        indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                     }
 
-                    foreach (Renderer renderer in individualShip.Value.closedSails)
-                    {
-                        if (individualShip.Value != null)
-                        {
-                            renderer.material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                        }
-                    }
                     individualShip.Value.hasChangedSails = false;
                 }
 
-                // Only reset if cannon texture has been set
-                if (TheGreatCacher.Instance.defaultCannons)
+                if (individualShip.Value.hasChangedCannons)
                 {
                     for (int i = individualShip.Value.cannons.Count - 1; i >= 0; i--)
                     {
@@ -3503,6 +3513,7 @@ namespace Alternion
                         {
                             rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                             rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                            rend.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm);
                         }
                         else
                         {
@@ -3514,11 +3525,12 @@ namespace Alternion
                     {
                         individualShip.Value.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                         individualShip.Value.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                        individualShip.Value.cannonLOD.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm);
                     }
                     individualShip.Value.hasChangedCannons = false;
                 }
 
-                if (TheGreatCacher.Instance.defaultCannonMesh)
+                if (individualShip.Value.hasChangedCannonModels)
                 {
                     for (int i = individualShip.Value.cannons.Count - 1; i >= 0; i--)
                     {
@@ -3535,26 +3547,13 @@ namespace Alternion
                     individualShip.Value.hasChangedCannonModels = false;
                 }
 
-                // Only reset if default Navy flag texture has been set
-                if (TheGreatCacher.Instance.setNavyFlag && individualShip.Value.isNavy)
+                if (individualShip.Value.hasChangedFlag)
                 {
-                    for (int i=0; i< individualShip.Value.flags.Count; i++)
-                    {
-                        individualShip.Value.flags[i].material.mainTexture = TheGreatCacher.Instance.navyFlag;
-                    }
+                    individualShip.Value.flag.material.mainTexture = individualShip.Value.isNavy ? TheGreatCacher.Instance.navyFlag : TheGreatCacher.Instance.pirateFlag;
+                    individualShip.Value.hasChangedFlag = false;
                 }
-
-                // Only reset if default Pirate flag texture has been set
-                if (TheGreatCacher.Instance.setPirateFlag && !individualShip.Value.isNavy)
-                {
-                    for (int i = 0; i < individualShip.Value.flags.Count; i++)
-                    {
-                        individualShip.Value.flags[i].material.mainTexture = TheGreatCacher.Instance.pirateFlag;
-                    }
-                }
-
-                // Only reset if swivel texture has been set
-                if (TheGreatCacher.Instance.setSwivelDefaults)
+                
+                if (individualShip.Value.hasChangedSwivels)
                 {
                     foreach (Renderer swivel in individualShip.Value.Swivels)
                     {
@@ -3562,13 +3561,13 @@ namespace Alternion
                         {
                             swivel.material.mainTexture = TheGreatCacher.Instance.defaultSwivel;
                             swivel.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
+                            swivel.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultSwivelNrm);
                         }
                     }
                     individualShip.Value.hasChangedSwivels = false;
                 }
 
-                // Only reset if mortar texture has been set
-                if (TheGreatCacher.Instance.setMortarDefaults)
+                if (individualShip.Value.hasChangedMortars)
                 {
                     foreach (Renderer mortar in individualShip.Value.mortars)
                     {
@@ -3576,6 +3575,7 @@ namespace Alternion
                         {
                             mortar.material.mainTexture = TheGreatCacher.Instance.defaultMortar;
                             mortar.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
+                            mortar.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm);
                         }
                     }
                     individualShip.Value.hasChangedMortars = false;
@@ -3585,7 +3585,7 @@ namespace Alternion
         }
 
         /// <summary>
-        /// Sets the new textures for cached ships.
+        /// Sets the new textures for a cached ship.
         /// </summary>
         /// <param name="steamID">Captain SteamID</param>
         /// <param name="index">Ship Index</param>
@@ -3593,9 +3593,10 @@ namespace Alternion
         {
             try
             {
-                // Loop through all cached vessels and apply new textures in the following order:
+                // Loop through the cached vessel and apply new textures in the following order:
                 // Sails
                 // Main Sails
+                // Flags
                 // Functional Cannons
                 // Destroyed Cannons
                 Texture newTex;
@@ -3610,11 +3611,13 @@ namespace Alternion
                             {
                                 if (TheGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
                                 {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
+                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex; 
+                                    indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
                                 else
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
                         }
@@ -3623,6 +3626,7 @@ namespace Alternion
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
                                 indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
                         }
 
@@ -3634,10 +3638,12 @@ namespace Alternion
                                 if (TheGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = newTex;
+                                    indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = newTex;
                                 }
                                 else
                                 {
                                     indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                    indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                                 }
                             }
                         }
@@ -3646,6 +3652,7 @@ namespace Alternion
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
                                 indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
                         }
 
@@ -3660,52 +3667,75 @@ namespace Alternion
                         // Only apply new texture if config has cannon textures enabled
                         if (AlternionSettings.useCannonSkins)
                         {
+                            TheGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.cannonSkinName, out weaponSkinAttributes attrib);
+
+                            Texture mainTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex)){
+                                mainTex = newTex;
+                            }
+                            else { mainTex = TheGreatCacher.Instance.defaultCannons; }
+                            Texture metTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                            {
+                                metTex = newTex;
+                            }
+                            else { metTex = TheGreatCacher.Instance.defaultCannonsMet; }
+                            Texture nrmTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_nrm", out newTex))
+                            {
+                                nrmTex = newTex;
+                            }
+                            else { nrmTex = TheGreatCacher.Instance.defaultCannonsNrm; }
+
                             for (int i = mightyVessel.cannons.Count - 1; i >= 0; i--)
                             {
                                 Renderer rend = mightyVessel.cannons[i];
                                 if (rend)
                                 {
-                                    bool isNotSet = true;
-                                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
-                                    {
-                                        rend.material.mainTexture = newTex;
-                                        isNotSet = false;
-                                    }
-                                    if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
-                                    {
-                                        rend.material.SetTexture("_Metallic", newTex);
-                                        isNotSet = false;
-                                    }
-                                    if (isNotSet)
-                                    {
-                                        rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
-                                        rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
-                                    }
+                                    rend.material.mainTexture = mainTex;
+                                    rend.material.SetTexture("_Metallic", metTex);
+                                    rend.material.SetTexture("_BumpMap", nrmTex);
                                 }
                                 else
                                 {
                                     mightyVessel.cannons.RemoveAt(i);
+                                    i--;
                                 }
                             }
 
+                            bool hasAppliedNewSkin = false;
+
                             // LOD
-                            if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
                             {
                                 mightyVessel.cannonLOD.material.mainTexture = newTex;
+                                hasAppliedNewSkin = true;
                             }
                             else
                             {
                                 mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                             }
 
-                            if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                            if (attrib.hasMet && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
                             {
                                 mightyVessel.cannonLOD.material.SetTexture("_Metallic", newTex);
+                                hasAppliedNewSkin = true;
                             }
                             else
                             {
                                 mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
                             }
+
+                            if (attrib.hasNrm && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_nrm", out newTex))
+                            {
+                                mightyVessel.cannonLOD.material.SetTexture("_BumpMap", newTex);
+                                hasAppliedNewSkin = true;
+                            }
+                            else
+                            {
+                                mightyVessel.cannonLOD.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultCannonsNrm);
+                            }
+                            mightyVessel.hasChangedCannons = hasAppliedNewSkin;
                         }
                         else if (mightyVessel.hasChangedCannons)
                         {
@@ -3713,6 +3743,7 @@ namespace Alternion
                             {
                                 cannon.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                                 cannon.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                cannon.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultCannonsNrm);
                             }
 
                             mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
@@ -3722,22 +3753,23 @@ namespace Alternion
 
                         if (AlternionSettings.useCannonSkins)
                         {
+                            Mesh cannon;
+                            if (TheGreatCacher.Instance.cannonModels.TryGetValue(player.cannonSkinName, out Mesh cannonMesh))
+                            {
+                                cannon = cannonMesh;
+                            }else { cannon = TheGreatCacher.Instance.defaultCannonMesh; }
+
                             for (int i = mightyVessel.cannonModels.Count - 1; i >= 0; i--)
                             {
                                 MeshFilter meshFilter = mightyVessel.cannonModels[i];
                                 if (meshFilter)
                                 {
-                                    if (TheGreatCacher.Instance.cannonModels.TryGetValue(player.cannonSkinName, out Mesh cannonMesh))
-                                    {
-                                        meshFilter.mesh = cannonMesh;
-                                    }else if (mightyVessel.hasChangedCannonModels)
-                                    {
-                                        meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
-                                    }
+                                    meshFilter.mesh = cannon;
                                 }
                                 else
                                 {
                                     mightyVessel.cannonModels.RemoveAt(i);
+                                    i--;
                                 }
                             }
                         }
@@ -3757,16 +3789,17 @@ namespace Alternion
                             string flagSkin = mightyVessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
                             if (flagSkin != "default" && TheGreatCacher.Instance.flags.TryGetValue(flagSkin, out newTex))
                             {
-                                flagHandler.Instance.setFlagsToSkin(mightyVessel, newTex);
+                                Instance.StartCoroutine(flagHandler.Instance.setFlag(int.Parse(index), mightyVessel.flag, newTex));
+                                flagHandler.setFlagTexture(mightyVessel, newTex);
                             }
                             else
                             {
-                                flagHandler.Instance.resetFlag(mightyVessel);
+                                flagHandler.resetFlag(mightyVessel);
                             }
                         }
                         else if (mightyVessel.hasChangedFlag)
                         {
-                            flagHandler.Instance.resetFlag(mightyVessel);
+                            flagHandler.resetFlag(mightyVessel);
                         }
 
                         // Only apply new texture if config has swivel textures enabled
@@ -3782,33 +3815,43 @@ namespace Alternion
                         // Only apply new texture if config has mortar textures enabled
                         if (AlternionSettings.useMortarSkins)
                         {
+                            TheGreatCacher.Instance.skinAttributes.TryGetValue("cannon_" + player.cannonSkinName, out weaponSkinAttributes attrib);
+                            Texture mainTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName, out newTex))
+                            {
+                                mainTex = newTex;
+                            }
+                            else { mainTex = TheGreatCacher.Instance.defaultMortar; }
+                            Texture metTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
+                            {
+                                metTex = newTex;
+                            }
+                            else { metTex = TheGreatCacher.Instance.defaultMortarMet; }
+                            Texture nrmTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_nrm", out newTex))
+                            {
+                                nrmTex = newTex;
+                            }
+                            else { nrmTex = TheGreatCacher.Instance.defaultMortarNrm; }
+
                             for (int i = 0; i < mightyVessel.mortars.Count - 1; i++)
                             {
-                                if (TheGreatCacher.Instance.mortarSkins.TryGetValue(player.mortarSkinName, out newTex))
-                                {
-                                    mightyVessel.mortars[i].material.mainTexture = newTex;
-                                }
-                                else
-                                {
-                                    mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
-                                }
+                                if (!mightyVessel.mortars[i]) { continue; }
+                                mightyVessel.mortars[i].material.mainTexture = mainTex;
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", metTex);
+                                mightyVessel.mortars[i].material.SetTexture("_BumpMap", nrmTex);
 
-                                if (TheGreatCacher.Instance.cannonSkins.TryGetValue(player.cannonSkinName + "_met", out newTex))
-                                {
-                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", newTex);
-                                }
-                                else
-                                {
-                                    mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
-                                }
                             }
                         }
                         else if (mightyVessel.hasChangedMortars )
                         {
                             for (int i = 0; i < mightyVessel.mortars.Count; i++)
                             {
+                                if (!mightyVessel.mortars[i]) { continue; }
                                 mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
-                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortar);
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
+                                mightyVessel.mortars[i].material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm);
                             }
 
                             mightyVessel.hasChangedMortars = false;
@@ -3825,15 +3868,18 @@ namespace Alternion
                                 {
                                     rend.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                                     rend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                                    rend.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultCannonsNrm);
                                 }
                                 else
                                 {
                                     mightyVessel.cannons.RemoveAt(i);
+                                    i--;
                                 }
                             }
 
                             mightyVessel.cannonLOD.material.mainTexture = TheGreatCacher.Instance.defaultCannons;
                             mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsMet);
+                            mightyVessel.cannonLOD.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultCannonsNrm);
 
                             mightyVessel.hasChangedCannons = false;
                         }
@@ -3841,10 +3887,9 @@ namespace Alternion
                         {
                             for (int i = mightyVessel.cannonModels.Count - 1; i >= 0; i--)
                             {
-                                MeshFilter meshFilter = mightyVessel.cannonModels[i];
-                                if (meshFilter)
+                                if (mightyVessel.cannonModels[i])
                                 {
-                                    meshFilter.mesh = TheGreatCacher.Instance.defaultCannonMesh;
+                                    mightyVessel.cannonModels[i].mesh = TheGreatCacher.Instance.defaultCannonMesh;
                                 }
                             }
                         }
@@ -3852,30 +3897,29 @@ namespace Alternion
                         {
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.mainSailDict)
                             {
-                                if (TheGreatCacher.Instance.setSailDefaults)
-                                {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                                }
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
                             foreach (KeyValuePair<string, SailHealth> indvidualSail in mightyVessel.sailDict)
                             {
-                                if (TheGreatCacher.Instance.setSailDefaults)
-                                {
-                                    indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                                }
+                                indvidualSail.Value.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
+                                indvidualSail.Value.êæïäîæïïíñå.GetComponent<Renderer>().material.mainTexture = TheGreatCacher.Instance.defaultSails;
                             }
 
                             sailHandler.Instance.resetClosedSails(mightyVessel);
 
                             mightyVessel.hasChangedSails = false;
                         }
+                        flagHandler.resetFlag(mightyVessel);
                         swivelHandler.Instance.resetSwivels(mightyVessel);
                         if (mightyVessel.hasChangedMortars)
                         {
                             for (int i=0; i < mightyVessel.mortars.Count; i++)
                             {
+                                if (!mightyVessel.mortars[i]) { continue; }
                                 mightyVessel.mortars[i].material.mainTexture = TheGreatCacher.Instance.defaultMortar;
-                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortar);
+                                mightyVessel.mortars[i].material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet);
+                                mightyVessel.mortars[i].material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm);
                             }
 
                             mightyVessel.hasChangedMortars = false;
@@ -3885,8 +3929,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.logLow(e.Message);
-                //Ignore Exception
+                logger.logLow(e.Message);
             }
         }
 
@@ -3896,7 +3939,6 @@ namespace Alternion
         /// <param name="texName">Image Name</param>
         /// <param name="imgWidth">Image Width</param>
         /// <param name="imgHeight">Image Height</param>
-        /// <returns>Texture2D</returns>
         public static Texture2D loadTexture(string texName, string filePath, int imgWidth, int imgHeight)
         {
             try
@@ -3909,8 +3951,8 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                Logger.debugLog("Error loading texture {0}" + texName);
-                Logger.debugLog(e.Message);
+                logger.debugLog("Error loading texture {0}" + texName);
+                logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 Texture2D tex = Texture2D.whiteTexture;
                 tex.name = "FAILED";
@@ -3922,7 +3964,6 @@ namespace Alternion
         /// Checks if input badge is a Kickstarter or Tournamentwake badge
         /// </summary>
         /// <param name="__instance">ScoreboardSlot</param> 
-        /// /// <returns>Bool</returns>
         public static bool checkIfTWOrKS(ScoreboardSlot __instance)
         {
             // If TW Badge
@@ -3991,8 +4032,8 @@ namespace Alternion
                         }
                         else
                         {
-                            Logger.debugLog("Failed to assign custom badge to a player:");
-                            Logger.debugLog(e.Message);
+                            logger.debugLog("Failed to assign custom badge to a player:");
+                            logger.debugLog(e.Message);
                         }
                     }
                 }
@@ -4047,20 +4088,12 @@ namespace Alternion
                 // Untested
                 try
                 {
-                    if (LocalPlayer.îêêæëçäëèñî.äíìíëðñïñéè.isCaptain())
-                    {
-                        PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
-                        string steamNewCaptainID = player.steamID.ToString();
-                        string teamNum = player.team.ToString();
-                        assignNewTexturesToShips(steamNewCaptainID, teamNum);
-                    }
+                    PlayerInfo player = GameMode.getPlayerInfo(__instance.êåééóæåñçòì.text);
+                    assignNewTexturesToShips(player.steamID.ToString(), player.team.ToString());
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog("##########################################################");
-                    Logger.debugLog("Pass captain patch.");
-                    Logger.debugLog(e.Message);
-                    Logger.debugLog("##########################################################");
+                    logger.debugLog("[passCaptainPatch]: " + e.Message);
                 }
             }
         }
