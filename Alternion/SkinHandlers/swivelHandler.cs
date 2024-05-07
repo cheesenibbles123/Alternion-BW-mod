@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using BWModLoader;
 using UnityEngine;
 using Harmony;
@@ -9,10 +10,9 @@ namespace Alternion.SkinHandlers
     [Mod]
     public class swivelHandler : MonoBehaviour
     {
-        /// <summary>
-        /// Swivel Handler
-        /// </summary>
         public static swivelHandler Instance;
+        private static Logger logger = new Logger("[SwivelHandler]");
+        private int maxRuns = 40;
 
         void Awake()
         {
@@ -32,23 +32,27 @@ namespace Alternion.SkinHandlers
         /// </summary>
         /// <param name="__instance">Cached ship</param>
         /// <param name="rend">Swivel Renderer</param>
-        void setupShip(SwivelUse __instance, Renderer rend)
+        private IEnumerator setupShip(Renderer rend, int index)
         {
-            int index = GameMode.getParentIndex(__instance.transform.root);
-
-            string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
-
-            if (TheGreatCacher.Instance.ships.TryGetValue(index.ToString(), out cachedShip vessel))
+            yield return new WaitForSeconds(0.1f);
+            bool doesntExist = true;
+            int counter = 0;
+            while (doesntExist && counter < maxRuns)
             {
-                vessel.Swivels.Add(rend);
-                applySkin(rend, steamID);
-            }
-            else
-            {
-                cachedShip newVessel = new cachedShip();
-                newVessel.Swivels.Add(rend);
-                TheGreatCacher.Instance.ships.Add(index.ToString(), newVessel);
-                applySkin(rend, steamID);
+                if (GameMode.Instance.teamCaptains[index]) {
+                    string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+                    cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
+
+                    vessel.Swivels.Add(rend);
+                    applySkin(rend, steamID);
+
+                    doesntExist = false;
+                }
+                else
+                {
+                    counter++;
+                    yield return new WaitForSeconds(.4f);
+                }
             }
         }
 
@@ -59,16 +63,31 @@ namespace Alternion.SkinHandlers
         /// <param name="steamID">Captain steamID</param>
         void applySkin(Renderer renderer, string steamID)
         {
-            if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player)) {
+            if (!renderer) return;
+
+            if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) && TheGreatCacher.Instance.skinAttributes.TryGetValue("swivel_" + player.swivelSkinName, out weaponSkinAttributes attrib)) {
                 Texture newTex;
-                if (TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName, out newTex))
+                if (attrib.hasAlb && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName, out newTex))
                 {
                     renderer.material.mainTexture = newTex;
                 }
-                if (TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
+                else { renderer.material.mainTexture = TheGreatCacher.Instance.defaultSwivel; }
+                if (attrib.hasAlb && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
                 {
                     renderer.material.SetTexture("_Metallic", newTex);
                 }
+                else { renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet); }
+                if (attrib.hasNrm && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_nrm", out newTex))
+                {
+                    renderer.material.SetTexture("_BumpMap", newTex);
+                }
+                else { renderer.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultSwivelNrm); }
+            }
+            else
+            {
+                renderer.material.mainTexture = TheGreatCacher.Instance.defaultSwivel;
+                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
+                renderer.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultSwivelNrm);
             }
         }
 
@@ -79,28 +98,34 @@ namespace Alternion.SkinHandlers
         /// <param name="player">Captain</param>
         public void updateSwivels(cachedShip vessel, playerObject player)
         {
-            if (player != null)
+            if (vessel == null) return;
+            if (player != null && TheGreatCacher.Instance.skinAttributes.TryGetValue(player.swivelSkinName, out weaponSkinAttributes attrib))
             {
                 Texture newTex;
+                Texture mainTex;
+                if (attrib.hasAlb && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName, out newTex))
+                {
+                    mainTex = newTex;
+                }
+                else {  mainTex = TheGreatCacher.Instance.defaultSwivel; }
+                Texture metTex;
+                if (attrib.hasMet && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
+                {
+                    metTex = newTex;
+                }
+                else { metTex = TheGreatCacher.Instance.defaultSwivelMet; }
+                Texture nrmTex;
+                if (attrib.hasNrm && TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
+                {
+                    nrmTex = newTex;
+                }
+                else { nrmTex = TheGreatCacher.Instance.defaultSwivelMet; }
+
                 foreach (Renderer renderer in vessel.Swivels)
                 {
-                    if (TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName,out newTex))
-                    {
-                        renderer.material.mainTexture = newTex;
-                    }
-                    else
-                    {
-                        renderer.material.mainTexture = TheGreatCacher.Instance.defaultSwivel;
-                    }
-
-                    if (TheGreatCacher.Instance.swivels.TryGetValue(player.swivelSkinName + "_met", out newTex))
-                    {
-                        renderer.material.SetTexture("_Metallic", newTex);
-                    }
-                    else
-                    {
-                        renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
-                    }
+                    renderer.material.mainTexture = mainTex;
+                    renderer.material.SetTexture("_Metallic", metTex);
+                    renderer.material.SetTexture("_BumpMap", nrmTex);
                 }
             }
             else
@@ -115,28 +140,15 @@ namespace Alternion.SkinHandlers
         /// /// <param name="vessel">Cached Ship</param>
         public void resetSwivels(cachedShip vessel)
         {
-            if (vessel.hasChangedSwivels)
+            if (vessel != null && vessel.hasChangedSwivels)
             {
                 foreach (Renderer ren in vessel.Swivels)
                 {
                     ren.material.mainTexture = TheGreatCacher.Instance.defaultSwivel;
                     ren.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSwivelMet);
+                    ren.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultSwivelNrm);
                 }
                 vessel.hasChangedSwivels = false;
-            }
-        }
-
-        /// <summary>
-        /// Setups up caching of default alb and met textures
-        /// </summary>
-        /// /// <param name="rend">Swivel Renderer</param>
-        void setupDefaultImg(Renderer rend)
-        {
-            if (!TheGreatCacher.Instance.setSwivelDefaults)
-            {
-                TheGreatCacher.Instance.defaultSwivel = rend.material.mainTexture;
-                TheGreatCacher.Instance.defaultSwivelMet = rend.material.GetTexture("_Metallic");
-                TheGreatCacher.Instance.setSwivelDefaults = true;
             }
         }
 
@@ -146,28 +158,28 @@ namespace Alternion.SkinHandlers
         [HarmonyPatch(typeof(SwivelUse), "Start")]
         class swivelPatch
         {
-            static void Postfix(SwivelUse __instance)
+            static bool Prefix(SwivelUse __instance)
             {
                 if (AlternionSettings.useSwivelSkins)
                 {
+                    int index = GameMode.getParentIndex(__instance.transform.root); // If we do this any later we get a -1 for the team index, might be something to do with how the transform is changed in Start()?
                     Renderer[] renderers2 = __instance.transform.parent.parent.GetComponentsInChildren<Renderer>();
                     for (int i = 0; i < renderers2.Length; i++)
                     {
-                        Renderer rend = renderers2[i];
-                        if (rend.name == "swiveltop" || rend.name == "swivel_connector" || rend.name == "swivel_base")
+                        if (renderers2[i].name == "swiveltop" || renderers2[i].name == "swivel_connector" || renderers2[i].name == "swivel_base")
                         {
                             try
                             {
-                                Instance.setupDefaultImg(rend);
-                                Instance.setupShip(__instance, rend);
+                                Instance.StartCoroutine(Instance.setupShip(renderers2[i], index));
                             }
                             catch (Exception e)
                             {
-                                Logger.debugLog(e.Message);
+                                logger.debugLog(e.Message);
                             }
                         }
                     }
                 }
+                return true;
             }
         }
     }

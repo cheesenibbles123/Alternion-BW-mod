@@ -5,16 +5,15 @@ using UnityEngine;
 using BWModLoader;
 
 using Alternion.Structs;
+using System.Runtime.InteropServices;
 
 namespace Alternion.SkinHandlers
 {
     [Mod]
     public class weaponSkinHandler : MonoBehaviour
     {
-        /// <summary>
-        /// WeaponSkinHandler instance
-        /// </summary>
         public static weaponSkinHandler Instance;
+        private static Logger logger = new Logger("[WeaponSkinHandler]");
 
         /// <summary>
         /// Assigns the weapon skin to the weapon.
@@ -28,36 +27,70 @@ namespace Alternion.SkinHandlers
             try
             {
                 // If the player Dict contains a reference to the specific weapon, output the texture
-                if (!TheGreatCacher.Instance.defaultWeaponModels.ContainsKey(weapon))
+                if (!TheGreatCacher.Instance.defaultWeaponModels.ContainsKey(weapon) && meshFilter)
                 {
                     TheGreatCacher.Instance.defaultWeaponModels.Add(weapon, meshFilter.mesh);
+                }
+                if (!TheGreatCacher.Instance.defaultWeaponSkins.ContainsKey(weapon) && renderer)
+                {
+                    TheGreatCacher.Instance.defaultWeaponSkins.Add(weapon, renderer.material.mainTexture);
+                    TheGreatCacher.Instance.defaultWeaponSkins.Add(weapon + "_met", renderer.material.GetTexture("_Metallic"));
+                    TheGreatCacher.Instance.defaultWeaponSkins.Add(weapon + "_nrm", renderer.material.GetTexture("_BumpMap"));
                 }
 
                 if (weaponSkin != "default")
                 {
-                    Texture newTex;
-                    if (TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
+                    if (TheGreatCacher.Instance.skinAttributes.TryGetValue(weapon + "_" + weaponSkin, out weaponSkinAttributes attrib))
                     {
-                        renderer.material.mainTexture = newTex;
-                    }
-                    if (TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
-                    {
-                        renderer.material.SetTexture("_Metallic", newTex);
-                    }
+                        if (renderer)
+                        {
+                            Texture newTex;
+                            if (attrib.hasAlb && TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin, out newTex))
+                            {
+                                renderer.material.mainTexture = newTex;
+                            }
+                            else if (TheGreatCacher.Instance.defaultWeaponSkins.TryGetValue(weapon, out newTex))
+                            {
+                                renderer.material.mainTexture = newTex;
+                            }
 
-                    Mesh mesh;
-                    if (TheGreatCacher.Instance.weaponModels.TryGetValue(weapon + "_" + weaponSkin, out mesh))
-                    {
-                        meshFilter.mesh = mesh;
-                    }else if (TheGreatCacher.Instance.defaultWeaponModels.TryGetValue(weapon, out mesh))
-                    {
-                        meshFilter.mesh = mesh;
+                            if (attrib.hasMet && TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_met", out newTex))
+                            {
+                                renderer.material.SetTexture("_Metallic", newTex);
+                            }
+                            else if (TheGreatCacher.Instance.defaultWeaponSkins.TryGetValue(weapon + "_met", out newTex))
+                            {
+                                renderer.material.SetTexture("_Metallic", newTex);
+                            }
+
+                            if (attrib.hasNrm && TheGreatCacher.Instance.weaponSkins.TryGetValue(weapon + "_" + weaponSkin + "_nrm", out newTex))
+                            {
+                                renderer.material.SetTexture("_BumpMap", newTex);
+                            }
+                            else if (TheGreatCacher.Instance.defaultWeaponSkins.TryGetValue(weapon + "_nrm", out newTex))
+                            {
+                                renderer.material.SetTexture("_BumpMap", newTex);
+                            }
+                        }
+
+                        if (meshFilter)
+                        {
+                            Mesh mesh;
+                            if (attrib.hasMesh && TheGreatCacher.Instance.weaponModels.TryGetValue(weapon + "_" + weaponSkin, out mesh))
+                            {
+                                meshFilter.mesh = mesh;
+                            }
+                            else if (TheGreatCacher.Instance.defaultWeaponModels.TryGetValue(weapon, out mesh))
+                            {
+                                meshFilter.mesh = mesh;
+                            }
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                Logger.debugLog("[WeaponSkinHandler][AssignSkin]: " + e.Message);
+                logger.debugLog("[AssignSkin]: " + e.Message);
             }
         }
 
@@ -71,7 +104,7 @@ namespace Alternion.SkinHandlers
 
             Renderer renderer = __instance.GetComponent<Renderer>();
             MeshFilter meshFilter = __instance.GetComponent<MeshFilter>();
-
+            if (!renderer) return;
             switch (renderer.material.mainTexture.name)
             {
                 case "wpn_standardMusket_stock_alb":
@@ -159,9 +192,7 @@ namespace Alternion.SkinHandlers
                     break;
                 default:
 #if DEBUG
-                    // If not known, output here
-                    //Logger.logLow("Type name: -" + renderer.name + "-");
-                    //Logger.logLow("Default name: -" + renderer.material.mainTexture.name + "-");
+                    logger.logLow("Got unused weapon skin input: " + renderer.material.mainTexture.name);
 #endif
                     break;
             }
@@ -199,38 +230,8 @@ namespace Alternion.SkinHandlers
                     }
                     catch (Exception e)
                     {
-                        Logger.debugLog("[WeaponSkinHandler][GoldApply]:" + e.Message);
+                        logger.debugLog("[GoldApply]:" + e.Message);
                     }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Mask skin patch
-        /// </summary>
-        [HarmonyPatch(typeof(Character), "setGoldMask")]
-        class goldMaskPatch
-        {
-            static void Postfix(Character __instance)
-            {
-                try
-                {
-                    if (AlternionSettings.useMaskSkins)
-                    {
-                        string steamID = __instance.transform.parent.GetComponent<PlayerInfo>().steamID.ToString();
-                        if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
-                        {
-                            if (TheGreatCacher.Instance.maskSkins.TryGetValue(player.maskSkinName, out Texture newTex))
-                            {
-                                // Renderer renderer = __instance.éäéïéðïåææè.transform.GetComponent<Renderer>();
-                                __instance.éäéïéðïåææè.transform.GetComponent<Renderer>().material.mainTexture = newTex;
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.debugLog("[WeaponSkinHandler][SetGold]: " + e.Message);
                 }
             }
         }
@@ -259,7 +260,7 @@ namespace Alternion.SkinHandlers
                     }
                     catch (Exception e)
                     {
-                        Logger.debugLog("[WeaponSkinHandler][1st Person]: " + e.Message);
+                        logger.debugLog("[1st Person]: " + e.Message);
                     }
                 }
             }

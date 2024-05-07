@@ -33,15 +33,28 @@ namespace Alternion.SkinHandlers
         /// <param name="skinName">Player skin name</param>
         void applySkin(Renderer renderer, string skinName)
         {
+            TheGreatCacher.Instance.skinAttributes.TryGetValue(skinName, out weaponSkinAttributes attrib);
+
             Texture img;
-            if (TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName, out img))
+            if (attrib.hasAlb && TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName, out img))
             {
                 renderer.material.mainTexture = img;
-            }
-            if (TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName + "_met", out img))
+            }else { renderer.material.mainTexture = TheGreatCacher.Instance.defaultMortar; }
+            if (attrib.hasMet && TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName + "_met", out img))
             {
                 renderer.material.SetTexture("_Metallic", img);
             }
+            else { renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMortarMet); }
+            if (attrib.hasNrm && TheGreatCacher.Instance.mortarSkins.TryGetValue(skinName + "_nrm", out img))
+            {
+                renderer.material.SetTexture("_BumpMap", img);
+            }
+            else { renderer.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMortarNrm); }
+
+            if (attrib.hasMesh && TheGreatCacher.Instance.mortarModels.TryGetValue(skinName, out Mesh model))
+            {
+                // TODO : Figure out how to get the correct mesh here
+            }else { }
         }
 
         /// <summary>
@@ -51,7 +64,7 @@ namespace Alternion.SkinHandlers
         /// <param name="index">Team index</param>
         /// <param name="vessel">Cached ship</param>
         /// <returns></returns>
-        private IEnumerator wasteTime(Renderer renderer, int index, cachedShip vessel)
+        private IEnumerator wasteTime(Renderer renderer, int index)
         {
             yield return new WaitForSeconds(.1f);
             bool notFoundCaptain = true;
@@ -74,30 +87,9 @@ namespace Alternion.SkinHandlers
             }
         }
 
-        /// <summary>
-        /// Sets up default skins to be cached
-        /// </summary>
-        /// <param name="renderer">Mortar renderer</param>
-        void handleDefaults(Renderer renderer)
-        {
-            if (!TheGreatCacher.Instance.setMortarDefaults)
-            {
-                TheGreatCacher.Instance.defaultMortar = renderer.material.mainTexture;
-                TheGreatCacher.Instance.defaultMortarMet = renderer.material.GetTexture("_Metallic");
-                TheGreatCacher.Instance.setMortarDefaults = true;
-            }
-        }
-
-        /// <summary>
-        /// Mortar Use patch class
-        /// </summary>
         [HarmonyPatch(typeof(MortarUse), "Start")]
         class mortarUsePatch
         {
-            /// <summary>
-            /// Mortar patch class postfix
-            /// </summary>
-            /// <param name="__instance">MortarUse instance</param>
             static void Postfix(MortarUse __instance)
             {
                 if (AlternionSettings.useMortarSkins)
@@ -107,15 +99,12 @@ namespace Alternion.SkinHandlers
                     {
                         try
                         {
-                            if (renderers[i].name == "prp_mortar")
+                            if (renderers[i] && renderers[i].name == "prp_mortar")
                             {
-                                Instance.handleDefaults(renderers[i]);
-
                                 int index = GameMode.getParentIndex(__instance.transform.root);
-                                cachedShip vessel = TheGreatCacher.getCachedShip(index.ToString());
+                                cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
                                 vessel.mortars.Add(renderers[i]);
-
-                                Instance.StartCoroutine(Instance.wasteTime(renderers[i], index, vessel));                                
+                                Instance.StartCoroutine(Instance.wasteTime(renderers[i], index));                                
                             }
                         }catch(Exception e)
                         {
