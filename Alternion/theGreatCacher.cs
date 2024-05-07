@@ -12,72 +12,38 @@ namespace Alternion
     public class TheGreatCacher : MonoBehaviour
     {
         public static TheGreatCacher Instance;
-        /// <summary>
-        /// Check for if the default cannons have been set or not
-        /// </summary>
-        public bool setCannonDefaults = false;
-        public bool setCannonDefaultMesh = false;
-        /// <summary>
-        /// Check for if the default cannons have been set or not
-        /// </summary>
-        public bool setSwivelDefaults = false;
-        /// <summary>
-        /// Check for if the default mortars have been set or not
-        /// </summary>
-        public bool setMortarDefaults = false;
-        /// <summary>
-        /// Check for if the default sails have been set or not
-        /// </summary>
-        public bool setSailDefaults = false;
-        /// <summary>
-        /// Check for if the default navy flag has been set or not
-        /// </summary>
-        public bool setNavyFlag = false;
-        /// <summary>
-        /// Check for if the default pirate flag has been set or not
-        /// </summary>
-        public bool setPirateFlag = false;
-        /// <summary>
-        /// Default swivel.
-        /// </summary>
+
         public Texture defaultSwivel;
-        /// <summary>
-        /// Default swivel met.
-        /// </summary>
         public Texture defaultSwivelMet;
-        /// <summary>
-        /// Default swivel.
-        /// </summary>
+        public Texture defaultSwivelNrm;
+        public Mesh defaultSwivelBarrelMesh;
+        public Mesh defaultSwivelConnectorMesh;
+        public Mesh defaultSwivelBaseMesh;
+
         public Texture defaultMortar;
-        /// <summary>
-        /// Default swivel met.
-        /// </summary>
         public Texture defaultMortarMet;
-        /// <summary>
-        /// Default sail texture.
-        /// </summary>
+        public Texture defaultMortarNrm;
+        public Mesh defaultMortarMesh;
+
         public Texture defaultSails;
-        /// <summary>
-        /// Default sail met texture.
-        /// </summary>
         public Texture defaultSailsMet;
-        /// <summary>
-        /// Default cannon texture.
-        /// </summary>
+
         public Texture defaultCannons;
-        public Mesh defaultCannonMesh;
-        /// <summary>
-        /// Default cannon met texture.
-        /// </summary>
         public Texture defaultCannonsMet;
-        /// <summary>
-        /// Default navy flag texture
-        /// </summary>
+        public Texture defaultCannonsNrm;
+        public Mesh defaultCannonMesh;
+
+        public Texture defaultMaskSkin;
+        public Texture defaultMaskMet;
+        public Texture defaultMaskNrm;
+        public Mesh defaultMaskMesh;
+
         public Texture navyFlag;
-        /// <summary>
-        /// Default pirate flag texture
-        /// </summary>
         public Texture pirateFlag;
+
+        public Dictionary<string, Mesh> defaultWeaponModels = new Dictionary<string, Mesh>();
+        public Dictionary<string, Texture> defaultWeaponSkins = new Dictionary<string, Texture>();
+
         /// <summary>
         /// Stores all cached ships.
         /// </summary>
@@ -91,10 +57,6 @@ namespace Alternion
         /// </summary>
         public Dictionary<string, Mesh> weaponModels = new Dictionary<string, Mesh>();
         /// <summary>
-        /// Stores all cached custom weapon models.
-        /// </summary>
-        public Dictionary<string, Mesh> defaultWeaponModels = new Dictionary<string, Mesh>();
-        /// <summary>
         /// Stores all cached badges.
         /// </summary>
         public Dictionary<string, Texture> badges = new Dictionary<string, Texture>();
@@ -102,6 +64,7 @@ namespace Alternion
         /// Stores all cached gold mask skins.
         /// </summary>
         public Dictionary<string, Texture> maskSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Mesh> maskModels = new Dictionary<string, Mesh>();
         /// <summary>
         /// Stores all cached main sails.
         /// </summary>
@@ -122,6 +85,7 @@ namespace Alternion
         /// Stores all cached mortar skins.
         /// </summary>
         public Dictionary<string, Texture> mortarSkins = new Dictionary<string, Texture>();
+        public Dictionary<string, Mesh> mortarModels = new Dictionary<string, Mesh>();
         /// <summary>
         /// Stores all cached flags
         /// </summary>
@@ -155,55 +119,29 @@ namespace Alternion
             }
         }
 
-        /// <summary>
-        /// Sets the default sail texture.
-        /// </summary>
-        /// <param name="newTexture">Default Sail Texture</param>
-        public static void setDefaultSails(Texture newTexture)
+        void Start()
         {
-            Instance.defaultSails = newTexture;
+            sortThroughAllTextures();
+            sortThroughAllMeshs();
         }
 
         /// <summary>
-        /// Sets the default cannon texture.
-        /// </summary>
-        /// <param name="newTexture">Default Cannon Texture</param>
-        public static void setDefaultCannons(Texture newTexture)
-        {
-            Instance.defaultCannons = newTexture;
-        }
-
-        /// <summary>
-        /// Sets the default flag texture(s).
-        /// </summary>
-        /// <param name="newTexture">Default Flag Texture</param>
-        public static void setDefaultFlags(Texture newTexture, bool isNavy)
-        {
-            if (isNavy && !Instance.setNavyFlag)
-            {
-                Instance.navyFlag = newTexture;
-                Instance.setNavyFlag = true;
-            }
-            else if (!Instance.setPirateFlag)
-            {
-                Instance.pirateFlag = newTexture;
-                Instance.setPirateFlag = true;
-            }
-        }
-
-        /// <summary>
-        /// Forces an update of all users
+        /// Forces an update of all users, only use if you know what you are doing
         /// </summary>
         public static void forceUpdate()
         {
             Instance.weaponSkins.Clear();
+            Instance.weaponModels.Clear();
             Instance.badges.Clear();
             Instance.maskSkins.Clear();
+            Instance.maskModels.Clear();
             Instance.mainSails.Clear();
             Instance.secondarySails.Clear();
             Instance.cannonSkins.Clear();
             Instance.mortarSkins.Clear();
+            Instance.mortarModels.Clear();
             Instance.players.Clear();
+            Instance.skinAttributes.Clear();
             Mainmod.Instance.createDirectories();
         }
 
@@ -213,17 +151,197 @@ namespace Alternion
         /// </summary>
         /// <param name="team">Team number</param>
         /// <returns>The ship for the given team</returns>
-        public static cachedShip getCachedShip(string team)
+        public cachedShip getCachedShip(string team)
         {
-            if (Instance.ships.TryGetValue(team, out cachedShip ship))
+            if (ships.TryGetValue(team, out cachedShip ship))
             {
                 return ship;
             }
             else
             {
                 cachedShip vessel = new cachedShip();
-                Instance.ships.Add(team, vessel);
+                ships.Add(team, vessel);
                 return vessel;
+            }
+        }
+
+        /// <summary>
+        /// Used to pre-load all default textures, removing the need to run if-checks at runtime to set them
+        /// </summary>
+        private void sortThroughAllTextures()
+        {
+            Texture[] mainTex = Resources.FindObjectsOfTypeAll<Texture>();
+            foreach (Texture texture in mainTex)
+            {
+                switch (texture.name)
+                {
+                    // GUI
+                    case "oldmap1":
+                        ModGUI.setMainBoxBackground(texture);
+                        break;
+                    case "panel_medium":
+                        ModGUI.setMainButtonBackground(texture);
+                        break;
+                    case "Checkmark":
+                        ModGUI.setCheckmark(texture);
+                        break;
+                    case "UISprite":
+                        ModGUI.setCheckBox(texture);
+                        break;
+
+                    // CANNONS
+                    case "prp_cannon_alb":
+                        defaultCannons = texture;
+                        break;
+                    case "prp_cannon_met":
+                        defaultCannonsMet = texture;
+                        break;
+                    case "prp_cannon_nrm":
+                        defaultCannonsNrm = texture;
+                        break;
+
+                    // MORTAR
+                    case "prp_mortar_alb":
+                        defaultMortar = texture;
+                        break;
+                    case "prp_mortar_met":
+                        defaultMortarMet = texture;
+                        break;
+                    case "prp_mortar_nrm":
+                        defaultMortarNrm = texture;
+                        break;
+
+                    // Swivel
+                    case "prp_swivel_alb":
+                        defaultSwivel = texture;
+                        break;
+                    case "prp_swivel_met":
+                        defaultSwivelMet = texture;
+                        break;
+                    case "prp_swivel_nrm":
+                        defaultSwivelNrm = texture;
+                        break;
+
+                    case "ships_sails_alb":
+                        defaultSails = texture;
+                        break;
+
+                    // FLAG
+                    case "flag_british":
+                        navyFlag = texture;
+                        break;
+                    case "flag_pirate":
+                        pirateFlag = texture;
+                        break;
+                    // GOLD MASK
+                    case "goldenSkullMask_alb":
+                        defaultMaskSkin = texture;
+                        break;
+                    case "goldenSkullMask_met":
+                        defaultMaskMet = texture;
+                        break;
+                    case "goldenSkullMask_nrm":
+                        defaultMaskNrm = texture;
+                        break;
+
+
+                    // MAIN MENU WEAPONS
+                    case "wpn_nockGun_stock_alb":
+                        primaryWeaponsDefault[0].alb = texture;
+                        break;
+                    case "wpn_nockGun_stock_met":
+                        primaryWeaponsDefault[0].met = texture;
+                        break;
+                    case "wpn_nockGun_stock_nrm":
+                        primaryWeaponsDefault[0].nrm = texture;
+                        break;
+                    case "wpn_nockGun_stock_ao":
+                        primaryWeaponsDefault[0].ao = texture;
+                        break;
+
+                    case "wpn_handMortar_alb":
+                        primaryWeaponsDefault[1].alb = texture;
+                        break;
+                    case "wpn_handMortar_met":
+                        primaryWeaponsDefault[1].met = texture;
+                        break;
+                    case "wpn_handMortar_nrm":
+                        primaryWeaponsDefault[1].nrm = texture;
+                        break;
+                    case "wpn_handMortar_ao":
+                        primaryWeaponsDefault[1].ao = texture;
+                        break;
+
+                    case "wpn_blunderbuss_alb":
+                        primaryWeaponsDefault[2].alb = texture;
+                        break;
+                    case "wpn_blunderbuss_met":
+                        primaryWeaponsDefault[2].met = texture;
+                        break;
+                    case "wpn_blunderbuss_nrm":
+                        primaryWeaponsDefault[2].nrm = texture;
+                        break;
+                    case "wpn_blunderbuss_ao":
+                        primaryWeaponsDefault[2].ao = texture;
+                        break;
+
+                    case "wpn_standardMusket_stock_alb":
+                        primaryWeaponsDefault[3].alb = texture;
+                        break;
+                    case "wpn_standardMusket_stock_met":
+                        primaryWeaponsDefault[3].met = texture;
+                        break;
+                    case "wpn_standardMusket_stock_nrm":
+                        primaryWeaponsDefault[3].nrm = texture;
+                        break;
+                    case "wpn_standardMusket_stock_ao":
+                        primaryWeaponsDefault[3].ao = texture;
+                        break;
+                                        
+                    
+                    default:
+                        //log(texture.name);
+                        break;
+                }
+            }
+        }
+
+        private void sortThroughAllMeshs()
+        {
+            Mesh[] allMeshes = Resources.FindObjectsOfTypeAll<Mesh>();
+            foreach (Mesh mesh in allMeshes)
+            {
+                switch (mesh.name)
+                {
+                    // CANNON
+                    case "cannon":
+                        defaultCannonMesh = mesh;
+                        break;
+
+                    // SWIVEL
+                    case "swivel_barrel":
+                        defaultSwivelBarrelMesh = mesh;
+                        break;
+                    case "swivel_connector":
+                        defaultSwivelConnectorMesh = mesh;
+                        break;
+                    case "swivel_base":
+                        defaultSwivelBaseMesh = mesh;
+                        break;
+
+                    // MASK
+                    case "goldenSkullMask":
+                        defaultMaskMesh = mesh;
+                        break;
+
+                    // MORTAR
+                    case "prp_mortar":
+                        defaultMortarMesh = mesh;
+                        break;
+                    default:
+                        //log(texture.name);
+                        break;
+                }
             }
         }
     }
