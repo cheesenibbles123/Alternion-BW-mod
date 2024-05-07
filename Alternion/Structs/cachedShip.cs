@@ -44,7 +44,7 @@ namespace Alternion.Structs
         /// <summary>
         /// Ship flag renderer
         /// </summary>
-        public List<Renderer> flags = new List<Renderer>();
+        public Renderer flag;
         /// <summary>
         /// Ship swivel renderers
         /// </summary>
@@ -57,6 +57,7 @@ namespace Alternion.Structs
         /// Mortar renderers
         /// </summary>
         public List<Renderer> mortars = new List<Renderer>();
+        public List<MeshFilter> mortarModels = new List<MeshFilter>();
         /// <summary>
         /// Stores all the cannons
         /// </summary>
