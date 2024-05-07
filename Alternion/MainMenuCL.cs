@@ -5,6 +5,7 @@ using BWModLoader;
 using Steamworks;
 using Alternion.Structs;
 using System.Collections.Generic;
+using static Triangulation;
 
 namespace Alternion
 {
@@ -50,10 +51,14 @@ namespace Alternion
         /// Renderer of the current main menu weapon
         /// </summary>
         static Renderer currentWeaponRend;
+
+        static MeshFilter currentMask;
+        static Renderer currentMaskRend;
         /// <summary>
         /// MainMenuCL Instance.
         /// </summary>
         public static MainMenuCL Instance;
+        private static Logger logger = new Logger("[MainMenuCL]");
 
         /// <summary>
         /// Sets the main menu weapon skin.
@@ -82,13 +87,13 @@ namespace Alternion
                         }
                         else
                         {
-                            Logger.debugLog("Main menu musket not found.");
+                            logger.debugLog("Main menu musket not found.");
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Logger.debugLog(e.Message);
+                    logger.debugLog(e.Message);
                 }
             }
 
@@ -101,48 +106,41 @@ namespace Alternion
         public static void setMainMenuBadge()
         {
 
-            if (!AlternionSettings.useBadges)
+            if (AlternionSettings.useBadges)
             {
-                LoadingBar.updatePercentage(95, "applying weapon skin");
-                setMainMenuWeaponSkin();
-                return;
-            }
+                MainMenu mm = FindObjectOfType<MainMenu>();
 
-            //Only main menu that you will really see is the one intially started
-            //This doesn't work if you return to the main menu from a server
-            MainMenu mm = FindObjectOfType<MainMenu>();
-
-            try
-            {
-                string steamID = Steamworks.SteamUser.GetSteamID().ToString();
-                if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
+                try
                 {
-                    if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
+                    string steamID = Steamworks.SteamUser.GetSteamID().ToString();
+                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
                     {
-                        if (TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
+                        if (mm.menuBadge.texture.name != "tournamentWake1Badge" ^ (!AlternionSettings.showTWBadges & mm.menuBadge.texture.name == "tournamentWake1Badge"))
                         {
-                            mm.menuBadge.texture = newTex;
+                            if (TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
+                            {
+                                mm.menuBadge.texture = newTex;
+                            }
                         }
                     }
+
                 }
-
+                catch (Exception e)
+                {
+                    logger.debugLog("Failed to assign custom badge to a player:");
+                    logger.debugLog(e.Message);
+                }
             }
-            catch (Exception e)
-            {
-                Logger.debugLog("Failed to assign custom badge to a player:");
-                Logger.debugLog(e.Message);
-            }
-
             LoadingBar.updatePercentage(95, "Applying weapon skin");
             setMainMenuWeaponSkin();
-            Instance.setMenuFlag();
-
+            setMenuFlag();
+            setGoldMask();
         }
         
         /// <summary>
         /// Sets the main menu flag.
         /// </summary>
-        public void setMenuFlag()
+        public static void setMenuFlag()
         {
             if (AlternionSettings.showFlags)
             {
@@ -156,6 +154,47 @@ namespace Alternion
                         menuFlag.material.mainTexture = newTex;
                     }
                 }
+            }
+        }
+
+        public static void setGoldMask()
+        {
+            currentMask = CharacterCustomizationUI.îêêæëçäëèñî.îìèòñéðèòæñ.GetComponent<MeshFilter>();
+            currentMaskRend = CharacterCustomizationUI.îêêæëçäëèñî.îìèòñéðèòæñ.GetComponent<Renderer>();
+            TheGreatCacher.Instance.defaultMaskSkin = currentMaskRend.material.mainTexture;
+            TheGreatCacher.Instance.defaultMaskMesh = currentMask.mesh;
+
+            string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
+            TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player);
+            string skinName = "mask_" + player.maskSkinName;
+
+            if (AlternionSettings.useMaskSkins)
+            {
+                TheGreatCacher.Instance.skinAttributes.TryGetValue(skinName, out weaponSkinAttributes attrib);
+                if (attrib.hasAlb)
+                {
+                    TheGreatCacher.Instance.maskSkins.TryGetValue(skinName, out Texture skin);
+                    currentMaskRend.material.mainTexture = skin;
+                }
+                else { currentMaskRend.material.mainTexture = TheGreatCacher.Instance.defaultMaskSkin; }
+                if (attrib.hasMet)
+                {
+                    TheGreatCacher.Instance.maskSkins.TryGetValue(skinName + "_met", out Texture skin);
+                    currentMaskRend.material.SetTexture("_Metallic", skin);
+                }
+                else { currentMaskRend.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultMaskMet); }
+                if (attrib.hasNrm)
+                {
+                    TheGreatCacher.Instance.maskSkins.TryGetValue(skinName + "_nrm", out Texture skin);
+                    currentMaskRend.material.SetTexture("_BumpMap", skin);
+                }
+                else { currentMaskRend.material.SetTexture("_BumpMap", TheGreatCacher.Instance.defaultMaskNrm); }
+                if (attrib.hasMesh)
+                {
+                    TheGreatCacher.Instance.maskModels.TryGetValue(skinName, out Mesh model);
+                    currentMask.mesh = model;
+                }
+                else { currentMask.mesh = TheGreatCacher.Instance.defaultMaskMesh; }
             }
         }
 
@@ -255,7 +294,6 @@ namespace Alternion
                 };
             for (int i = 0; i < meshes.Length; i++)
             {
-                //Logger.debugLog($"Mesh: {meshes[i].name}");
                 if (wpns.Contains(meshes[i].name))
                 {
                     wpnl.Add(meshes[i]);
@@ -411,7 +449,7 @@ namespace Alternion
         {
             static void postfix(MainMenu __instance)
             {
-                Instance.setMenuFlag();
+                setMenuFlag();
             }
         }
 
@@ -444,7 +482,7 @@ namespace Alternion
                 // Call these so that they set correctly again on returning to the main menu
                 setMainMenuBadge();
                 Instance.setMenuCharacter();
-                Instance.setMenuFlag();
+                setMenuFlag();
             }
         }
 
@@ -456,7 +494,7 @@ namespace Alternion
         {
             static void Postfix(CharacterCustomizationUI __instance, int íïïìîóðíçëæ)
             {
-                Instance.setMenuFlag();
+                setMenuFlag();
             }
         }
     }
