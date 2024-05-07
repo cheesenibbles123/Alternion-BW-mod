@@ -5,7 +5,7 @@ using System.IO;
 namespace Alternion
 {
     /// <summary>
-    /// GUI class.
+    /// Settings menu handler class.
     /// </summary>
     [Mod]
     public class ModGUI : MonoBehaviour
@@ -147,7 +147,7 @@ namespace Alternion
             }
             else
             {
-                UnityEngine.Object.DestroyImmediate(this);
+                DestroyImmediate(this);
             }
         }
 
@@ -156,7 +156,7 @@ namespace Alternion
             horizontalCheckBox = new Vector2(horizontalButton.x + buttonWH.x + 40, horizontalButton.y + 10);
             GameObject uiGameobject = new GameObject();
             uiGameobject.AddComponent<ModGUI>();
-            UnityEngine.Object.DontDestroyOnLoad(uiGameobject);
+            DontDestroyOnLoad(uiGameobject);
         }
 
         void OnGUI()
