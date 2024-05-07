@@ -11,6 +11,7 @@ namespace Alternion
     [Mod]
     public class LoadingBar : MonoBehaviour
     {
+        private Logger logger = new Logger("[LoadingBar]");
         /// <summary>
         /// All loaded textures.
         /// </summary>
@@ -85,8 +86,8 @@ namespace Alternion
                 return loadingTextures[imgToUse];
             }catch (Exception e)
             {
-                Logger.debugLog("ERROR GETTING LOADING GUI TEXTURE");
-                Logger.debugLog(e.Message);
+                logger.debugLog("ERROR GETTING LOADING GUI TEXTURE");
+                logger.debugLog(e.Message);
                 return Texture2D.whiteTexture;
             }
         }
