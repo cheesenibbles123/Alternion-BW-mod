@@ -6,6 +6,7 @@ using Harmony;
 
 namespace Alternion.Fixes
 {
+    // CURRENTLY INACTIVE AND AWAITING UPDATE
 #if EXTRAS
     class shipLod
     {

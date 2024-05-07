@@ -8,6 +8,7 @@ using System.Collections;
 
 namespace Alternion.Fixes
 {
+    // CURRENTLY INACTIVE AND AWAITING UPDATE
 #if EXTRAS
     public class botPlayerChanges : MonoBehaviour
     {
@@ -55,30 +56,30 @@ namespace Alternion.Fixes
                 {
                     pirateBotOutfits.Add(i, getBotOutfitItems(false));
                 }
-                Logger.debugLog("Bot setup complete");
+                logger.debugLog("Bot setup complete");
             }
             catch(Exception e)
             {
-                Logger.debugLog("Failed setting up bots");
-                Logger.debugLog(e.Message);
+                logger.debugLog("Failed setting up bots");
+                logger.debugLog(e.Message);
             }
         }
 
         OutfitItem[] pickRandomItem(bool navy)
         {
-            Logger.debugLog($"getting random outfit, navy={navy}");
+            logger.debugLog($"getting random outfit, navy={navy}");
             int num = UnityEngine.Random.Range(0, numberOfOutfitOptions);
 
             if (navy)
             {
                 navyBotOutfits.TryGetValue(num, out OutfitItem[] navyOutfit);
-                Logger.debugLog("Got navy outfit");
+                logger.debugLog("Got navy outfit");
                 return navyOutfit;
             }
             else
             {
                 pirateBotOutfits.TryGetValue(num, out OutfitItem[] pirateOutfit);
-                Logger.debugLog("Got pirate outfit");
+                logger.debugLog("Got pirate outfit");
                 return pirateOutfit;
             }
         }

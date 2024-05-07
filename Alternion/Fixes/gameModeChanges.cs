@@ -5,16 +5,14 @@ namespace Alternion.Fixes
     
     class gameModeChanges
     {
-
         [HarmonyPatch(typeof(GameMode), "getPlayerInfo")]
         class getPlayerInfoPatch
         {
             /// <summary>
             /// Patches into getPlayerInfo and removes references to 'game', aka calls for when a bot does something
             /// </summary>
-            /// <param name="__result">Current instance of GameMode</param>
+            /// <param name="__result">PlayerInfo return value</param>
             /// <param name="pname">Player Name</param>
-            /// <returns></returns>
             static bool Prefix(ref PlayerInfo __result, string pname)
             {
                 if (pname == "game")

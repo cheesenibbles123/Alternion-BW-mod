@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Alternion.Fixes
 {
+    // CURRENTLY INACTIVE AND AWAITING UPDATE
 #if EXTRAS
 
     public class birbHandler : MonoBehaviour
@@ -33,9 +34,9 @@ namespace Alternion.Fixes
             {
                 yield return new WaitForSeconds(.5f);
             }
-            Logger.logLow($"{!__instance.character.æïðèñìæêêñç}");
+            logger.logLow($"{!__instance.character.æïðèñìæêêñç}");
             __instance.character.óððêäóäîçñè.SetActive(!__instance.character.æïðèñìæêêñç); // Only enable if not owner
-            Logger.logLow("IsBird");
+            logger.logLow("IsBird");
             if (__instance.character.æïðèñìæêêñç)
             {
                 __instance.character.óððêäóäîçñè.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly; // Sets to only use shadows, so it still shows in FP
