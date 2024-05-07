@@ -13,14 +13,10 @@ namespace Alternion.SkinHandlers
     [Mod]
     public class sailHandler : MonoBehaviour
     {
-
-        /// <summary>
-        /// SailHandler Instance
-        /// </summary>
         public static sailHandler Instance;
 
         /// <summary>
-        /// List containing all the mainsails
+        /// List containing all the mainsail names
         /// </summary>
         List<string> mainSailList = new List<string>()
         {
@@ -62,49 +58,34 @@ namespace Alternion.SkinHandlers
             if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player))
             {
                 Texture newTex;
-                if (isMain)
+                string skinName = isMain ? player.mainSailName : player.sailSkinName;
+                if (skinName != "default")
                 {
-                    if (player.mainSailName != "default" && TheGreatCacher.Instance.mainSails.TryGetValue(player.mainSailName, out newTex))
+                    if (isMain ? TheGreatCacher.Instance.mainSails.TryGetValue(skinName, out newTex) : TheGreatCacher.Instance.secondarySails.TryGetValue(skinName, out newTex))
                     {
                         renderer.material.mainTexture = newTex;
                         vessel.hasChangedSails = true;
                     }
                     else
                     {
-                        resetSail(vessel, renderer);
-                    }
-                }
-                else
-                {
-                    if (player.mainSailName != "default" && TheGreatCacher.Instance.secondarySails.TryGetValue(player.sailSkinName, out newTex))
-                    {
-                        renderer.material.mainTexture = newTex;
-                        vessel.hasChangedSails = true;
-                    }
-                    else
-                    {
-                        resetSail(vessel, renderer);
+                        resetSail(renderer);
                     }
                 }
             }
             else
             {
-                resetSail(vessel, renderer);
+                resetSail(renderer);
             }
         }
 
         /// <summary>
         /// Applies the skins to the sail
         /// </summary>
-        /// <param name="vessel">Ship</param>
         /// <param name="renderer">Sail Renderer</param>
-        static void resetSail(cachedShip vessel, Renderer renderer)
+        static void resetSail(Renderer renderer)
         {
-            //if (vessel.hasChangedSails)
-            //{
-                renderer.material.mainTexture = TheGreatCacher.Instance.defaultSails;
-                renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSailsMet);
-            //}
+            renderer.material.mainTexture = TheGreatCacher.Instance.defaultSails;
+            renderer.material.SetTexture("_Metallic", TheGreatCacher.Instance.defaultSailsMet);
         }
 
         /// <summary>
@@ -114,24 +95,24 @@ namespace Alternion.SkinHandlers
         /// <param name="steamID">Captain steamID</param>
         /// <param name="renderer">Sail Renderer</param>
         /// <param name="__instance">SailHealth</param>
-        static void setupShip(cachedShip vessel, string steamID, Renderer renderer, SailHealth __instance)
+        static void setupShip(cachedShip vessel, string steamID, Renderer renderer, Renderer closedRenderer, SailHealth __instance)
         {
 
             if (Instance.mainSailList.Contains(__instance.name) && AlternionSettings.useMainSails)
             {
                 vessel.mainSailDict.Add((vessel.mainSailDict.Count + 1).ToString(), __instance);
                 applySkins(vessel, steamID, renderer, true);
-                applySkins(vessel, steamID, __instance.êæïäîæïïíñå.GetComponent<Renderer>(), true);
+                applySkins(vessel, steamID, closedRenderer, true);
             }
             else if (AlternionSettings.useSecondarySails)
             {
                 vessel.sailDict.Add((vessel.sailDict.Count + 1).ToString(), __instance);
                 applySkins(vessel, steamID, renderer, false);
-                applySkins(vessel, steamID, __instance.êæïäîæïïíñå.GetComponent<Renderer>(), false);
+                applySkins(vessel, steamID, closedRenderer, false);
             }
             else
             {
-                resetSail(vessel, renderer);
+                resetSail(renderer);
             }
         }
 
@@ -139,7 +120,7 @@ namespace Alternion.SkinHandlers
         /// Waits until the captain has been set
         /// </summary>
         /// <param name="teamNum">Team Number</param>
-        /// <param name="__instance">SailHealth</param>
+        /// <param name="__instance">SailHealth component</param>
         private IEnumerator wasteTime(int teamNum, SailHealth __instance)
         {
             yield return new WaitForSeconds(0.1f);
@@ -160,7 +141,8 @@ namespace Alternion.SkinHandlers
 
         public void handleClosedSails(cachedShip vessel, playerObject player)
         {
-            if (player != null)
+            if (player != null &&
+                (AlternionSettings.useSecondarySails || AlternionSettings.useMainSails))
             {
                 Texture newTex;
                 foreach (Renderer renderer in vessel.closedSails)
@@ -218,22 +200,8 @@ namespace Alternion.SkinHandlers
         void handleShipSetup(int teamNum, SailHealth __instance)
         {
             string steamID = GameMode.Instance.teamCaptains[teamNum - 1].steamID.ToString();
-
-            if (!TheGreatCacher.Instance.setSailDefaults)
-            {
-                TheGreatCacher.Instance.defaultSails = __instance.GetComponent<Renderer>().material.mainTexture;
-                TheGreatCacher.Instance.setSailDefaults = true;
-            }
-            if (TheGreatCacher.Instance.ships.TryGetValue(teamNum.ToString(), out cachedShip vessel))
-            {
-                setupShip(vessel, steamID, __instance.GetComponent<Renderer>(), __instance);
-            }
-            else
-            {
-                cachedShip newVessel = new cachedShip();
-                TheGreatCacher.Instance.ships.Add(teamNum.ToString(), newVessel);
-                setupShip(newVessel, steamID, __instance.GetComponent<Renderer>(), __instance);
-            }
+            cachedShip vessel = TheGreatCacher.Instance.getCachedShip(teamNum.ToString());
+            setupShip(vessel, steamID, __instance.GetComponent<Renderer>(), __instance.êæïäîæïïíñå.GetComponent<Renderer>(), __instance);
         }
 
         /// <summary>

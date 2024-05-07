@@ -13,12 +13,9 @@ namespace Alternion.SkinHandlers
     [Mod]
     public class flagHandler : MonoBehaviour
     {
-        /// <summary>
-        /// flagHandler Instance
-        /// </summary>
         public static flagHandler Instance;
-
-        float assignDelay = 4f;
+        private static Logger logger = new Logger("[FlagHandler]");
+        const float assignDelay = 4f; // Game uses 3, so lower than this can be inconsistent
 
         void Awake()
         {
@@ -32,169 +29,66 @@ namespace Alternion.SkinHandlers
             }
         }
 
-        /// <summary>
-        /// Harmony patch "allBuildShip" for ShipConstruction
-        /// </summary>
-        [HarmonyPatch(typeof(ShipConstruction), "allBuildShip")]
-        class buildShipPatch
-        {
-            static void Postfix(ShipConstruction __instance, string shipType, int team, ïçîìäîóäìïæ.åéðñðçîîïêç info)
-            {
-                if (AlternionSettings.showFlags)
-                {
-                    Instance.StartCoroutine(Instance.setFlag(team));
-                }
-                else if (TheGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel))
-                {
-                    Instance.resetFlag(vessel);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Applies skin to Flag
-        /// </summary>
-        /// <param name="team">Ship team</param>
-        private IEnumerator setFlag(int team)
+        private IEnumerator wasteTime(FlagSet __instance)
         {
             yield return new WaitForSeconds(assignDelay);
-            Transform shipTransform = GameMode.Instance.teamParents[team];
-            Renderer[] renderers = shipTransform.GetComponentsInChildren<Renderer>(true); // Get all renderers
-
-            if (TheGreatCacher.Instance.ships.TryGetValue(team.ToString(), out cachedShip vessel)) // Fetch existing ship
-            {
-                loopRenderers(renderers, vessel, false, team);
-            }
-            else
-            {
-                cachedShip newVessel = new cachedShip(); // Create new ship
-                TheGreatCacher.Instance.ships.Add(team.ToString(), newVessel); // Add ship to cache
-
-                loopRenderers(renderers, newVessel, true, team);
-
-            }
+            Instance.StartCoroutine(Instance.setFlag(GameMode.getParentIndex(__instance.transform.root), __instance.GetComponent<Renderer>(), null, 0));
         }
-
-        /// <summary>
-        /// Loops over the renderers
-        /// </summary>
-        /// <param name="renderers">Renderer Array</param>
-        /// <param name="vessel">Cached Ship</param>
-        /// <param name="isNew">Is a newly created ship or not</param>
-        /// <param name="team">Team number</param>
-        void loopRenderers(Renderer[] renderers, cachedShip vessel, bool isNew, int team)
+        public IEnumerator setFlag(int index, Renderer renderer, Texture newTex = null, float delay = assignDelay)
         {
-            foreach (Renderer renderer in renderers)
+            yield return new WaitForSeconds(delay);
+            bool isPirates = GameMode.Instance.teamFactions[index] == "Pirates";
+            string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+
+            cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
+            if (!vessel.isInitialized)
             {
-                try
+                vessel.isNavy = !isPirates;
+                vessel.flag = renderer;
+                vessel.isInitialized = true;
+            }
+
+            if (AlternionSettings.showFlags)
+            {
+                if (newTex)
                 {
-                    changeRenderer(renderer, vessel, isNew, team);
+                    setFlagTexture(vessel, newTex);
+                    vessel.hasChangedFlag = true;
+                    yield break;
                 }
-                catch (Exception e)
+
+                if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) &&
+                    TheGreatCacher.Instance.flags.TryGetValue(isPirates ? player.flagPirateSkinName : player.flagNavySkinName, out newTex))
                 {
-                    Logger.logLow(e.Message);
+                    setFlagTexture(vessel, newTex);
+                    vessel.hasChangedFlag = true;
+                    yield break;
                 }
             }
+            resetFlag(vessel);
         }
 
-        /// <summary>
-        /// Sets the flags
-        /// </summary>
-        /// <param name="renderer">Renderer</param>
-        /// <param name="vessel">Cached Ship</param>
-        /// <param name="isNew">Is a newly created ship or not</param>
-        void changeRenderer(Renderer renderer, cachedShip vessel, bool isNew, int team)
-        {
-            if (renderer.name == "teamflag" || renderer.name.ToLower().StartsWith("squadflag"))
-            {
-                defaultsHandler(renderer);
 
-                if (!vessel.isInitialized)
-                {
-                    vessel.isNavy = (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british");
-                    vessel.isInitialized = true;
-                }
-
-                if (TheGreatCacher.Instance.players.TryGetValue(GameMode.Instance.teamCaptains[team].steamID.ToString(), out playerObject player))
-                {
-                    string flagSkin = vessel.isNavy ? player.flagNavySkinName : player.flagPirateSkinName;
-                    if (TheGreatCacher.Instance.flags.TryGetValue(flagSkin, out Texture flag))
-                    {
-                        if (flag.name != "FAILED")
-                        {
-                            renderer.material.mainTexture = flag;
-                            vessel.hasChangedFlag = true;
-                        }
-                        else
-                        {
-                            resetFlag(vessel);
-                        }
-                    }
-                    else
-                    {
-                        resetFlag(vessel);
-                    }
-                }
-                else
-                {
-                    resetFlag(vessel);
-                }
-
-                if (isNew)
-                {
-                    vessel.flags.Add(renderer);
-                }
-
-
-            }
-        }
-
-        /// <summary>
-        /// Sets up the defaults
-        /// </summary>
-        /// <param name="renderer">Renderer</param>
-        void defaultsHandler(Renderer renderer)
-        {
-            if (!TheGreatCacher.Instance.setNavyFlag && (renderer.material.mainTexture.name == "flag_navy" || renderer.material.mainTexture.name == "flag_british"))
-            {
-                TheGreatCacher.setDefaultFlags(renderer.material.mainTexture, true);
-            }
-            else if (!TheGreatCacher.Instance.setPirateFlag && renderer.material.mainTexture.name == "flag_pirate")
-            {
-                TheGreatCacher.setDefaultFlags(renderer.material.mainTexture, false);
-            }
-        }
-
-        /// <summary>
-        /// Applies skin to Flag
-        /// </summary>
-        /// <param name="vessel">Ship</param>
-        public void resetFlag(cachedShip vessel)
+        public static void resetFlag(cachedShip vessel)
         {
             if (vessel.hasChangedFlag)
             {
-                if (vessel.isNavy)
-                {
-                    setFlagsToSkin(vessel, TheGreatCacher.Instance.navyFlag);
-                }
-                else
-                {
-                    setFlagsToSkin(vessel, TheGreatCacher.Instance.pirateFlag);
-                }
-                vessel.hasChangedFlag = false;
+                setFlagTexture(vessel, vessel.isNavy ? TheGreatCacher.Instance.navyFlag : TheGreatCacher.Instance.pirateFlag, true);
             }
         }
 
-        /// <summary>
-        /// Update all flags in ship to flag
-        /// </summary>
-        /// <param name="vessel">Cached Ship</param>
-        /// <param name="newFlagTex">Flag to use</param>
-        public void setFlagsToSkin(cachedShip vessel, Texture newFlagTex)
+        public static void setFlagTexture(cachedShip vessel, Texture newTexture, bool isChangingToDefault = false)
         {
-            foreach (Renderer renderer in vessel.flags)
+            vessel.flag.material.mainTexture = newTexture;
+            vessel.hasChangedFlag = !isChangingToDefault;
+        }
+
+        [HarmonyPatch(typeof(FlagSet), "OnEnable")]
+        class FlatSetPatch
+        {
+            static void Postfix(FlagSet __instance)
             {
-                renderer.material.mainTexture = newFlagTex;
+                Instance.StartCoroutine(Instance.wasteTime(__instance));
             }
         }
     }
