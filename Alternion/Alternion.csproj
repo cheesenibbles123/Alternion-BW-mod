@@ -75,8 +75,10 @@
     <Compile Include="Fixes\shipLod.cs" />
     <Compile Include="OBJImporter.cs" />
     <Compile Include="SkinHandlers\cannonHandler.cs" />
+    <Compile Include="DebugLib.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />
     <Compile Include="MainMenuCL.cs" />
+    <Compile Include="SkinHandlers\GoldMaskHandler.cs" />
     <Compile Include="SkinHandlers\mortarHandler.cs" />
     <Compile Include="SkinHandlers\sailHandler.cs" />
     <Compile Include="Structs\defaultPrimaryWeapon.cs" />
