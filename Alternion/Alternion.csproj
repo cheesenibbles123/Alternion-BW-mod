@@ -72,7 +72,9 @@
     <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="Fixes\gameModeChanges.cs" />
+    <Compile Include="Fixes\LevelProtect.cs" />
     <Compile Include="Fixes\shipLod.cs" />
+    <Compile Include="Fixes\Weapons.cs" />
     <Compile Include="OBJImporter.cs" />
     <Compile Include="SkinHandlers\cannonHandler.cs" />
     <Compile Include="DebugLib.cs" />
