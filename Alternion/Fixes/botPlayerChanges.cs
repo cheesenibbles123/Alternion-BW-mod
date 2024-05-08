@@ -9,10 +9,40 @@ using System.Collections;
 namespace Alternion.Fixes
 {
     // CURRENTLY INACTIVE AND AWAITING UPDATE
+
+    [HarmonyPatch(typeof(BotPlayer), "Unload")]
+    class botPlayerUnloadPatch
+    {
+        static bool Prefix(BotPlayer __instance)
+        {
+            if (__instance.gameObject && __instance.gameObject.activeSelf)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+
+#if DEBUG
+    [HarmonyPatch(typeof(BotPlayer), "die")]
+    class botPlayerDiePatch
+    {
+        static bool Prefix(BotPlayer __instance, int æðæïçåíòéåð, Vector3 äåòéðññåîòì, int çññíïïíòóêê, string óêæóæìïóéñè)
+        {
+            if (!__instance.ìäóêäðçóììî) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: ìäóêäðçóììî");
+            if (!__instance.GetComponent<Collider>()) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: Collider");
+            if (!__instance.GetComponent<RagDoll>()) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: RagDoll");
+            // Seems to be an issue regarding the effect spawner
+            return true;
+        }
+    }
+#endif
+
 #if EXTRAS
     public class botPlayerChanges : MonoBehaviour
     {
         public static botPlayerChanges Instance;
+        private static Logger logger = new Logger("[BotPlayer]");
 
         int[] values = new int[]
         {
@@ -127,11 +157,11 @@ namespace Alternion.Fixes
         {
             static bool Prefix(BotPlayer __instance)
             {
-                Logger.debugLog("Entered patch");
+                logger.debugLog("Entered patch");
                 int index = GameMode.getParentIndex(__instance.transform.parent);
-                Logger.debugLog("Got transform");
+                logger.debugLog("Got transform");
                 Instance.setupOutfit(__instance, Instance.navyTeams.Contains(index));
-                Logger.debugLog("Setup outfit");
+                logger.debugLog("Setup outfit");
                 return true;
             }
         }
@@ -142,7 +172,7 @@ namespace Alternion.Fixes
             if (isNavy)
             {
                 OutfitItem[] outfit = pickRandomItem(true); // Navy bot
-                Logger.debugLog("Got outfit navy");
+                logger.debugLog("Got outfit navy");
                 instance.ìëòèìêðìíçñ.èìëéçòíääåå = outfit[3]; // suit
                 instance.ìëòèìêðìíçñ.ìäóçðåòðåíè = outfit[2]; // hat
                 instance.ìëòèìêðìíçñ.äíñêòéóñäèæ = outfit[1]; // hair
@@ -151,43 +181,43 @@ namespace Alternion.Fixes
             else
             {
                 OutfitItem[] outfit = pickRandomItem(false); // Pirate bot
-                Logger.debugLog("Got outfit pir");
+                logger.debugLog("Got outfit pir");
                 instance.îòæîñìíïæêñ.èìëéçòíääåå = outfit[3]; // suit
                 instance.îòæîñìíïæêñ.ìäóçðåòðåíè = outfit[2]; // hat
                 instance.îòæîñìíïæêñ.äíñêòéóñäèæ = outfit[1]; // hair
                 instance.îòæîñìíïæêñ.òìíåðëòíæåæ = outfit[0]; // beard
             }
 
-            Logger.debugLog("Complete.");
+            logger.debugLog("Complete.");
         }
 
         OutfitItem[] getBotOutfitItems(bool navy)
         {
-            Logger.debugLog("Entering outfit getter.");
+            logger.debugLog("Entering outfit getter.");
             int suit = UnityEngine.Random.Range(0, values[0]);
             int hat = UnityEngine.Random.Range(0, values[1]);
             int beard = UnityEngine.Random.Range(0, values[2]);
             int hair = UnityEngine.Random.Range(0, values[3]);
-            Logger.debugLog("Generated values");
+            logger.debugLog("Generated values");
             if (navy)
             {
-                Logger.debugLog("generating navy");
+                logger.debugLog("generating navy");
                 OutfitItem[] items = new OutfitItem[] {CharacterCustomizationUI.îêêæëçäëèñî.çðòðåäîìëòî[beard],
                         CharacterCustomizationUI.îêêæëçäëèñî.íòïæóçìîèèð[hair],
                         CharacterCustomizationUI.îêêæëçäëèñî.éèåòæéïìóíí[hat],
                         CharacterCustomizationUI.îêêæëçäëèñî.íìçææäðëåïè[suit]
                 };
-                Logger.debugLog("Returning Navy");
+                logger.debugLog("Returning Navy");
                 return items;
             }
             else {
-                Logger.debugLog("generating pirate");
+                logger.debugLog("generating pirate");
                 OutfitItem[] items = new OutfitItem[] {CharacterCustomizationUI.îêêæëçäëèñî.çðòðåäîìëòî[beard],
                         CharacterCustomizationUI.îêêæëçäëèñî.íòïæóçìîèèð[hair],
                         CharacterCustomizationUI.îêêæëçäëèñî.îåéìïíóìòèê[hat],
                         CharacterCustomizationUI.îêêæëçäëèñî.ìéìçæêîêêíæ[suit]
                 };
-                Logger.debugLog("Returning pirate");
+                logger.debugLog("Returning pirate");
                 return items;
             }
         }
@@ -197,18 +227,12 @@ namespace Alternion.Fixes
         {
             static bool Prefix(BotPlayer __instance)
             {
-                if (!__instance.gameObject.activeSelf)
+                if (!__instance.gameObject ||
+                    (__instance.gameObject && !__instance.gameObject.activeSelf))
                 {
                     return false;
                 }
-
-                if (__instance.transform.parent)
-                {
-                    __instance.transform.parent = null;
-                }
-                __instance.gameObject.SetActive(false);
-
-                return false;
+                return true;
             }
         }
     }
