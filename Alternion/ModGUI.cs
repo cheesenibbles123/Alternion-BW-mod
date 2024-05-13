@@ -27,6 +27,10 @@ namespace Alternion
         /// </summary>
         static Texture checkBox;
         /// <summary>
+        /// Check box texture
+        /// </summary>
+        public static Texture watermarkTexture;
+        /// <summary>
         /// Is options menu visible?
         /// </summary>
         bool isEnabled = false;
@@ -34,6 +38,7 @@ namespace Alternion
         /// ModGUI Instance
         /// </summary>
         public static ModGUI Instance;
+
 
         //Placeholder Declarations for displayButtons()
         /// <summary>
@@ -164,6 +169,11 @@ namespace Alternion
             if (isEnabled)
             {
                 displayGUI();
+            }
+
+            if (watermarkTexture && AlternionSettings.enableWaterMark)
+            {
+                GUI.DrawTexture(new Rect(10, 10, 64, 52), watermarkTexture, ScaleMode.ScaleToFit);
             }
         }
 

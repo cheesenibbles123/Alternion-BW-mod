@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
+    <Compile Include="AssetDownloader.cs" />
     <Compile Include="Fixes\birbHandler.cs" />
     <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
@@ -75,7 +76,9 @@
     <Compile Include="Fixes\LevelProtect.cs" />
     <Compile Include="Fixes\shipLod.cs" />
     <Compile Include="Fixes\Weapons.cs" />
+    <Compile Include="Patcher.cs" />
     <Compile Include="OBJImporter.cs" />
+    <Compile Include="SkinHandlers\BadgeHandler.cs" />
     <Compile Include="SkinHandlers\cannonHandler.cs" />
     <Compile Include="DebugLib.cs" />
     <Compile Include="SkinHandlers\flagHandler.cs" />

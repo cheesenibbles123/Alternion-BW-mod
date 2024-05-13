@@ -44,7 +44,7 @@ namespace Alternion.Structs
         /// <summary>
         /// Ship flag renderer
         /// </summary>
-        public Renderer flag;
+        public List<Renderer> flags = new List<Renderer>();
         /// <summary>
         /// Ship swivel renderers
         /// </summary>
