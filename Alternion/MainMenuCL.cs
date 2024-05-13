@@ -161,8 +161,6 @@ namespace Alternion
         {
             currentMask = CharacterCustomizationUI.îêêæëçäëèñî.îìèòñéðèòæñ.GetComponent<MeshFilter>();
             currentMaskRend = CharacterCustomizationUI.îêêæëçäëèñî.îìèòñéðèòæñ.GetComponent<Renderer>();
-            TheGreatCacher.Instance.defaultMaskSkin = currentMaskRend.material.mainTexture;
-            TheGreatCacher.Instance.defaultMaskMesh = currentMask.mesh;
 
             string steamID = SteamUser.GetSteamID().m_SteamID.ToString();
             TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player);
