@@ -1,4 +1,5 @@
-﻿using Alternion.SkinHandlers;
+﻿using Alternion.Fixes;
+using Alternion.SkinHandlers;
 using Alternion.Structs;
 using Harmony;
 using System;
@@ -489,6 +490,7 @@ namespace Alternion
         {
             // Reset all ship skins that are cached on newRound() to default textures
             Helpers.resetAllShipsToDefault();
+            LevelProtect.Instance.roundEnd();
         }
     }
 

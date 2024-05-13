@@ -16,12 +16,13 @@ namespace Alternion.Fixes
         public static readonly string scoreStat = "stat_score";
 
         public static LevelProtect Instance;
-        public bool allowScoreToBeSent = false;
+        static bool shouldResetNumber = false;
 
         readonly int maxPossibleScore = 10000; // 10K max per min, if you get more than that I don't know what you are doing
         readonly int secondsBetweenPush = 60;
         static int currentScore;
         static int scoreToAdd = 0;
+        static int totalRoundScore = 0;
 
         void Awake()
         {
@@ -44,6 +45,11 @@ namespace Alternion.Fixes
             logger.logLow("Got base score: " + currentScore);
         }
 
+        public void roundEnd()
+        {
+            totalRoundScore = 0;
+        }
+
         private void checkScoreBeforePush()
         {
             while (true) // On secondary thread so it's probably ok ;P
@@ -52,14 +58,16 @@ namespace Alternion.Fixes
                 {
                     if (scoreToAdd < maxPossibleScore)
                     {
-                        allowScoreToBeSent = true;
                         currentScore += scoreToAdd;
+                        totalRoundScore += scoreToAdd;
+
                         SteamUserStats.SetStat(scoreStat, currentScore);
                         logger.logLow("Updating steam score to: " + currentScore);
                     }
                     else
                     {
                         logger.debugLog("Got extreme value attempt: " + scoreToAdd);
+                        shouldResetNumber = true;
                     }
                     scoreToAdd = 0;
                 }
@@ -75,6 +83,22 @@ namespace Alternion.Fixes
                 if (çìîñìëðêëéò == scoreStat)
                 {
                     scoreToAdd = (åéçèêêðíçòñ - currentScore);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        [HarmonyPatch(typeof(PlayerInfo), "updateScore")]
+        class updateScorePatch
+        {
+            static bool Prefix(PlayerInfo __instance, int amount, string note, bool tickSound)
+            {
+                if (shouldResetNumber)
+                {
+                    Traverse info = Traverse.Create(__instance);
+                    info.Field("score").SetValue(totalRoundScore);
+                    shouldResetNumber = false;
                     return false;
                 }
                 return true;
