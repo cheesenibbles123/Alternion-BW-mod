@@ -29,6 +29,7 @@ namespace Alternion.Fixes
     {
         static bool Prefix(BotPlayer __instance, int æðæïçåíòéåð, Vector3 äåòéðññåîòì, int çññíïïíòóêê, string óêæóæìïóéñè)
         {
+            if (!__instance) return true;
             if (!__instance.ìäóêäðçóììî) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: ìäóêäðçóììî");
             if (!__instance.GetComponent<Collider>()) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: Collider");
             if (!__instance.GetComponent<RagDoll>()) Logger.logger.DebugLog($"[Botplayer Die]: Undefined: RagDoll");
