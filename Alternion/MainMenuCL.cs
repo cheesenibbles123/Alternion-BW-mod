@@ -5,7 +5,6 @@ using BWModLoader;
 using Steamworks;
 using Alternion.Structs;
 using System.Collections.Generic;
-using static Triangulation;
 
 namespace Alternion
 {
