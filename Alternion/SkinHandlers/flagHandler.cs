@@ -45,7 +45,7 @@ namespace Alternion.SkinHandlers
                     if (vessel == null) vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
                     if (GameMode.Instance.teamCaptains[index])
                     {
-                        Instance.StartCoroutine(Instance.setFlag(index, __instance.GetComponent<Renderer>(), null, assignDelay));
+                        Instance.StartCoroutine(Instance.setFlag(index, __instance.GetComponent<Renderer>(), null, 0));
                     }
                     break;
                 }
