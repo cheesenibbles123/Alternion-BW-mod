@@ -6,7 +6,7 @@ namespace Alternion.Fixes
     // CURRENTLY INACTIVE AND AWAITING UPDATE
     class displayStat
     {
-        /*
+#if EXTRAS
         private static Logger logger = new Logger("[DisplayStat]");
         [HarmonyPatch(typeof(PlayerInfo), "setupRemotePlayer")]
         class displayStatPatch
@@ -29,6 +29,6 @@ namespace Alternion.Fixes
                 Logger.debugLog($"Accolade Medal set to -{plrInf.displayStat}-{plrInf.displayStatMedal}- ");
             }
         }
-        */
+#endif
     }
 }
