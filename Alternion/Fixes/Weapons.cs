@@ -59,19 +59,4 @@ namespace Alternion.Fixes
         }
     }
 #endif
-
-    [HarmonyPatch(typeof(CaptainVoiceSet), "ëèïèòêêòíîï")]
-    class CaptainedVoicePatch
-    {
-        static bool Prefix(AudioClip[] çíëòðêîïåëå, int ïóäæëòñçéóæ, AudioSource çèêèëäóïéëç)
-        {
-            if (çèêèëäóïéëç && !çèêèëäóïéëç.isPlaying && ïóäæëòñçéóæ >= 0 && ïóäæëòñçéóæ < çíëòðêîïåëå.Length)
-            {
-                çèêèëäóïéëç.clip = çíëòðêîïåëå[ïóäæëòñçéóæ];
-                çèêèëäóïéëç.Play();
-            }
-            return false;
-        }
-    }
-
 }
