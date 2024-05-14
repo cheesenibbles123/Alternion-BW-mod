@@ -73,7 +73,6 @@ namespace Alternion.SkinHandlers
                         if (BadgeHelpers.checkIfTWOrKS(__instance) && TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTexture))
                         {
                             __instance.éòëèïòëóæèó.texture = newTexture;
-                            __instance.éòëèïòëóæèó.SetNativeSize();
                         }
                     }
 
@@ -112,7 +111,6 @@ namespace Alternion.SkinHandlers
                     if (BadgeHelpers.checkIfTWOrKS(óéíïñîèëëêð) && TheGreatCacher.Instance.badges.TryGetValue(player.badgeName, out Texture newTex))
                     {
                         __instance.äæåéåîèòéîñ.texture = newTex;
-                        __instance.äæåéåîèòéîñ.SetNativeSize();
                     }
                 }
             }
