@@ -9,7 +9,7 @@ namespace Alternion.SkinHandlers
 {
     class BadgeHelpers
     {
-        public static Logger logger = new Logger("[FlagHandler]");
+        public static Logger logger = new Logger("[BadgeHandler]");
 
         /// <summary>
         /// Checks if input badge is a Kickstarter or Tournamentwake badge
