@@ -84,9 +84,6 @@ namespace Alternion.SkinHandlers
                     yield break;
                 }
             }
-            logger.debugLog("Resetting tex!");
-            logger.debugLog($"Result: {TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject playerLog)} {TheGreatCacher.Instance.flags.TryGetValue(isPirates ? playerLog.flagPirateSkinName : playerLog.flagNavySkinName, out newTex)}");
-
             resetFlag(vessel);
         }
 
