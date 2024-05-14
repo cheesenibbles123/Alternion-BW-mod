@@ -23,7 +23,7 @@ namespace Alternion.Fixes
         }
     }
 
-#if DEBUG
+#if EXTRAS
     [HarmonyPatch(typeof(BotPlayer), "die")]
     class botPlayerDiePatch
     {
