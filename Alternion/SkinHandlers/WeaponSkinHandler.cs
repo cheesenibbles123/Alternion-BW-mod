@@ -90,7 +90,7 @@ namespace Alternion.SkinHandlers
             }
             catch (Exception e)
             {
-                logger.debugLog("[AssignSkin]: " + e.Message);
+                logger.debugLog(e.Message);
             }
         }
 

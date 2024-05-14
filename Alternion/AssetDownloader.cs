@@ -29,7 +29,7 @@ namespace Alternion
             }
             catch (Exception e)
             {
-                logger.debugLog("Error loading texture {0}" + texName);
+                logger.debugLog("Error loading texture: " + texName);
                 logger.debugLog(e.Message);
                 // Return default white texture on failing to load
                 Texture2D tex = Texture2D.whiteTexture;
@@ -54,8 +54,7 @@ namespace Alternion
                 }
                 catch (Exception e)
                 {
-                    logger.debugLog("Error downloading watermark:");
-                    logger.debugLog(e.Message);
+                    logger.debugLog("Error downloading watermark: " + e.Message);
                 }
 
             }

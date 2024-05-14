@@ -84,7 +84,7 @@ namespace Alternion
         /// <summary>
         /// Current version number
         /// </summary>
-        public static string version = "v10.2 beta";
+        public static string version = "v10.3 beta";
         /// <summary>
         /// Button to press to display current version in the log
         /// </summary>
@@ -205,7 +205,6 @@ namespace Alternion
                 if (configToLoad != configFile)
                 {
                     loadSettings(configFile);
-                    logger.debugLog("No custom config found! Defaulting to standard.");
                 }
                 else
                 {
