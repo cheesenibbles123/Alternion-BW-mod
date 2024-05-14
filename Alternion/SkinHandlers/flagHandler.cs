@@ -58,30 +58,36 @@ namespace Alternion.SkinHandlers
             yield return new WaitForSeconds(delay);
 
             bool isPirates = GameMode.Instance.teamFactions[index] == "Pirates";
-            string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
+            PlayerInfo captain = GameMode.Instance.teamCaptains[index];
             cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
-            vessel.flags.Add(renderer);
-            if (!vessel.isInitialized)
-            {
-                vessel.isNavy = !isPirates;
-                vessel.isInitialized = true;
-            }
 
-            if (AlternionSettings.showFlags)
+            if (captain)
             {
-                if (newTex)
+                string steamID = captain.steamID.ToString();
+
+                vessel.flags.Add(renderer);
+                if (!vessel.isInitialized)
                 {
-                    setFlagTextures(vessel, newTex);
-                    vessel.hasChangedFlag = true;
-                    yield break;
+                    vessel.isNavy = !isPirates;
+                    vessel.isInitialized = true;
                 }
 
-                if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) &&
-                    TheGreatCacher.Instance.flags.TryGetValue(isPirates ? player.flagPirateSkinName : player.flagNavySkinName, out newTex))
+                if (AlternionSettings.showFlags)
                 {
-                    setFlagTextures(vessel, newTex);
-                    vessel.hasChangedFlag = true;
-                    yield break;
+                    if (newTex)
+                    {
+                        setFlagTextures(vessel, newTex);
+                        vessel.hasChangedFlag = true;
+                        yield break;
+                    }
+
+                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) &&
+                        TheGreatCacher.Instance.flags.TryGetValue(isPirates ? player.flagPirateSkinName : player.flagNavySkinName, out newTex))
+                    {
+                        setFlagTextures(vessel, newTex);
+                        vessel.hasChangedFlag = true;
+                        yield break;
+                    }
                 }
             }
             resetFlag(vessel);
