@@ -54,9 +54,7 @@ namespace Alternion.Fixes
     {
         static bool Prefix(ShipHealth __instance, bool èîìíðïóèììå)
         {
-            if (__instance.êæòðóîíìîäò) Logger.logger.DebugLog($"[Ship Grapp]: No movement component");
-            if (__instance.êæòðóîíìîäò.óìíïíçóïíìæ == 0 || __instance.êæòðóîíìîäò.óìíïíçóïíìæ == 1) Logger.logger.DebugLog($"[Ship Grapp]: No shared grapples {__instance.êæòðóîíìîäò.óìíïíçóïíìæ}");
-            if (!UI.Instance.shipHealth) Logger.logger.DebugLog($"[Ship Grapp]: No UI component");
+            if (!__instance.êæòðóîíìîäò) return false;
             return true;
         }
     }
