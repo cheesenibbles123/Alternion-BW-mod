@@ -15,7 +15,7 @@ namespace Alternion.Fixes
     {
         static bool Prefix(BotPlayer __instance)
         {
-            if (__instance.gameObject && __instance.gameObject.activeSelf)
+            if (__instance != null && __instance.gameObject != null && __instance.gameObject.activeSelf)
             {
                 return true;
             }
