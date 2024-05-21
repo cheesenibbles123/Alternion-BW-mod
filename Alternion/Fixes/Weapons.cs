@@ -54,7 +54,7 @@ namespace Alternion.Fixes
     {
         static bool Prefix(ShipHealth __instance, bool èîìíðïóèììå)
         {
-            if (!__instance.êæòðóîíìîäò) return false;
+            if (!__instance || !__instance.êæòðóîíìîäò) return false;
             return true;
         }
     }
