@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="AlternionSettings.cs" />
     <Compile Include="AssetDownloader.cs" />
+    <Compile Include="Fixes\Audio.cs" />
     <Compile Include="Fixes\birbHandler.cs" />
     <Compile Include="Fixes\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
