@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using BWModLoader;
 using Harmony;
 using UnityEngine;
 using Alternion.Structs;
-using System.Reflection;
+using System.Linq;
 
 namespace Alternion.SkinHandlers
 {
@@ -18,6 +17,7 @@ namespace Alternion.SkinHandlers
         private static Logger logger = new Logger("[FlagHandler]");
         const float assignDelay = 4f; // Game uses 3, so lower than this can be inconsistent
         int maxRuns = 20;
+        int[] pirateIndexs = new int[] { 4, 5, 6 };
 
         void Awake()
         {
@@ -46,31 +46,31 @@ namespace Alternion.SkinHandlers
                     if (GameMode.Instance.teamCaptains[index])
                     {
                         Instance.StartCoroutine(Instance.setFlag(index, __instance.GetComponent<Renderer>(), null, 0));
+                        break;
                     }
-                    break;
                 }
                 counter++;
-                yield return new WaitForSeconds(.4f);
+                yield return new WaitForSeconds(.3f);
             }
         }
         public IEnumerator setFlag(int index, Renderer renderer, Texture newTex = null, float delay = assignDelay)
         {
             yield return new WaitForSeconds(delay);
 
-            bool isPirates = GameMode.Instance.teamFactions[index] == "Pirates";
+            bool isPirates = pirateIndexs.Contains(index);
             PlayerInfo captain = GameMode.Instance.teamCaptains[index];
             cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
+
+            vessel.flags.Add(renderer);
+            if (!vessel.isInitialized)
+            {
+                vessel.isNavy = !isPirates;
+                vessel.isInitialized = true;
+            }
 
             if (captain)
             {
                 string steamID = captain.steamID.ToString();
-
-                vessel.flags.Add(renderer);
-                if (!vessel.isInitialized)
-                {
-                    vessel.isNavy = !isPirates;
-                    vessel.isInitialized = true;
-                }
 
                 if (AlternionSettings.showFlags)
                 {
