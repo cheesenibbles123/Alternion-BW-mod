@@ -6,8 +6,6 @@ using Steamworks;
 
 namespace Alternion.Fixes
 {
-    // It works but just for now until it can be verified on more machines dont include it into release
-#if DEBUG
     [Mod]
     public class LevelProtect : MonoBehaviour
     {
@@ -71,6 +69,7 @@ namespace Alternion.Fixes
                     }
                     scoreToAdd = 0;
                 }
+
                 Thread.Sleep(secondsBetweenPush * 1000);
             }
         }
@@ -106,5 +105,4 @@ namespace Alternion.Fixes
         }
 
     }
-#endif
 }
