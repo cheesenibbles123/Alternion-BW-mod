@@ -9,7 +9,9 @@ using System.Collections;
 namespace Alternion.Fixes
 {
     // CURRENTLY INACTIVE AND AWAITING UPDATE
+#if EXTRAS
 
+    // Too many cases of errors occuring even when active, needs a revisit
     [HarmonyPatch(typeof(BotPlayer), "Unload")]
     class botPlayerUnloadPatch
     {
@@ -23,7 +25,6 @@ namespace Alternion.Fixes
         }
     }
 
-#if EXTRAS
     [HarmonyPatch(typeof(BotPlayer), "die")]
     class botPlayerDiePatch
     {
@@ -37,9 +38,6 @@ namespace Alternion.Fixes
             return true;
         }
     }
-#endif
-
-#if EXTRAS
     public class botPlayerChanges : MonoBehaviour
     {
         public static botPlayerChanges Instance;
