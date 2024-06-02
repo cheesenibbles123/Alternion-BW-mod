@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using BWModLoader;
-using System.IO;
 
-namespace Alternion
+namespace Alternion.UI
 {
     /// <summary>
     /// Settings menu handler class.

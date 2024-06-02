@@ -2,6 +2,7 @@
 using UnityEngine;
 using BWModLoader;
 using Alternion.Structs;
+using Alternion.UI;
 
 namespace Alternion
 {
