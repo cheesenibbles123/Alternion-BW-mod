@@ -178,16 +178,16 @@ namespace Alternion
                 {
                     // GUI
                     case "oldmap1":
-                        ModGUI.setMainBoxBackground(texture);
+                        UI.SettingsMenu.setMainBoxBackground(texture);
                         break;
                     case "panel_medium":
-                        ModGUI.setMainButtonBackground(texture);
+                        UI.SettingsMenu.setMainButtonBackground(texture);
                         break;
                     case "Checkmark":
-                        ModGUI.setCheckmark(texture);
+                        UI.SettingsMenu.setCheckmark(texture);
                         break;
                     case "UISprite":
-                        ModGUI.setCheckBox(texture);
+                        UI.SettingsMenu.setCheckBox(texture);
                         break;
 
                     // CANNONS

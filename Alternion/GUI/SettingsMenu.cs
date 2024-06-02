@@ -7,7 +7,7 @@ namespace Alternion.UI
     /// Settings menu handler class.
     /// </summary>
     [Mod]
-    public class ModGUI : MonoBehaviour
+    public class SettingsMenu : MonoBehaviour
     {
         /// <summary>
         /// Main options menu background texture
@@ -36,7 +36,7 @@ namespace Alternion.UI
         /// <summary>
         /// ModGUI Instance
         /// </summary>
-        public static ModGUI Instance;
+        public static SettingsMenu Instance;
 
 
         //Placeholder Declarations for displayButtons()
@@ -159,7 +159,7 @@ namespace Alternion.UI
         {
             horizontalCheckBox = new Vector2(horizontalButton.x + buttonWH.x + 40, horizontalButton.y + 10);
             GameObject uiGameobject = new GameObject();
-            uiGameobject.AddComponent<ModGUI>();
+            uiGameobject.AddComponent<SettingsMenu>();
             DontDestroyOnLoad(uiGameobject);
         }
 

@@ -63,7 +63,7 @@ namespace Alternion
             Texture2D loadedTexture = loadTexture("pfp", AlternionSettings.texturesFilePath, 258, 208);
             if (loadedTexture.name != "FAILED")
             {
-                ModGUI.watermarkTexture = loadedTexture;
+                UI.SettingsMenu.watermarkTexture = loadedTexture;
             }
         }
 
