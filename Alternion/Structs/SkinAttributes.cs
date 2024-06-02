@@ -1,6 +1,6 @@
 ﻿namespace Alternion.Structs
 {
-    public class weaponSkinAttributes
+    public struct weaponSkinAttributes
     {
         public string weaponSkin;
         public bool hasAlb;

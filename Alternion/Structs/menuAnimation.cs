@@ -2,7 +2,7 @@
 
 namespace Alternion.Structs
 {
-    public class menuAnimation
+    public struct menuAnimation
     {
         public AnimationClip animation;
         public bool weaponVisible;
