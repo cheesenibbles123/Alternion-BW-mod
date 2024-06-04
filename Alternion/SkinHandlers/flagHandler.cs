@@ -36,21 +36,19 @@ namespace Alternion.SkinHandlers
             yield return new WaitForSeconds(.1f);
             int index = -1;
             int counter = 0;
-            cachedShip vessel = null;
             while (counter < maxRuns)
             {
                 index = GameMode.getParentIndex(__instance.transform.root);
                 if (index != -1)
                 {
-                    if (vessel == null) vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
-                    if (GameMode.Instance.teamCaptains[index])
+                    if (GameMode.Instance.teamCaptains[index] || counter == maxRuns)
                     {
                         Instance.StartCoroutine(Instance.setFlag(index, __instance.GetComponent<Renderer>(), null, 0));
                         break;
                     }
                 }
                 counter++;
-                yield return new WaitForSeconds(.3f);
+                yield return new WaitForSeconds(.5f);
             }
         }
         public IEnumerator setFlag(int index, Renderer renderer, Texture newTex = null, float delay = assignDelay)
@@ -68,7 +66,7 @@ namespace Alternion.SkinHandlers
                 vessel.isInitialized = true;
             }
 
-            if (captain)
+            if (captain && AlternionSettings.showFlags)
             {
                 string steamID = captain.steamID.ToString();
 
@@ -90,13 +88,16 @@ namespace Alternion.SkinHandlers
                     }
                 }
             }
-            resetFlag(vessel);
+            else
+            {
+                resetFlag(vessel, true);
+            }
         }
 
 
-        public static void resetFlag(cachedShip vessel)
+        public static void resetFlag(cachedShip vessel, bool force = false)
         {
-            if (vessel.hasChangedFlag)
+            if (vessel.hasChangedFlag || force)
             {
                 setFlagTextures(vessel, vessel.isNavy ? TheGreatCacher.Instance.navyFlag : TheGreatCacher.Instance.pirateFlag, true);
             }
