@@ -15,7 +15,7 @@ namespace Alternion.SkinHandlers
     {
         public static flagHandler Instance;
         private static Logger logger = new Logger("[FlagHandler]");
-        const float assignDelay = 4f; // Game uses 3, so lower than this can be inconsistent
+        const float assignDelay = 3f; // Game uses 3, so lower than this can be inconsistent
         int maxRuns = 20;
         int[] pirateIndexs = new int[] { 4, 5, 6 };
 
@@ -50,13 +50,17 @@ namespace Alternion.SkinHandlers
                 counter++;
                 yield return new WaitForSeconds(.5f);
             }
+
+            if (counter >= maxRuns)
+            {
+                Instance.StartCoroutine(Instance.setFlag(index, __instance.GetComponent<Renderer>(), null, 0));
+            }
         }
         public IEnumerator setFlag(int index, Renderer renderer, Texture newTex = null, float delay = assignDelay)
         {
             yield return new WaitForSeconds(delay);
 
             bool isPirates = pirateIndexs.Contains(index);
-            PlayerInfo captain = GameMode.Instance.teamCaptains[index];
             cachedShip vessel = TheGreatCacher.Instance.getCachedShip(index.ToString());
 
             vessel.flags.Add(renderer);
@@ -66,26 +70,25 @@ namespace Alternion.SkinHandlers
                 vessel.isInitialized = true;
             }
 
-            if (captain && AlternionSettings.showFlags)
+            if (AlternionSettings.showFlags && GameMode.Instance.teamCaptains[index])
             {
-                string steamID = captain.steamID.ToString();
+                string steamID = GameMode.Instance.teamCaptains[index].steamID.ToString();
 
-                if (AlternionSettings.showFlags)
+                if (newTex != null)
                 {
-                    if (newTex)
-                    {
-                        setFlagTextures(vessel, newTex);
-                        vessel.hasChangedFlag = true;
-                        yield break;
-                    }
-
-                    if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) &&
-                        TheGreatCacher.Instance.flags.TryGetValue(isPirates ? player.flagPirateSkinName : player.flagNavySkinName, out newTex))
-                    {
-                        setFlagTextures(vessel, newTex);
-                        vessel.hasChangedFlag = true;
-                        yield break;
-                    }
+                    setFlagTextures(vessel, newTex);
+                    vessel.hasChangedFlag = true;
+                    yield break;
+                }
+                else if (TheGreatCacher.Instance.players.TryGetValue(steamID, out playerObject player) && TheGreatCacher.Instance.flags.TryGetValue(isPirates ? player.flagPirateSkinName : player.flagNavySkinName, out newTex))
+                {
+                    setFlagTextures(vessel, newTex);
+                    vessel.hasChangedFlag = true;
+                    yield break;
+                }
+                else
+                {
+                    resetFlag(vessel, true);
                 }
             }
             else
