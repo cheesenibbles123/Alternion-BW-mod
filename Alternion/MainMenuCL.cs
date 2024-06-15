@@ -17,7 +17,7 @@ namespace Alternion
         /// <summary>
         /// Main menu character transform.
         /// </summary>
-        static Transform menuCharacter;
+        public static Transform menuCharacter;
         /// <summary>
         /// Animation reference for the main menu character
         /// </summary>
