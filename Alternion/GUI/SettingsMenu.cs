@@ -69,7 +69,7 @@ namespace Alternion.UI
         /// <summary>
         /// Width + Height of Toggle Buttons
         /// </summary>
-        Vector2 buttonWH = new Vector2(120, 40);
+        Vector2 buttonWH = new Vector2(125, 40);
 
 
         /// <summary>
@@ -279,14 +279,14 @@ namespace Alternion.UI
                 }
 
                 //Bot Outfits
-                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 4), buttonWH.x, buttonWH.y), "Random Bot Outfits"))
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 5), buttonWH.x, buttonWH.y), "Random Bot Outfits"))
                 {
                     AlternionSettings.useBotOutfitSkins = !AlternionSettings.useBotOutfitSkins;
                 }
-                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 5), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
                 if (AlternionSettings.useBotOutfitSkins)
                 {
-                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 5), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
 
             } // Player

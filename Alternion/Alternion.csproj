@@ -71,12 +71,13 @@
     <Compile Include="AssetDownloader.cs" />
     <Compile Include="Fixes\Audio.cs" />
     <Compile Include="Fixes\birbHandler.cs" />
-    <Compile Include="Fixes\botPlayerChanges.cs" />
+    <Compile Include="SkinHandlers\botPlayerChanges.cs" />
     <Compile Include="Fixes\displayStat.cs" />
     <Compile Include="Fixes\gameModeChanges.cs" />
     <Compile Include="Fixes\LevelProtect.cs" />
     <Compile Include="Fixes\shipLod.cs" />
     <Compile Include="Fixes\Weapons.cs" />
+    <Compile Include="GUI\CustomizationScreenController.cs" />
     <Compile Include="GUI\ShipCustomizationScreen.cs" />
     <Compile Include="Patcher.cs" />
     <Compile Include="OBJImporter.cs" />
