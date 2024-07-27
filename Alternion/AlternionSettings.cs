@@ -30,6 +30,10 @@ namespace Alternion
         /// </summary>
         public static bool useMaskSkins = true;
         /// <summary>
+        /// Display Custom Bot Outfits
+        /// </summary>
+        public static bool useBotOutfitSkins = true;
+        /// <summary>
         /// Display Main sail skins.
         /// </summary>
         public static bool useMainSails = true;
@@ -178,6 +182,7 @@ namespace Alternion
             showKSBadges = false;
             useBadges = true;
             useMaskSkins = true;
+            useBotOutfitSkins = true;
             useMainSails = true;
             useSecondarySails = true;
             useWeaponSkins = true;
@@ -263,6 +268,9 @@ namespace Alternion
                             case "useMaskSkins":
                                 useMaskSkins = stringIntToBool(splitArr[1]);
                                 break;
+                            case "useBotOutfitSkins":
+                                useBotOutfitSkins = stringIntToBool(splitArr[1]);
+                                break;
                             case "useMainSails":
                                 useMainSails = stringIntToBool(splitArr[1]);
                                 break;
@@ -327,6 +335,7 @@ namespace Alternion
             streamWriter.WriteLine("showFlags=" + boolToInt(showFlags));
             streamWriter.WriteLine("useBadges=" + boolToInt(useBadges));
             streamWriter.WriteLine("useMaskSkins=" + boolToInt(useMaskSkins));
+            streamWriter.WriteLine("useBotOutfitSkins=" + boolToInt(useBotOutfitSkins));
             streamWriter.WriteLine("useMainSails=" + boolToInt(useMainSails));
             streamWriter.WriteLine("useSecondarySails=" + boolToInt(useSecondarySails));
             streamWriter.WriteLine("useWeaponSkins=" + boolToInt(useWeaponSkins));

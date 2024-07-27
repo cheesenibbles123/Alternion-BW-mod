@@ -278,6 +278,17 @@ namespace Alternion.UI
                     GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
                 }
 
+                //Bot Outfits
+                if (GUI.Button(new Rect(horizontalButton.x, horizontalButton.y + (buttonOffset * 4), buttonWH.x, buttonWH.y), "Random Bot Outfits"))
+                {
+                    AlternionSettings.useBotOutfitSkins = !AlternionSettings.useBotOutfitSkins;
+                }
+                GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkBox, ScaleMode.ScaleToFit);
+                if (AlternionSettings.useBotOutfitSkins)
+                {
+                    GUI.DrawTexture(new Rect(horizontalCheckBox.x, horizontalCheckBox.y + (buttonOffset * 4), checkWH.x, checkWH.y), checkMark, ScaleMode.ScaleToFit);
+                }
+
             } // Player
             else if (AlternionSettings.configMenuPageNumber == 2)
             {

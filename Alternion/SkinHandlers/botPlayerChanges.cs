@@ -1,14 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-using Harmony;
-using System.Collections;
+﻿using Harmony;
 
-namespace Alternion.Fixes
+namespace Alternion.SkinHandlers
 {
     // CURRENTLY INACTIVE AND AWAITING UPDATE
+
+    // Too many cases of errors occuring even when active, needs a revisit
+    [HarmonyPatch(typeof(BotPlayer), "Start")]
+    class BotStartPatch
+    {
+        static bool Prefix(BotPlayer __instance)
+        {
+            if (__instance && AlternionSettings.useBotOutfitSkins)
+            {
+                OutfitItem[] navyOutfit = getBotOutfitItems(true);
+                // Navy
+                __instance.ìëòèìêðìíçñ.èìëéçòíääåå = navyOutfit[3];
+                __instance.ìëòèìêðìíçñ.èïéççóíîçåó = navyOutfit[4];
+                __instance.ìëòèìêðìíçñ.ìäóçðåòðåíè = navyOutfit[2];
+                __instance.ìëòèìêðìíçñ.äíñêòéóñäèæ = navyOutfit[1];
+                __instance.ìëòèìêðìíçñ.òìíåðëòíæåæ = navyOutfit[0];
+
+                OutfitItem[] pirateOutfit = getBotOutfitItems(false);
+                // Pirate
+                __instance.îòæîñìíïæêñ.èìëéçòíääåå = pirateOutfit[3];
+                __instance.îòæîñìíïæêñ.èïéççóíîçåó = pirateOutfit[4];
+                __instance.îòæîñìíïæêñ.ìäóçðåòðåíè = pirateOutfit[2];
+                __instance.îòæîñìíïæêñ.äíñêòéóñäèæ = pirateOutfit[1];
+                __instance.îòæîñìíïæêñ.òìíåðëòíæåæ = pirateOutfit[0];
+            }
+
+            return true;
+        }
+
+        static OutfitItem[] getBotOutfitItems(bool navy)
+        {
+            int suit = UnityEngine.Random.Range(0, 4);
+            int hat = UnityEngine.Random.Range(0, 4);
+            int beard = UnityEngine.Random.Range(0, 5);
+            int hair = UnityEngine.Random.Range(0, 5);
+            int head = UnityEngine.Random.Range(0, 5);
+
+            if (navy)
+            {
+                OutfitItem[] items = new OutfitItem[] {
+                    CharacterCustomizationUI.îêêæëçäëèñî.çðòðåäîìëòî[beard],
+                    CharacterCustomizationUI.îêêæëçäëèñî.íòïæóçìîèèð[hair],
+                    CharacterCustomizationUI.îêêæëçäëèñî.éèåòæéïìóíí[hat],
+                    CharacterCustomizationUI.îêêæëçäëèñî.íìçææäðëåïè[suit],
+                    CharacterCustomizationUI.îêêæëçäëèñî.æòæòîèññìèì[head]
+                };
+                return items;
+            }
+            else
+            {
+                OutfitItem[] items = new OutfitItem[] {
+                    CharacterCustomizationUI.îêêæëçäëèñî.çðòðåäîìëòî[beard],
+                    CharacterCustomizationUI.îêêæëçäëèñî.íòïæóçìîèèð[hair],
+                    CharacterCustomizationUI.îêêæëçäëèñî.îåéìïíóìòèê[hat],
+                    CharacterCustomizationUI.îêêæëçäëèñî.ìéìçæêîêêíæ[suit],
+                    CharacterCustomizationUI.îêêæëçäëèñî.æòæòîèññìèì[head]
+                };
+                return items;
+            }
+        }
+    }
+
+
+
 #if EXTRAS
 
     // Too many cases of errors occuring even when active, needs a revisit
